@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <title>我做过的那些音乐节奏类游戏——太鼓达人篇 | SanderZ&#39;s Blog</title>
+  <title>我做过的那些音乐类游戏——太鼓达人与O2JAM篇 | SanderZ&#39;s Blog</title>
   <meta name="description" content="" />
   <meta name="HandheldFriendly" content="True" />
   <meta name="MobileOptimized" content="320" />
@@ -43,7 +43,7 @@
                                 <div class="mp-scroll">
                                 
                                 <li class="search-archive-li mp-pjax">
-                                    <a href="/2015/01/22/我做过的那些音乐节奏类游戏——太鼓达人篇/">我做过的那些音乐节奏类游戏——太鼓达人篇</a>
+                                    <a href="/2015/01/22/我做过的那些音乐类游戏——太鼓达人与O2JAM篇/">我做过的那些音乐类游戏——太鼓达人与O2JAM篇</a>
                                 </li>
                                 
                                 <li class="search-archive-li mp-pjax">
@@ -104,7 +104,7 @@
         <div id="pjax">
             <div class="pjax-hidden" style="display: none">
                 
-                    <a  data-pjax href="/2015/01/22/我做过的那些音乐节奏类游戏——太鼓达人篇/">我做过的那些音乐节奏类游戏——太鼓达人篇</a>
+                    <a  data-pjax href="/2015/01/22/我做过的那些音乐类游戏——太鼓达人与O2JAM篇/">我做过的那些音乐类游戏——太鼓达人与O2JAM篇</a>
                 
                     <a  data-pjax href="/2015/01/21/用Hexo在Github和Gitcafe上搭建博客/">用Hexo在Github和Gitcafe上搭建博客</a>
                 
@@ -122,7 +122,7 @@
                 
                 <div id="nav-container">
                     <div class="post-navbar" style="line-height: 63px;display:none">
-                        <li id="navbar-title"><a href="#">我做过的那些音乐节奏类游戏——太鼓达人篇</a></li>
+                        <li id="navbar-title"><a href="#">我做过的那些音乐类游戏——太鼓达人与O2JAM篇</a></li>
                         <li id="navbar-toc" style="border-left: none">
                             <a style="padding-right: 15px">
                                 <span id="toc-content" >Introduction</span><i class="fa fa-chevron-down" ></i>
@@ -151,7 +151,7 @@
                   <div class="tag-tile">
                       
                   </div>
-                <h1 class="post-title" style="margin: 14px 0;color:#50585D">我做过的那些音乐节奏类游戏——太鼓达人篇</h1>
+                <h1 class="post-title" style="margin: 14px 0;color:#50585D">我做过的那些音乐类游戏——太鼓达人与O2JAM篇</h1>
 
                     <div class="post-meta">
                         Post on<span class="fa fa-clock-o"></span>
@@ -161,7 +161,36 @@
     </span>
 
         <section class="post-content">
-            
+            <blockquote>
+<p>前言</p>
+<p>出于对音乐类游戏的爱好，从大学正式学习编程开始，我就陆陆续续地尝试用当时学到的知识把自己接触过的一些音乐类游戏给实现出来。</p>
+<p>从大一开始，整个大学期间我试着做过太鼓达人、O2JAM（劲乐团）、Catch The Beat还有Jubeat（乐动魔方）。刚开始时做的东西比较简陋，只是简单地实现了游戏的玩法，后来随着开始使用游戏引擎以及经验、知识的增加，做的游戏也开始完善起来。在此就写几篇文章作为记录和总结。</p>
+</blockquote>
+<h1 id="太鼓达人与Java">太鼓达人与Java</h1>
+<p>制作太鼓达人的时候是在大一，当时只学习了基础的C语言和Java。所以它是使用Java的Swing与AWT制作的图形界面。</p>
+<p>实现的功能有以下这些：</p>
+<ol>
+<li>游戏开始同时播放背景音乐；</li>
+<li>从磁盘上的文件中读取设定好的鼓点的时间和鼓点的颜色（红或蓝）；</li>
+<li>按照从文件中读取的时间和颜色在最右端加入鼓点，并使之向左滚动到指定位置；</li>
+<li>当鼓点到达指定位置时需按键盘上的对应按键（D、K为蓝色，F、J为红色）进行打击；</li>
+<li>当按下对应按键时发出对应音效；</li>
+<li>根据打击时鼓点相对指定位置进行判定，显示“不可” “可” “良”，若超过指定位置一定距离不打击同样判定为“不可”；</li>
+<li>打击时记录分数和连击数以及最大连击数；</li>
+<li>出现“不可”连击重新从0开始记录；</li>
+<li>连击数达到50、100、200 、300、400……时播放相应音效。</li>
+</ol>
+<h2 id="制作时的几个要点">制作时的几个要点</h2>
+<h3 id="从文件中读取谱面文件信息">从文件中读取谱面文件信息</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dataInput</span>(){</div><div class="line">	<span class="keyword">try</span>{</div><div class="line">		FileReader offsetRead = <span class="keyword">new</span> FileReader(<span class="string">"data/offset.txt"</span>);</div><div class="line">		BufferedReader offsetBr = <span class="keyword">new</span> BufferedReader(offsetRead);</div><div class="line">		String row;</div><div class="line">		<span class="keyword">int</span> inputOffset;</div><div class="line">		<span class="keyword">int</span> inputType;</div><div class="line">		<span class="keyword">int</span> i = <span class="number">0</span>;</div><div class="line">		<span class="keyword">while</span>((row = offsetBr.readLine())!=<span class="keyword">null</span>){</div><div class="line">		    offset[i] = Integer.parseInt(row);	   </div><div class="line">		    i++;</div><div class="line">		}</div><div class="line">		offsetBr.close();</div><div class="line">		i = <span class="number">0</span>;</div><div class="line">		FileReader typeRead = <span class="keyword">new</span> FileReader(<span class="string">"data/type.txt"</span>);</div><div class="line">		BufferedReader typeBr = <span class="keyword">new</span> BufferedReader(typeRead);</div><div class="line">		<span class="keyword">while</span>((row = typeBr.readLine())!=<span class="keyword">null</span>){</div><div class="line">		    types[i] = Integer.parseInt(row);</div><div class="line">		    i++;</div><div class="line">		}</div><div class="line">		typeBr.close();</div><div class="line">	}</div><div class="line">	<span class="keyword">catch</span>(IOException e){</div><div class="line">		e.printStackTrace();</div><div class="line">	}</div><div class="line">	<span class="keyword">catch</span>(NumberFormatException e){</div><div class="line">		e.printStackTrace();</div><div class="line">	}</div><div class="line">	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h3 id="图形界面的绘制并添加相应的监听">图形界面的绘制并添加相应的监听</h3>
+<h3 id="使鼓点和音乐合拍">使鼓点和音乐合拍</h3>
+<h4 id="多线程的使用">多线程的使用</h4>
+<p>刚刚提到，开始的时候程序效率很差，鼓点表示的节奏要比实际音乐的节奏慢很多（鼓点仍是有节奏的，但是BPM比实际音乐低很多）。后来学习了线程的知识以后，我将原来的程序中添加鼓点部分和移动鼓点部分分别独立放到一个线程中，不再使用Timer，改为单独使用一个线程计时。终于成功提高了程序效率，使鼓点合上了音乐。</p>
+<h2 id="回顾总结">回顾总结</h2>
+<h1 id="O2JAM与Android">O2JAM与Android</h1>
+
         </section>
         <hr/>
         <nav class="pagination" style="width:auto" role="pagination">
