@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[SanderZ's Blog]]></title>
+  
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2015-01-24T14:14:21.943Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name><![CDATA[SanderZ]]></name>
+    <email><![CDATA[375545592@qq.com]]></email>
+  </author>
+  
+  <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[我做过的那些音乐类游戏——太鼓达人篇]]></title>
+    <link href="http://yoursite.com/2015/01/22/Taiko/"/>
+    <id>http://yoursite.com/2015/01/22/Taiko/</id>
+    <published>2015-01-21T16:46:19.000Z</published>
+    <updated>2015-01-24T13:57:15.589Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p>前言</p>
+<p>出于对音乐类游戏的爱好，从大学正式学习编程开始，我就陆陆续续地尝试用当时学到的知识把自己接触过的一些音乐类游戏给实现出来。</p>
+<p>从大一开始，整个大学期间我试着做过太鼓达人、O2JAM（劲乐团）、Catch The Beat还有Jubeat（乐动魔方）。刚开始时做的东西比较简陋，只是简单地实现了游戏的玩法，后来随着开始使用游戏引擎以及经验、知识的增加，做的游戏也开始完善起来。在此就写几篇文章作为记录和总结。</p>
+</blockquote>
+<p><a id="more"></a></p>
+<h1 id="太鼓达人与Java">太鼓达人与Java</h1>
+<p>制作太鼓达人的时候是在大一，当时只学习了基础的C语言和Java。所以它是使用Java的Swing与AWT制作的图形界面。</p>
+<p>实现的功能有以下这些：</p>
+<ol>
+<li>游戏开始同时播放背景音乐；</li>
+<li>从磁盘上的文件中读取设定好的鼓点的时间和鼓点的颜色（红或蓝）；</li>
+<li>按照从文件中读取的时间和颜色在最右端加入鼓点，并使之向左滚动到指定位置；</li>
+<li>当鼓点到达指定位置时需按键盘上的对应按键（D、K为蓝色，F、J为红色）进行打击；</li>
+<li>当按下对应按键时发出对应音效；</li>
+<li>根据打击时鼓点相对指定位置进行判定，显示“不可” “可” “良”，若超过指定位置一定距离不打击同样判定为“不可”；</li>
+<li>打击时记录分数和连击数以及最大连击数；</li>
+<li>出现“不可”连击重新从0开始记录；</li>
+<li>连击数达到50、100、200 、300、400……时播放相应音效。</li>
+</ol>
+<p>下面是一段效果演示的视频：</p>
+<p><a id="more"></a></p>
+<h2 id="制作的一些要点">制作的一些要点</h2>
+<h3 id="一、分析游戏涉及的对象及行为">一、分析游戏涉及的对象及行为</h3>
+<p>游戏中主要涉及的对象是鼓点以及四个按键，涉及的行为主要包括计时（用于同步，使鼓点合拍）、生成鼓点、移动鼓点、点击按键播放音效和判定，最后还有分数的统计。</p>
+<p>对于鼓点，当时我写了如下的一个类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">class Notes {</div><div class="line">	Image noteImage ;    <span class="comment">//鼓点的图片，红色和蓝色是两张图片</span></div><div class="line">	<span class="keyword">int</span> x = <span class="number">0</span>;           <span class="comment">//鼓点的x坐标</span></div><div class="line">	<span class="keyword">int</span> y = <span class="number">50</span>;          <span class="comment">//鼓点的y坐标，游戏中固定不变。</span></div><div class="line">	<span class="keyword">int</span> type = <span class="number">0</span>;        <span class="comment">//鼓点的类型，0表示红色，8表示蓝色</span></div><div class="line">	Notes(<span class="keyword">int</span> x,<span class="keyword">int</span> type){</div><div class="line">		<span class="keyword">this</span>.x = x;</div><div class="line">		<span class="keyword">this</span>.type = type;</div><div class="line">		<span class="keyword">switch</span>(type){</div><div class="line">			<span class="keyword">case</span> <span class="number">0</span>:	noteImage = redImage; <span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="number">8</span>: noteImage = blueImage;<span class="keyword">break</span>;</div><div class="line">		}</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>并使用一个<code>ArrayList</code>将当前显示在屏幕上所有的Note对象存储起来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//存储Notes</span></div><div class="line">ArrayList &lt;Notes&gt;noteList = <span class="keyword">new</span> ArrayList &lt;Notes&gt;();</div></pre></td></tr></table></figure>
+
+<p>因为Note是按时间顺序添加进这个<code>ArrayList</code>中的，所以它是有序的。</p>
+<p><strong>现在回过头来看，觉得使用<code>ArrayList</code>是不合适的。</strong>因为<code>ArrayList</code>底层是基于数组的实现，添加和删除时要大量移动数据。而我对这组数据的操作只是在头部删除和在尾部插入，此外还有就是从头到尾的遍历，<strong>这样看来使用一个带头尾指针的单链表更为合适。可以改用<code>LinkedList</code>。</strong></p>
+<p>对于四个按键，当时我只是用四个布尔型的变量来记录它们是否按下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">boolean</span> drumOutL = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">boolean</span> drumOutR = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">boolean</span> drumInL = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">boolean</span> drumInR = <span class="keyword">false</span>;</div></pre></td></tr></table></figure>
+
+<h3 id="二、从文件中读取谱面文件信息">二、从文件中读取谱面文件信息</h3>
+<p>定义了Notes类以后，下一个问题是怎么才能让程序知道，什么时间该添加一个Note，这个Note是什么类型的，下一个Note又该什么时候添加。换句话说，就是如何保证每次游戏时，我们打击的鼓点（Note）都是按同样的时间、顺序、种类出现的。音乐类游戏玩家一般将这样一组固定的Note序列称为谱面。</p>
+<p>分析自己机器上安装的一些音乐类游戏，基本都是将谱面的信息（每个Note出现的时间点、类型、位置等，视具体游戏而定）记录在一个文本文件中。然后让程序去读取。于是我也模仿着将谱面信息记录在文本文件中。<em>（大一时觉得字符串处理比较麻烦，将时间信息和类型信息分开存在了<code>offset.txt</code>和<code>type.txt</code>两个文本文件中。<strong>这显然是不合理的，合并为一个文件才是更好的处理方法</strong>。）</em></p>
+<p>接着声明了两个数组分别记录Note的时间和类型信息（使用时按队列操作），如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>[] offset;  <span class="comment">//记录Note应被点击的时间</span></div><div class="line"><span class="keyword">int</span>[] types;   <span class="comment">//记录Note的类型，0表示红，8表示蓝</span></div></pre></td></tr></table></figure>
+
+<p>然后通过以下代码将文本文件中的信息记录到上面声明的两个数组中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dataInput</span>(){</div><div class="line"></div><div class="line">	<span class="keyword">try</span>{</div><div class="line">		FileReader offsetRead = <span class="keyword">new</span> FileReader(<span class="string">"data/offset.txt"</span>);</div><div class="line">		BufferedReader offsetBr = <span class="keyword">new</span> BufferedReader(offsetRead);</div><div class="line">		String row;</div><div class="line">		<span class="keyword">int</span> i = <span class="number">0</span>;    <span class="comment">//队尾指针</span></div><div class="line">		<span class="keyword">while</span>((row = offsetBr.readLine())!=<span class="keyword">null</span>){</div><div class="line">			offset[i] = Integer.parseInt(row);    <span class="comment">//元素入队	   </span></div><div class="line">			i++;</div><div class="line">		}</div><div class="line">		offsetBr.close();</div><div class="line">		i = <span class="number">0</span>;       <span class="comment">//队尾指针</span></div><div class="line">		FileReader typeRead = <span class="keyword">new</span> FileReader(<span class="string">"data/type.txt"</span>);</div><div class="line">		BufferedReader typeBr = <span class="keyword">new</span> BufferedReader(typeRead);</div><div class="line">		<span class="keyword">while</span>((row = typeBr.readLine())!=<span class="keyword">null</span>){</div><div class="line">			types[i] = Integer.parseInt(row);    <span class="comment">//元素入队</span></div><div class="line">			i++;</div><div class="line">		}</div><div class="line">		typeBr.close();</div><div class="line">	}</div><div class="line">	<span class="keyword">catch</span>(IOException e){</div><div class="line">		e.printStackTrace();</div><div class="line">	}</div><div class="line">	<span class="keyword">catch</span>(NumberFormatException e){</div><div class="line">		e.printStackTrace();</div><div class="line">	}</div><div class="line">		</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这样就获取到了谱面的信息。</p>
+<h3 id="三、图形界面的绘制并添加相应的监听">三、图形界面的绘制并添加相应的监听</h3>
+<p>绘制图形界面部分基本是通过反复调用<code>repaint()</code>方法来实现的。再通过一些布尔型变量来控制图形是否需要绘制。</p>
+<p>所用JPanel中<code>paintComponent()</code>方法如下（没有做分辨率适配，硬编码问题严重）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">paintComponent</span>(Graphics g){</div><div class="line">	<span class="keyword">super</span>.paintComponent(g);</div><div class="line">	g.drawImage(barRight,<span class="number">181</span>,<span class="number">0</span>,<span class="keyword">this</span>);</div><div class="line">	g.drawImage(barLeft,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>);</div><div class="line">	g.setColor(Color.GRAY);</div><div class="line">	g.drawOval(<span class="number">219</span>, <span class="number">47</span>, <span class="number">103</span>, <span class="number">103</span>);</div><div class="line">	g.fillOval(<span class="number">223</span>, <span class="number">50</span>, <span class="number">95</span>, <span class="number">95</span>);</div><div class="line"></div><div class="line">	<span class="comment">//绘制Note</span></div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; noteList.size();i++){</div><div class="line">		g.drawImage(noteList.get(i).noteImage,</div><div class="line">					noteList.get(i).x,</div><div class="line">					noteList.get(i).y,</div><div class="line">					<span class="keyword">this</span>);</div><div class="line">	}</div><div class="line">	<span class="comment">//如果点击了，则画上标识</span></div><div class="line">	<span class="keyword">if</span>(drumOutL) {</div><div class="line">		g.drawImage(drumOuterLeft,<span class="number">12</span>,<span class="number">35</span>,<span class="keyword">this</span>);</div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="comment">//......此处省略......</span></div><div class="line">		</div><div class="line">	g.drawString(<span class="string">"Score:  "</span>+String.valueOf(score),<span class="number">800</span> , <span class="number">50</span>);</div><div class="line">	g.drawString(<span class="string">"Combo:  "</span>+String.valueOf(combo),<span class="number">800</span> , <span class="number">150</span>);</div><div class="line">	g.drawString(<span class="string">"Maxcombo:  "</span>+String.valueOf(maxCombo),<span class="number">800</span> , <span class="number">175</span>);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>repaint()</code>是触发重绘动作，当调用<code>repaint()</code>后，会通知<code>repaintManager</code>增加一个重绘区域，<code>repaintManager</code>在一定条件下会合并一些重绘区域，然后派发一个绘制动作到事件派发线程（<code>EventQueue</code>）。事件派发线程执行到这个绘制事件时，就会调用组件的<code>paint()</code>，在<code>paint()</code>方法里会先调用<code>update</code>来将重绘区域清空（默认情况下是填充白色），然后再调用<code>paintcomponent()</code>来绘制自身，最后调用<code>paintChildren</code>来绘制所有的子。具体流程可以参考<code>JComponent</code>里的<code>paint()</code>方法。</p>
+</blockquote>
+<p>然后通过以下程序监听键盘</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">		<span class="comment">//监听键盘</span></div><div class="line">addKeyListener(<span class="keyword">new</span> KeyAdapter(){</div><div class="line"></div><div class="line">	<span class="annotation">@Override</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyPressed</span>(KeyEvent e) {</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		<span class="keyword">switch</span>(e.getKeyCode()){</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_D: drumOutL = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_K: drumOutR = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_F: drumInL = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_J: drumInR = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		}</div><div class="line">		<span class="comment">//按键按下时进行判定</span></div><div class="line">		judge();</div><div class="line">		repaint();</div><div class="line">		<span class="keyword">try</span> {</div><div class="line">			hitSound();</div><div class="line">		} <span class="keyword">catch</span> (IOException e1) {</div><div class="line">			<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">			e1.printStackTrace();</div><div class="line">		}</div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="annotation">@Override</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyReleased</span>(KeyEvent e) {</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		<span class="keyword">switch</span>(e.getKeyCode()){</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_D: drumOutL = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_K: drumOutR = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_F: drumInL = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_J: drumInR = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		}			</div><div class="line">		repaint();</div><div class="line">	}			</div><div class="line">});</div></pre></td></tr></table></figure>
+
+<h3 id="四、使鼓点和音乐合拍">四、使鼓点和音乐合拍</h3>
+<p>现在已经获取到了Note的时间点，我们还需要获得音乐开始播放了多久，并将其不断和Note的时间进行比较，以确保按时添加Note。</p>
+<p><strong>音乐类游戏对时间精度要求很高，上百毫秒的误差对于BPM较高且Note较密集的曲子来说，已经严重影响游戏了。</strong>最开始的时候，我是使用<code>Timer</code>来实现计时的，但是<code>Timer</code>根本做不到这么高的精度，当我以1ms的间隔调用<code>Timer</code>时，整个程序变得非常的卡，哪怕将其放宽到近百毫秒，效率也依旧非常的差。而且当我输出获取到的时间的时候，发现它的误差很大，并不是像理想中那样按程序规定的间隔增加的。这个问题一直到我学习了<strong>线程</strong>的知识以后才解决。</p>
+<h4 id="多线程的使用">多线程的使用</h4>
+<p>刚刚提到，开始的时候程序效率很差，鼓点表示的节奏要比实际音乐的节奏慢很多（鼓点仍是有节奏的，但是BPM比实际音乐低很多）。后来学习了线程的知识以后，<strong>我将原来的程序中添加鼓点部分和移动鼓点部分分别独立放到一个线程中，不再使用<code>Timer</code>，改为单独使用一个线程计时</strong>。终于成功提高了程序效率，使鼓点合上了音乐。</p>
+<p>首先我自己写了一个<code>MyTimer</code>类用于计时</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTimer</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>{</div><div class="line"></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> pastTime = <span class="number">0</span>;    <span class="comment">//音乐开始播放了多久</span></div><div class="line">	<span class="keyword">private</span> <span class="keyword">long</span> startTime;            <span class="comment">//音乐开始播放时的系统时间</span></div><div class="line">	</div><div class="line">	<span class="annotation">@Override</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>){</div><div class="line">			<span class="keyword">try</span> {</div><div class="line">				Thread.sleep(<span class="number">1</span>);</div><div class="line">			} <span class="keyword">catch</span> (InterruptedException e) {</div><div class="line">				<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">				e.printStackTrace();</div><div class="line">			}</div><div class="line">			pastTime = (<span class="keyword">int</span>) (System.currentTimeMillis() - startTime);</div><div class="line">		}</div><div class="line">	}</div><div class="line">	</div><div class="line">	<span class="keyword">public</span> <span class="title">MyTimer</span>(){</div><div class="line">		startTime=System.currentTimeMillis();</div><div class="line">	}</div><div class="line">	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>它实现了<code>Runable</code>接口，接下来就可以建立一个新的线程专门用于计时</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">MyTimer myTimer = <span class="keyword">new</span> MyTimer();</div><div class="line">Thread clock = <span class="keyword">new</span> Thread(myTimer , <span class="string">"计时"</span>);</div><div class="line">clock.start();</div></pre></td></tr></table></figure>
+
+<p>我试着输出通过它获取到的时间（如下图），可以看到，基本稳定，偶尔有较小的偏差。</p>
+<p>图片</p>
+<p>然后我为添加Note部分和移动Note部分各建立一个新的线程，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//用于添加Note的线程</span></div><div class="line">Thread addThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable(){</div><div class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;		<span class="comment">//offset队列队首指针</span></div><div class="line">	<span class="annotation">@Override</span>			</div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {</div><div class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>){</div><div class="line">			<span class="keyword">try</span> {</div><div class="line">				Thread.sleep(<span class="number">1</span>);</div><div class="line">			} <span class="keyword">catch</span> (InterruptedException e) {</div><div class="line">				e.printStackTrace();</div><div class="line">			}		</div><div class="line">			pastTime = MyTimer.pastTime;</div><div class="line">			<span class="keyword">if</span>( i &lt; offset.length ){</div><div class="line">				<span class="comment">//允许前后10ms的误差</span></div><div class="line">				<span class="comment">//InitOffset为从开始放置Note的屏幕右端移动到屏幕左端</span></div><div class="line">				指定位置的时间。根据移动速度不同而不同</div><div class="line">				<span class="keyword">if</span>(pastTime - offset[i] + InitOffset  &gt; -<span class="number">10</span> && </div><div class="line">					pastTime - offset[i] + InitOffset &lt; <span class="number">10</span>){</div><div class="line">					noteList.add(<span class="keyword">new</span> Notes(<span class="number">1023</span>,types[i]));    </div><div class="line">					<span class="comment">//添加Note，已添加的offset出队</span></div><div class="line">					i++;</div><div class="line">				}</div><div class="line">			}</div><div class="line">		}</div><div class="line">	}	</div><div class="line">});		</div><div class="line">		</div><div class="line"><span class="comment">//用于移动Note的线程		</span></div><div class="line">Thread moveThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable(){</div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>(){</div><div class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>){</div><div class="line">			<span class="keyword">try</span> {</div><div class="line">				Thread.sleep(<span class="number">5</span>);</div><div class="line">			} <span class="keyword">catch</span> (InterruptedException e) {</div><div class="line">				e.printStackTrace();</div><div class="line">			}			    	</div><div class="line">			pastTime = MyTimer.pastTime;</div><div class="line">			<span class="keyword">if</span>(pastTime - offset[<span class="number">0</span>] + InitOffset &gt; <span class="number">0</span>){</div><div class="line">				<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; noteList.size();i++){</div><div class="line">					noteList.get(i).x -= speed;</div><div class="line">					<span class="comment">//到达左侧指定点移除,并记为miss</span></div><div class="line">					<span class="keyword">if</span>(noteList.get(i).x &lt; <span class="number">181</span>){</div><div class="line">						noteList.remove(i);</div><div class="line">						i--;</div><div class="line">						miss();</div><div class="line">					}</div><div class="line">				}</div><div class="line">				repaint();</div><div class="line">			}</div><div class="line">		}</div><div class="line">	}</div><div class="line">});</div><div class="line">			</div><div class="line">addThread.start();</div><div class="line">moveThread.start();</div></pre></td></tr></table></figure>
+
+<h4 id="线程间的关系">线程间的关系</h4>
+<p>最后再分析一下这三个线程之间的关系。</p>
+<ul>
+<li><p><code>clock</code>线程：负责计时，不断修改<code>pastTime</code>这一变量</p>
+</li>
+<li><p><code>addThrea</code>线程：负责添加Note，读<code>pastTime</code>变量，但是不做修改，在<code>noteList</code>的末尾添加Note对象</p>
+</li>
+<li><p><code>moveThread</code>线程：负责移动所有Note，读<code>pastTime</code>变量，但是不做修改，在<code>noteList</code>的头部删除Note对象</p>
+</li>
+</ul>
+<p>可以看到，<code>addThread</code>和<code>moveThread</code>都要修改<code>noteList</code>，且<code>addThread</code>向<code>noteList</code>中添加Note对象使<code>noteList</code>非空后，<code>moveThread</code>才能对其进行修改，否则就会出错。可见它们是需要<strong>同步</strong>的。好在对<code>noteList</code>的操作是根据<code>pastTime</code>的值进行的，<code>clock</code>线程起到了类似时钟信号的作用。通过时间控制保证了总是先添加，后删除。</p>
+<h2 id="小结">小结</h2>
+<p>制作太鼓达人时的一些关键点和遇到的问题大概就是这样。实现了游戏的基本玩法，作为一个游戏来说并不完整，并未完成选歌、游戏结束评分、返回再进行新的的游戏的完整流程。但作为实践来说，使我对线程的使用、数据结构的选择等有了初步的认识。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<blockquote>
+<p>前言</p>
+<p>出于对音乐类游戏的爱好，从大学正式学习编程开始，我就陆陆续续地尝试用当时学到的知识把自己接触过的一些音乐类游戏给实现出来。</p>
+<p>从大一开始，整个大学期间我试着做过太鼓达人、O2JAM（劲乐团）、Catch The Beat还有Jubeat（乐动魔方）。刚开始时做的东西比较简陋，只是简单地实现了游戏的玩法，后来随着开始使用游戏引擎以及经验、知识的增加，做的游戏也开始完善起来。在此就写几篇文章作为记录和总结。</p>
+</blockquote>
+<p><!-- more --></p>
+<h1 id="太鼓达人与Java">太鼓达人与Java</h1>
+<p>制作太鼓达人的时候是在大一，当时只学习了基础的C语言和Java。所以它是使用Java的Swing与AWT制作的图形界面。</p>
+<p>实现的功能有以下这些：</p>
+<ol>
+<li>游戏开始同时播放背景音乐；</li>
+<li>从磁盘上的文件中读取设定好的鼓点的时间和鼓点的颜色（红或蓝）；</li>
+<li>按照从文件中读取的时间和颜色在最右端加入鼓点，并使之向左滚动到指定位置；</li>
+<li>当鼓点到达指定位置时需按键盘上的对应按键（D、K为蓝色，F、J为红色）进行打击；</li>
+<li>当按下对应按键时发出对应音效；</li>
+<li>根据打击时鼓点相对指定位置进行判定，显示“不可” “可” “良”，若超过指定位置一定距离不打击同样判定为“不可”；</li>
+<li>打击时记录分数和连击数以及最大连击数；</li>
+<li>出现“不可”连击重新从0开始记录；</li>
+<li>连击数达到50、100、200 、300、400……时播放相应音效。</li>
+</ol>
+<p>下面是一段效果演示的视频：</p>
+<p>]]>
+    
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[用Hexo在Github和Gitcafe上搭建博客]]></title>
+    <link href="http://yoursite.com/2015/01/21/Build_your_blog_with_%20hexo/"/>
+    <id>http://yoursite.com/2015/01/21/Build_your_blog_with_ hexo/</id>
+    <published>2015-01-21T04:41:44.000Z</published>
+    <updated>2015-01-24T11:26:04.981Z</updated>
+    <content type="html"><![CDATA[<p><a id="more"></a></p>
+<h2 id="什么是Hexo">什么是Hexo</h2>
+<p>Hexo是一款开源的博客程序，它可以生成静态的博客页面。详见它的官网<a href="hexo.io">hexo.io</a></p>
+<h2 id="为什么选择Hexo">为什么选择Hexo</h2>
+<p>选择Hexo的原因主要有以下几点：</p>
+<ol>
+<li><p>简单易用。安装完Hexo后，通过几句命令就可以完成一个博客从无到有再发布至网上的全部过程。</p>
+</li>
+<li><p>管理方便。Hexo根据本地文件目录下的<code>.md</code>文件生成博文的静态页面，因此可以使用本地的Markdown编辑器来编辑博文，并利用本地的文件系统来管理，修改完成后只需一句命令就可以更新（重新生成）整个网站，十分灵活方便。</p>
+</li>
+<li><p>支持同时将博客发布至Github和Gitcafe（只需要简单地修改Hexo的配置文件即可）。再利用自己购买的域名和DNSPOD进行分流，可以使国内外都有比较理想的访问速度。</p>
+</li>
+<li><p>主题丰富，可以自由定制。想节省时间的话，Hexo上已有不少主题，许多是国人制作的，直接使用便有不错的页面效果和访问速度。如果比较熟悉前端技术，有时间也喜欢折腾，还可以自己定制主题。<br><a id="more"></a></p>
+<h2 id="使用Hexo需要哪些基础">使用Hexo需要哪些基础</h2>
+</li>
+</ol>
+<p>使用Hexo至少需要掌握以下的几点：</p>
+<ol>
+<li><p>Git的基本操作</p>
+</li>
+<li><p>Github或Gitcafe之类的使用（利用Github pages和Gitcafe pages服务）</p>
+</li>
+<li><p>Markdown标记语言的使用</p>
+</li>
+</ol>
+<p>此外，Hexo需要NodeJS的支持，要安装许多相关的东西，且其安装和使用基本是通过命令完成的，需要有相关基础。</p>
+<h2 id="安装Hexo">安装Hexo</h2>
+<p>各个系统安装方法略有差别（Git和NodeJS的安装方面），详细可见<a href="hexo.io">官网</a>。我是在Ubuntu 12.04LTS中进行安装的，按照官网的步骤遇到了一些问题。下面就以此为例来详细讲一下Hexo的安装。</p>
+<h3 id="安装Git">安装Git</h3>
+<p>执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">sudo</span> apt-get install git-core</div></pre></td></tr></table></figure>
+
+<h3 id="安装NodeJS">安装NodeJS</h3>
+<p>官网建议通过 <code>nvm</code> 进行安装，并提供了两种方式：<br>第一种：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ curl https://raw.github.com/creationix/nvm/master/install.sh | sh</div></pre></td></tr></table></figure>
+
+<p>第二种：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ wget -qO- https://raw.github.com/creationix/nvm/master/install.sh | sh</div></pre></td></tr></table></figure>
+
+<p>此处，第一种方式可能会提示没有安装<code>curl</code>，需要执行<code>$ sudo apt-get install curl</code>进行安装。若两种方式都没有成功，可以采用如下的方式直接从github克隆到本地：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git clone https://github.com/creationix/nvm.git</div></pre></td></tr></table></figure>
+
+<p><strong>接下来就是官网没有提及的部分</strong>。到这一步以后，官网让重启terminal，然后执行<code>$ nvm install 0.10</code>。这时，我遇到了问题，如下图：</p>
+<p>图片</p>
+<p><strong>解决的方法如下</strong>，执行<code>$ source ~/.nvm/nvm.sh</code>后<code>nvm</code>命令就可用了。但这样是不够的，重启terminal后，还会出现同样的问题。我们需要在<code>~/.bashrc</code>, <code>~/.bash_profile</code>, <code>~/.profile</code>, 或者 <code>~/.zshrc</code>之一的文件中添加刚才的命令，这样在终端启动时就会自动执行刚才的命令。</p>
+<p>接下来利用<code>nvm</code>安装NodeJS，执行如下命令，安装0.10版的NodeJS（最新稳定版本）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ nvm install <span class="number">0.10</span></div></pre></td></tr></table></figure>
+
+<p>考虑到国内网络环境，可以执行如下命令代替（改为从国内的镜像源下载）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist nvm install <span class="number">0.10</span></div></pre></td></tr></table></figure>
+
+<p>然后就可以看到一段进度条，最后提示<code>Now using node v0.10</code>，安装成功。</p>
+<p>和刚才一样，如果不想每次重启终端都输入环境变量 <code>NVM_NODEJS_ORG_MIRROR</code>，且再指定使用的NodeJS的版本。可以也将其加入到<code>.bashrc</code>文件中，和之前安装<code>nvm</code>时加入的命令一起，它们应该是如下这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nvm</span></div><div class="line"><span class="keyword">export</span> NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/dist</div><div class="line"><span class="built_in">source</span> ~/.nvm/nvm.sh</div><div class="line">nvm use <span class="number">0.10</span></div></pre></td></tr></table></figure>
+
+<h3 id="安装Hexo-1">安装Hexo</h3>
+<p>执行如下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install -g hexo</div></pre></td></tr></table></figure>
+
+<p>由于国内网络环境原因，很可能会报错。可以尝试如下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm --registry=https://registry.npm.taobao.org install -g hexo</div></pre></td></tr></table></figure>
+
+<p>如果成功，至此就完成了Hexo的安装。可以重启终端后执行<code>$ hexo</code>确认一下有没有问题。</p>
+<h2 id="使用Hexo生成博客并发布">使用Hexo生成博客并发布</h2>
+<p>在<code>Home</code>下新建一个目录<code>Blog</code>，然后打开终端，执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> Blog</div><div class="line">$ hexo init</div><div class="line">$ npm install</div></pre></td></tr></table></figure>
+
+<p>然后你可以发现你的Blog目录下有东西了。找到<code>_config.yml</code>，用自己惯用的文本编辑器打开。找到其中的<code>deploy</code>部分。因为我们要同时部署到Github和Gitcafe上，请按如下格式将<code>deploy</code>部分填写完整后保存。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  message: ‘’</div><div class="line">  repo:</div><div class="line">    github: <span class="tag">&lt;<span class="title">repository</span> <span class="attribute">url</span>&gt;</span>,master</div><div class="line">    gitcafe: <span class="tag">&lt;<span class="title">repository</span> <span class="attribute">url</span>&gt;</span>,gitcafe-pages</div></pre></td></tr></table></figure>
+
+<p>其中<code>&lt;repository url&gt;</code>部分可以有两种写法，<br>第一种</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http<span class="variable">s:</span>//github.<span class="keyword">com</span>/username/username.github.io.git</div></pre></td></tr></table></figure>
+
+<p>第二种</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git<span class="variable">@github</span>.<span class="symbol">com:</span>username/username.github.io.git</div></pre></td></tr></table></figure>
+
+<p>完成这一步以后，回到终端，执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy -g</div></pre></td></tr></table></figure>
+
+<p>完成后在浏览器中查看你的Github pages，Gitcafe pages，如果之前的步骤一切顺利，你可以发现博客已经成功发布了。</p>
+<h3 id="关于Windows系统下安装：">关于Windows系统下安装：</h3>
+<p>我在 Windows8 系统上尝试安装过，开始一切正常。但最后执行 <code>$ hexo deploy</code>的时候总是像下面一样报错。</p>
+<p>图片</p>
+<p>网上查了很久，基本是说没有在 git bash 中操作或者是 Git 环境变量没有配置好。可惜我不属于这两种情况。暂时没有找到解决方案。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p><!-- more --></p>
+<h2 id="什么是Hexo">什么是Hexo</h2>
+<p>Hexo是一款开源的博客程序，它可以生成静态的博客页面。详见它的官网<a href="hexo.io">hexo.io</a></p>
+<h2 id="为什么选择Hexo">为什么选择Hexo</h2>
+<p>选择Hexo的原因主要有以下几点：</p>
+<ol>
+<li><p>简单易用。安装完Hexo后，通过几句命令就可以完成一个博客从无到有再发布至网上的全部过程。</p>
+</li>
+<li><p>管理方便。Hexo根据本地文件目录下的<code>.md</code>文件生成博文的静态页面，因此可以使用本地的Markdown编辑器来编辑博文，并利用本地的文件系统来管理，修改完成后只需一句命令就可以更新（重新生成）整个网站，十分灵活方便。</p>
+</li>
+<li><p>支持同时将博客发布至Github和Gitcafe（只需要简单地修改Hexo的配置文件即可）。再利用自己购买的域名和DNSPOD进行分流，可以使国内外都有比较理想的访问速度。</p>
+</li>
+<li><p>主题丰富，可以自由定制。想节省时间的话，Hexo上已有不少主题，许多是国人制作的，直接使用便有不错的页面效果和访问速度。如果比较熟悉前端技术，有时间也喜欢折腾，还可以自己定制主题。<br>]]>
+    
+    </summary>
+    
+  </entry>
+  
+</feed>

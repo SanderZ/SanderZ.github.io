@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我做过的那些音乐类游戏——太鼓达人篇 | SanderZ&#39;s Blog</title>
+  <meta name="author" content="SanderZ">
+  
+  <meta name="description" content="前言
+出于对音乐类游戏的爱好，从大学正式学习编程开始，我就陆陆续续地尝试用当时学到的知识把自己接触过的一些音乐类游戏给实现出来。
+从大一开始，整个大学期间我试着做过太鼓达人、O2JAM（劲乐团）、Catch The Beat还有Jubeat（乐动魔方）。刚开始时做的东西比较简陋，只是简单地实现了游戏的玩法，后来随着开始使用游戏引擎以及经验、知识的增加，做的游戏也开始完善起来。在此就写几篇文章作为记录和总结。
+
+
+太鼓达人与Java
+制作太鼓达人的时候是在大一，当时只学习了基础的C语言和Java。所以它是使用Java的Swing与AWT制作的图形界面。
+实现的功能有以下这些：
+
+游戏开始同时播放背景音乐；
+从磁盘上的文件中读取设定好的鼓点的时间和鼓点的颜色（红或蓝）；
+按照从文件中读取的时间和颜色在最右端加入鼓点，并使之向左滚动到指定位置；
+当鼓点到达指定位置时需按键盘上的对应按键（D、K为蓝色，F、J为红色）进行打击；
+当按下对应按键时发出对应音效；
+根据打击时鼓点相对指定位置进行判定，显示“不可” “可” “良”，若超过指定位置一定距离不打击同样判定为“不可”；
+打击时记录分数和连击数以及最大连击数；
+出现“不可”连击重新从0开始记录；
+连击数达到50、100、200 、300、400……时播放相应音效。
+
+下面是一段效果演示的视频：">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="我做过的那些音乐类游戏——太鼓达人篇"/>
+  <meta property="og:site_name" content="SanderZ&#39;s Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <link rel="alternate" href="/atom.xml" title="SanderZ&#39;s Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//libs.baidu.com/jquery/1.8.0/jquery.min.js"></script>
+</head>
+
+
+<body>
+  <header id="header" class="inner">
+<div class="alignleft">
+  <h1><a href="/">SanderZ&#39;s Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+      <li><a href="/about">关于</a></li>
+    
+	
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-01-21T16:46:19.000Z"><a href="/2015/01/22/Taiko/">1月 22 2015</a></time>
+      
+      
+  
+    <h1 class="title">我做过的那些音乐类游戏——太鼓达人篇</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <blockquote>
+<p>前言</p>
+<p>出于对音乐类游戏的爱好，从大学正式学习编程开始，我就陆陆续续地尝试用当时学到的知识把自己接触过的一些音乐类游戏给实现出来。</p>
+<p>从大一开始，整个大学期间我试着做过太鼓达人、O2JAM（劲乐团）、Catch The Beat还有Jubeat（乐动魔方）。刚开始时做的东西比较简陋，只是简单地实现了游戏的玩法，后来随着开始使用游戏引擎以及经验、知识的增加，做的游戏也开始完善起来。在此就写几篇文章作为记录和总结。</p>
+</blockquote>
+<p><a id="more"></a></p>
+<h1 id="太鼓达人与Java">太鼓达人与Java</h1>
+<p>制作太鼓达人的时候是在大一，当时只学习了基础的C语言和Java。所以它是使用Java的Swing与AWT制作的图形界面。</p>
+<p>实现的功能有以下这些：</p>
+<ol>
+<li>游戏开始同时播放背景音乐；</li>
+<li>从磁盘上的文件中读取设定好的鼓点的时间和鼓点的颜色（红或蓝）；</li>
+<li>按照从文件中读取的时间和颜色在最右端加入鼓点，并使之向左滚动到指定位置；</li>
+<li>当鼓点到达指定位置时需按键盘上的对应按键（D、K为蓝色，F、J为红色）进行打击；</li>
+<li>当按下对应按键时发出对应音效；</li>
+<li>根据打击时鼓点相对指定位置进行判定，显示“不可” “可” “良”，若超过指定位置一定距离不打击同样判定为“不可”；</li>
+<li>打击时记录分数和连击数以及最大连击数；</li>
+<li>出现“不可”连击重新从0开始记录；</li>
+<li>连击数达到50、100、200 、300、400……时播放相应音效。</li>
+</ol>
+<p>下面是一段效果演示的视频：</p>
+<p><a id="more"></a></p>
+<h2 id="制作的一些要点">制作的一些要点</h2>
+<h3 id="一、分析游戏涉及的对象及行为">一、分析游戏涉及的对象及行为</h3>
+<p>游戏中主要涉及的对象是鼓点以及四个按键，涉及的行为主要包括计时（用于同步，使鼓点合拍）、生成鼓点、移动鼓点、点击按键播放音效和判定，最后还有分数的统计。</p>
+<p>对于鼓点，当时我写了如下的一个类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">class Notes {</div><div class="line">	Image noteImage ;    <span class="comment">//鼓点的图片，红色和蓝色是两张图片</span></div><div class="line">	<span class="keyword">int</span> x = <span class="number">0</span>;           <span class="comment">//鼓点的x坐标</span></div><div class="line">	<span class="keyword">int</span> y = <span class="number">50</span>;          <span class="comment">//鼓点的y坐标，游戏中固定不变。</span></div><div class="line">	<span class="keyword">int</span> type = <span class="number">0</span>;        <span class="comment">//鼓点的类型，0表示红色，8表示蓝色</span></div><div class="line">	Notes(<span class="keyword">int</span> x,<span class="keyword">int</span> type){</div><div class="line">		<span class="keyword">this</span>.x = x;</div><div class="line">		<span class="keyword">this</span>.type = type;</div><div class="line">		<span class="keyword">switch</span>(type){</div><div class="line">			<span class="keyword">case</span> <span class="number">0</span>:	noteImage = redImage; <span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="number">8</span>: noteImage = blueImage;<span class="keyword">break</span>;</div><div class="line">		}</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>并使用一个<code>ArrayList</code>将当前显示在屏幕上所有的Note对象存储起来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//存储Notes</span></div><div class="line">ArrayList &lt;Notes&gt;noteList = <span class="keyword">new</span> ArrayList &lt;Notes&gt;();</div></pre></td></tr></table></figure>
+
+<p>因为Note是按时间顺序添加进这个<code>ArrayList</code>中的，所以它是有序的。</p>
+<p><strong>现在回过头来看，觉得使用<code>ArrayList</code>是不合适的。</strong>因为<code>ArrayList</code>底层是基于数组的实现，添加和删除时要大量移动数据。而我对这组数据的操作只是在头部删除和在尾部插入，此外还有就是从头到尾的遍历，<strong>这样看来使用一个带头尾指针的单链表更为合适。可以改用<code>LinkedList</code>。</strong></p>
+<p>对于四个按键，当时我只是用四个布尔型的变量来记录它们是否按下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">boolean</span> drumOutL = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">boolean</span> drumOutR = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">boolean</span> drumInL = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">boolean</span> drumInR = <span class="keyword">false</span>;</div></pre></td></tr></table></figure>
+
+<h3 id="二、从文件中读取谱面文件信息">二、从文件中读取谱面文件信息</h3>
+<p>定义了Notes类以后，下一个问题是怎么才能让程序知道，什么时间该添加一个Note，这个Note是什么类型的，下一个Note又该什么时候添加。换句话说，就是如何保证每次游戏时，我们打击的鼓点（Note）都是按同样的时间、顺序、种类出现的。音乐类游戏玩家一般将这样一组固定的Note序列称为谱面。</p>
+<p>分析自己机器上安装的一些音乐类游戏，基本都是将谱面的信息（每个Note出现的时间点、类型、位置等，视具体游戏而定）记录在一个文本文件中。然后让程序去读取。于是我也模仿着将谱面信息记录在文本文件中。<em>（大一时觉得字符串处理比较麻烦，将时间信息和类型信息分开存在了<code>offset.txt</code>和<code>type.txt</code>两个文本文件中。<strong>这显然是不合理的，合并为一个文件才是更好的处理方法</strong>。）</em></p>
+<p>接着声明了两个数组分别记录Note的时间和类型信息（使用时按队列操作），如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>[] offset;  <span class="comment">//记录Note应被点击的时间</span></div><div class="line"><span class="keyword">int</span>[] types;   <span class="comment">//记录Note的类型，0表示红，8表示蓝</span></div></pre></td></tr></table></figure>
+
+<p>然后通过以下代码将文本文件中的信息记录到上面声明的两个数组中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dataInput</span>(){</div><div class="line"></div><div class="line">	<span class="keyword">try</span>{</div><div class="line">		FileReader offsetRead = <span class="keyword">new</span> FileReader(<span class="string">"data/offset.txt"</span>);</div><div class="line">		BufferedReader offsetBr = <span class="keyword">new</span> BufferedReader(offsetRead);</div><div class="line">		String row;</div><div class="line">		<span class="keyword">int</span> i = <span class="number">0</span>;    <span class="comment">//队尾指针</span></div><div class="line">		<span class="keyword">while</span>((row = offsetBr.readLine())!=<span class="keyword">null</span>){</div><div class="line">			offset[i] = Integer.parseInt(row);    <span class="comment">//元素入队	   </span></div><div class="line">			i++;</div><div class="line">		}</div><div class="line">		offsetBr.close();</div><div class="line">		i = <span class="number">0</span>;       <span class="comment">//队尾指针</span></div><div class="line">		FileReader typeRead = <span class="keyword">new</span> FileReader(<span class="string">"data/type.txt"</span>);</div><div class="line">		BufferedReader typeBr = <span class="keyword">new</span> BufferedReader(typeRead);</div><div class="line">		<span class="keyword">while</span>((row = typeBr.readLine())!=<span class="keyword">null</span>){</div><div class="line">			types[i] = Integer.parseInt(row);    <span class="comment">//元素入队</span></div><div class="line">			i++;</div><div class="line">		}</div><div class="line">		typeBr.close();</div><div class="line">	}</div><div class="line">	<span class="keyword">catch</span>(IOException e){</div><div class="line">		e.printStackTrace();</div><div class="line">	}</div><div class="line">	<span class="keyword">catch</span>(NumberFormatException e){</div><div class="line">		e.printStackTrace();</div><div class="line">	}</div><div class="line">		</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这样就获取到了谱面的信息。</p>
+<h3 id="三、图形界面的绘制并添加相应的监听">三、图形界面的绘制并添加相应的监听</h3>
+<p>绘制图形界面部分基本是通过反复调用<code>repaint()</code>方法来实现的。再通过一些布尔型变量来控制图形是否需要绘制。</p>
+<p>所用JPanel中<code>paintComponent()</code>方法如下（没有做分辨率适配，硬编码问题严重）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">paintComponent</span>(Graphics g){</div><div class="line">	<span class="keyword">super</span>.paintComponent(g);</div><div class="line">	g.drawImage(barRight,<span class="number">181</span>,<span class="number">0</span>,<span class="keyword">this</span>);</div><div class="line">	g.drawImage(barLeft,<span class="number">0</span>,<span class="number">0</span>,<span class="keyword">this</span>);</div><div class="line">	g.setColor(Color.GRAY);</div><div class="line">	g.drawOval(<span class="number">219</span>, <span class="number">47</span>, <span class="number">103</span>, <span class="number">103</span>);</div><div class="line">	g.fillOval(<span class="number">223</span>, <span class="number">50</span>, <span class="number">95</span>, <span class="number">95</span>);</div><div class="line"></div><div class="line">	<span class="comment">//绘制Note</span></div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; noteList.size();i++){</div><div class="line">		g.drawImage(noteList.get(i).noteImage,</div><div class="line">					noteList.get(i).x,</div><div class="line">					noteList.get(i).y,</div><div class="line">					<span class="keyword">this</span>);</div><div class="line">	}</div><div class="line">	<span class="comment">//如果点击了，则画上标识</span></div><div class="line">	<span class="keyword">if</span>(drumOutL) {</div><div class="line">		g.drawImage(drumOuterLeft,<span class="number">12</span>,<span class="number">35</span>,<span class="keyword">this</span>);</div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="comment">//......此处省略......</span></div><div class="line">		</div><div class="line">	g.drawString(<span class="string">"Score:  "</span>+String.valueOf(score),<span class="number">800</span> , <span class="number">50</span>);</div><div class="line">	g.drawString(<span class="string">"Combo:  "</span>+String.valueOf(combo),<span class="number">800</span> , <span class="number">150</span>);</div><div class="line">	g.drawString(<span class="string">"Maxcombo:  "</span>+String.valueOf(maxCombo),<span class="number">800</span> , <span class="number">175</span>);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>repaint()</code>是触发重绘动作，当调用<code>repaint()</code>后，会通知<code>repaintManager</code>增加一个重绘区域，<code>repaintManager</code>在一定条件下会合并一些重绘区域，然后派发一个绘制动作到事件派发线程（<code>EventQueue</code>）。事件派发线程执行到这个绘制事件时，就会调用组件的<code>paint()</code>，在<code>paint()</code>方法里会先调用<code>update</code>来将重绘区域清空（默认情况下是填充白色），然后再调用<code>paintcomponent()</code>来绘制自身，最后调用<code>paintChildren</code>来绘制所有的子。具体流程可以参考<code>JComponent</code>里的<code>paint()</code>方法。</p>
+</blockquote>
+<p>然后通过以下程序监听键盘</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">		<span class="comment">//监听键盘</span></div><div class="line">addKeyListener(<span class="keyword">new</span> KeyAdapter(){</div><div class="line"></div><div class="line">	<span class="annotation">@Override</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyPressed</span>(KeyEvent e) {</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		<span class="keyword">switch</span>(e.getKeyCode()){</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_D: drumOutL = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_K: drumOutR = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_F: drumInL = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_J: drumInR = <span class="keyword">true</span>; <span class="keyword">break</span>;</div><div class="line">		}</div><div class="line">		<span class="comment">//按键按下时进行判定</span></div><div class="line">		judge();</div><div class="line">		repaint();</div><div class="line">		<span class="keyword">try</span> {</div><div class="line">			hitSound();</div><div class="line">		} <span class="keyword">catch</span> (IOException e1) {</div><div class="line">			<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">			e1.printStackTrace();</div><div class="line">		}</div><div class="line">	}</div><div class="line"></div><div class="line">	<span class="annotation">@Override</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyReleased</span>(KeyEvent e) {</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		<span class="keyword">switch</span>(e.getKeyCode()){</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_D: drumOutL = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_K: drumOutR = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_F: drumInL = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> KeyEvent.VK_J: drumInR = <span class="keyword">false</span>; <span class="keyword">break</span>;</div><div class="line">		}			</div><div class="line">		repaint();</div><div class="line">	}			</div><div class="line">});</div></pre></td></tr></table></figure>
+
+<h3 id="四、使鼓点和音乐合拍">四、使鼓点和音乐合拍</h3>
+<p>现在已经获取到了Note的时间点，我们还需要获得音乐开始播放了多久，并将其不断和Note的时间进行比较，以确保按时添加Note。</p>
+<p><strong>音乐类游戏对时间精度要求很高，上百毫秒的误差对于BPM较高且Note较密集的曲子来说，已经严重影响游戏了。</strong>最开始的时候，我是使用<code>Timer</code>来实现计时的，但是<code>Timer</code>根本做不到这么高的精度，当我以1ms的间隔调用<code>Timer</code>时，整个程序变得非常的卡，哪怕将其放宽到近百毫秒，效率也依旧非常的差。而且当我输出获取到的时间的时候，发现它的误差很大，并不是像理想中那样按程序规定的间隔增加的。这个问题一直到我学习了<strong>线程</strong>的知识以后才解决。</p>
+<h4 id="多线程的使用">多线程的使用</h4>
+<p>刚刚提到，开始的时候程序效率很差，鼓点表示的节奏要比实际音乐的节奏慢很多（鼓点仍是有节奏的，但是BPM比实际音乐低很多）。后来学习了线程的知识以后，<strong>我将原来的程序中添加鼓点部分和移动鼓点部分分别独立放到一个线程中，不再使用<code>Timer</code>，改为单独使用一个线程计时</strong>。终于成功提高了程序效率，使鼓点合上了音乐。</p>
+<p>首先我自己写了一个<code>MyTimer</code>类用于计时</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTimer</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>{</div><div class="line"></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> pastTime = <span class="number">0</span>;    <span class="comment">//音乐开始播放了多久</span></div><div class="line">	<span class="keyword">private</span> <span class="keyword">long</span> startTime;            <span class="comment">//音乐开始播放时的系统时间</span></div><div class="line">	</div><div class="line">	<span class="annotation">@Override</span></div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>){</div><div class="line">			<span class="keyword">try</span> {</div><div class="line">				Thread.sleep(<span class="number">1</span>);</div><div class="line">			} <span class="keyword">catch</span> (InterruptedException e) {</div><div class="line">				<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">				e.printStackTrace();</div><div class="line">			}</div><div class="line">			pastTime = (<span class="keyword">int</span>) (System.currentTimeMillis() - startTime);</div><div class="line">		}</div><div class="line">	}</div><div class="line">	</div><div class="line">	<span class="keyword">public</span> <span class="title">MyTimer</span>(){</div><div class="line">		startTime=System.currentTimeMillis();</div><div class="line">	}</div><div class="line">	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>它实现了<code>Runable</code>接口，接下来就可以建立一个新的线程专门用于计时</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">MyTimer myTimer = <span class="keyword">new</span> MyTimer();</div><div class="line">Thread clock = <span class="keyword">new</span> Thread(myTimer , <span class="string">"计时"</span>);</div><div class="line">clock.start();</div></pre></td></tr></table></figure>
+
+<p>我试着输出通过它获取到的时间（如下图），可以看到，基本稳定，偶尔有较小的偏差。</p>
+<p>图片</p>
+<p>然后我为添加Note部分和移动Note部分各建立一个新的线程，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//用于添加Note的线程</span></div><div class="line">Thread addThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable(){</div><div class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;		<span class="comment">//offset队列队首指针</span></div><div class="line">	<span class="annotation">@Override</span>			</div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>() {</div><div class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>){</div><div class="line">			<span class="keyword">try</span> {</div><div class="line">				Thread.sleep(<span class="number">1</span>);</div><div class="line">			} <span class="keyword">catch</span> (InterruptedException e) {</div><div class="line">				e.printStackTrace();</div><div class="line">			}		</div><div class="line">			pastTime = MyTimer.pastTime;</div><div class="line">			<span class="keyword">if</span>( i &lt; offset.length ){</div><div class="line">				<span class="comment">//允许前后10ms的误差</span></div><div class="line">				<span class="comment">//InitOffset为从开始放置Note的屏幕右端移动到屏幕左端</span></div><div class="line">				指定位置的时间。根据移动速度不同而不同</div><div class="line">				<span class="keyword">if</span>(pastTime - offset[i] + InitOffset  &gt; -<span class="number">10</span> && </div><div class="line">					pastTime - offset[i] + InitOffset &lt; <span class="number">10</span>){</div><div class="line">					noteList.add(<span class="keyword">new</span> Notes(<span class="number">1023</span>,types[i]));    </div><div class="line">					<span class="comment">//添加Note，已添加的offset出队</span></div><div class="line">					i++;</div><div class="line">				}</div><div class="line">			}</div><div class="line">		}</div><div class="line">	}	</div><div class="line">});		</div><div class="line">		</div><div class="line"><span class="comment">//用于移动Note的线程		</span></div><div class="line">Thread moveThread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable(){</div><div class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span>(){</div><div class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>){</div><div class="line">			<span class="keyword">try</span> {</div><div class="line">				Thread.sleep(<span class="number">5</span>);</div><div class="line">			} <span class="keyword">catch</span> (InterruptedException e) {</div><div class="line">				e.printStackTrace();</div><div class="line">			}			    	</div><div class="line">			pastTime = MyTimer.pastTime;</div><div class="line">			<span class="keyword">if</span>(pastTime - offset[<span class="number">0</span>] + InitOffset &gt; <span class="number">0</span>){</div><div class="line">				<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; noteList.size();i++){</div><div class="line">					noteList.get(i).x -= speed;</div><div class="line">					<span class="comment">//到达左侧指定点移除,并记为miss</span></div><div class="line">					<span class="keyword">if</span>(noteList.get(i).x &lt; <span class="number">181</span>){</div><div class="line">						noteList.remove(i);</div><div class="line">						i--;</div><div class="line">						miss();</div><div class="line">					}</div><div class="line">				}</div><div class="line">				repaint();</div><div class="line">			}</div><div class="line">		}</div><div class="line">	}</div><div class="line">});</div><div class="line">			</div><div class="line">addThread.start();</div><div class="line">moveThread.start();</div></pre></td></tr></table></figure>
+
+<h4 id="线程间的关系">线程间的关系</h4>
+<p>最后再分析一下这三个线程之间的关系。</p>
+<ul>
+<li><p><code>clock</code>线程：负责计时，不断修改<code>pastTime</code>这一变量</p>
+</li>
+<li><p><code>addThrea</code>线程：负责添加Note，读<code>pastTime</code>变量，但是不做修改，在<code>noteList</code>的末尾添加Note对象</p>
+</li>
+<li><p><code>moveThread</code>线程：负责移动所有Note，读<code>pastTime</code>变量，但是不做修改，在<code>noteList</code>的头部删除Note对象</p>
+</li>
+</ul>
+<p>可以看到，<code>addThread</code>和<code>moveThread</code>都要修改<code>noteList</code>，且<code>addThread</code>向<code>noteList</code>中添加Note对象使<code>noteList</code>非空后，<code>moveThread</code>才能对其进行修改，否则就会出错。可见它们是需要<strong>同步</strong>的。好在对<code>noteList</code>的操作是根据<code>pastTime</code>的值进行的，<code>clock</code>线程起到了类似时钟信号的作用。通过时间控制保证了总是先添加，后删除。</p>
+<h2 id="小结">小结</h2>
+<p>制作太鼓达人时的一些关键点和遇到的问题大概就是这样。实现了游戏的基本玩法，作为一个游戏来说并不完整，并未完成选歌、游戏结束评分、返回再进行新的的游戏的完整流程。但作为实践来说，使我对线程的使用、数据结构的选择等有了初步的认识。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+<!-- Baidu Button BEGIN -->
+<div id="bdshare" class="bdshare_t bds_tools_32 get-codes-bdshare">
+<a class="bds_qzone"></a>
+<a class="bds_tsina"></a>
+<a class="bds_tqq"></a>
+<a class="bds_renren"></a>
+<a class="bds_t163"></a>
+<span class="bds_more"></span>
+<a class="shareCount"></a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=3326447" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+ <nav id="pagination" >
+    
+    
+    <a href="/2015/01/21/Build_your_blog_with_ hexo/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+
+
+<section id="comment">
+
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"sanderz"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->  
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+
+  <div class="widget tag">
+<h3 class="title">简介</h3>
+<ul class="entry">
+<li>SanderZ</li>
+<li>Theme: <a href="https://github.com/zippera/lightum">Lightum</a>
+<li>我的简历: <a href="">下载</a></li>
+<li>My Resume: <a href="">Download</a></li>
+<li>QQ: 375545592</li>
+<font color="red"></font>
+</ul>
+</div>
+
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><section>
+Theme of <a href="https://github.com/zippera/lightum">Lightum</a>, Improved from <a href="https://github.com/hexojs/hexo-theme-light">Light</a>, by <a href="/">zippera</a> 
+</section>
+<div class="clearfix"></div>
+</footer>
+  <script src="//libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
+
+
+
