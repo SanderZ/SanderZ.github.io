@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我做过的那些音乐类游戏——Jubeat与设计模式篇 | SanderZ&#39;s Blog</title>
+  <meta name="author" content="SanderZ">
+  
+  <meta name="description" content="这是本系列的第四篇文章，其他几篇的地址如下
+地址一
+地址二
+
+
+
+Jubeat 与 Win8 触屏
+Jubeat (乐动魔方) 是一款街机的音乐类游戏。街机每次玩都要投币，平板等上面的移植版本又觉得屏幕太小，一直在想要是有个支持触屏的 PC 版本多好。
+正好学校有大的触摸屏设备可以借我们开发使用，就试着自己用 Unity 将 Jubeat 移植到 PC 平台，用和实体的街机差不多大的触摸屏进行游戏。
+演示视频如下：
+视频
+
+然后总结一下开发过程中的一些要点和遇到的问题。
+一、设计模式的使用
+使用 Unity 的过程中，如何组织代码更加合理，一直是一个问题。初学设计模式，决定试着运用一下。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="我做过的那些音乐类游戏——Jubeat与设计模式篇"/>
+  <meta property="og:site_name" content="SanderZ&#39;s Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <link rel="alternate" href="/atom.xml" title="SanderZ&#39;s Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//libs.baidu.com/jquery/1.8.0/jquery.min.js"></script>
+</head>
+
+
+<body>
+  <header id="header" class="inner">
+<div class="alignleft">
+  <h1><a href="/">SanderZ&#39;s Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+      <li><a href="/about">关于</a></li>
+    
+	
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-01-29T04:16:00.000Z"><a href="/2015/01/29/Jubeat/">1月 29 2015</a></time>
+      
+      
+  
+    <h1 class="title">我做过的那些音乐类游戏——Jubeat与设计模式篇</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <blockquote>
+<p>这是本系列的第四篇文章，其他几篇的地址如下</p>
+<p>地址一</p>
+<p>地址二</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Jubeat_与_Win8_触屏">Jubeat 与 Win8 触屏</h1>
+<p>Jubeat (乐动魔方) 是一款街机的音乐类游戏。街机每次玩都要投币，平板等上面的移植版本又觉得屏幕太小，一直在想要是有个支持触屏的 PC 版本多好。</p>
+<p>正好学校有大的触摸屏设备可以借我们开发使用，就试着自己用 Unity 将 Jubeat 移植到 PC 平台，用和实体的街机差不多大的触摸屏进行游戏。</p>
+<p>演示视频如下：</p>
+<p>视频</p>
+<hr>
+<p>然后总结一下开发过程中的一些要点和遇到的问题。</p>
+<h2 id="一、设计模式的使用">一、设计模式的使用</h2>
+<p>使用 Unity 的过程中，如何组织代码更加合理，一直是一个问题。初学设计模式，决定试着运用一下。</p>
+<a id="more"></a>
+
+<h3 id="1-_MVC_模式的使用">1. MVC 模式的使用</h3>
+<p>虽然不少游戏的开发可能并不适合垂直的 MVC 模式，但对于音乐类游戏来说，我认为是适用的。</p>
+<p>我使用 MVC 模式希望达到的目的是：当需要将游戏修改为另一种类型的音乐类游戏，或者改为支持多种音乐类游戏时，可以基本保持 Model 部分代码不变，只需要更换或者添加相应的 Controller 和 View 即可。</p>
+<p>下面就结合我用 VS 生成的类图来讲一下我是怎么在 Jubeat 的开发中使用 MVC 模式的。</p>
+<p>图片</p>
+<h3 id="2-_关于_Model：">2. 关于 Model：</h3>
+<p>封装内容：包括了各种音乐类游戏共有的一些<strong>数据</strong>和<strong>游戏逻辑</strong>。<strong>数据</strong>如：分数、连击数、本局游戏的音乐、音乐播放的时间、Note的列表（谱面信息），等等。<strong>逻辑</strong>如：播放音乐、添加 Note 、判断精确度，等等。</p>
+<p>上图中，<code>MugModel</code>、<code>AddNotesBehavior</code>和<code>JubeatAddBehavior</code>都属于 Model 部分。</p>
+<h4 id="a-_配合使用的策略模式">a. 配合使用的策略模式</h4>
+<p>考虑到 Model 中包含的游戏逻辑中有一部分会因为音乐游戏的玩法不同而不同，例如添加 Note 的部分和计分规则的部分。所以使用策略模式将这些会变化的部分单独封装起来，改变玩法时只需添加一个实现了对应接口的类即可。</p>
+<p>从上图中可见，这里我只将添加 Note 部分封装了起来，写了一个接口<code>AddNotesBehavior</code>，并且在<code>JubeatAddBehavior</code>中实现了这个接口。</p>
+<h4 id="b-_单例模式">b. 单例模式</h4>
+<p>此外<code>SongData</code>类记录的是选中的歌曲的谱面信息，在选歌界面和游戏时（两个 Scene）都要用到它。我需要保证它的数据在两个Scene中是一样的。</p>
+<p>为此，我试着使用单例模式，保证它只有一个实例。（在使用单例模式时遇到了一点问题，游戏对点击事件的响应变得很迟钝，此外一切正常。而在改成通过访问静态变量后就没有任何问题。暂时没有找到原因。）</p>
+<h3 id="3-_关于_View_与观察者模式">3. 关于 View 与观察者模式</h3>
+<p>封装内容：包括了各种 UI 界面元素的<strong>游戏对象</strong>和<strong>处理UI变化的逻辑</strong>。包括各种分数的 Lable 、控制 Combe 等的渐隐效果，控制背景动画随指定条件变化等等。</p>
+<p>上图中的<code>JubeatView</code>就是这次 Jubeat 游戏使用的 View ，它实现了两个接口<code>ScoreObserver</code>和<code>ComboObserver</code>，这里通过观察者模式来完成 View 和 Model 间数据的同步。</p>
+<h3 id="4-_关于_Controller">4. 关于 Controller</h3>
+<p>上图中的<code>TapResponse</code>就是这次 Jubeat 使用的 Controller。它负责的任务：获取按键的触摸事件（或鼠标点击事件），并做出相应的响应，更改 Model 中对应的内容（Note 的状态、准确度的统计信息等等）。</p>
+<h3 id="5-_Mecanim_动画系统与状态模式">5. Mecanim 动画系统与状态模式</h3>
+<p>个人的理解来看，Mecanim 的状态机帮我们实现了状态模式。使用它可以很方便地将动画播放委托给 Unity 的动画系统来处理。不同的动画对应不同的状态，我只需要在 Model 中更新相应的条件即可。然后 Unity 的动画系统会自动根据条件的变化完成状态的切换，即切换不同的动画。</p>
+<p>通过上述的方式，尽量使脚本间的关系接近右图的情况。避免了左图中情况的出现（会导致代码难以维护、修改）。</p>
+<p>图片</p>
+<h2 id="二、使用_WWW_类在运行时载入本地的资源">二、使用 WWW 类在运行时载入本地的资源</h2>
+<h3 id="1-_读取歌曲信息以及在选歌界面的歌曲预览">1. 读取歌曲信息以及在选歌界面的歌曲预览</h3>
+<p>这一次我选择使用国人制作的Jubeat的安卓移植版本 Andjuist 的谱面文件。大致格式如下：</p>
+<p>图片</p>
+<p>首先我利用 C# 自带的 IO 类写了一个用于读取文本文件的工具类<code>FileReader</code>，代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> FileReader{</div><div class="line"></div><div class="line">    <span class="comment">//打开文本文件，逐行读出，并返回一个ArrayList</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> ArrayList <span class="title">LoadFile</span>(<span class="keyword">string</span> path, <span class="keyword">string</span> name)</div><div class="line">    {</div><div class="line">        StreamReader sr = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span></div><div class="line">        {</div><div class="line">            Debug.Log(path);</div><div class="line">            sr = File.OpenText(path + <span class="string">"//"</span> + name);</div><div class="line">            Debug.Log(<span class="string">"opened"</span>);</div><div class="line">        }</div><div class="line">        <span class="keyword">catch</span> (Exception e)</div><div class="line">        {</div><div class="line">            Debug.Log(<span class="string">"failed"</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keyword">string</span> line;</div><div class="line"></div><div class="line">        ArrayList arrlist = <span class="keyword">new</span> ArrayList();</div><div class="line">        <span class="keyword">while</span> ((line = sr.ReadLine()) != <span class="keyword">null</span>)</div><div class="line">        {</div><div class="line">            arrlist.Add(line);</div><div class="line">        }</div><div class="line"></div><div class="line">        sr.Close();</div><div class="line"></div><div class="line">        sr.Dispose();</div><div class="line"></div><div class="line">        <span class="keyword">return</span> arrlist;</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>谱面的信息包括：</p>
+<ol>
+<li>歌曲封面（图片文件）</li>
+<li>歌曲信息（如曲名、作者等，文本文件）</li>
+<li>歌曲（音频文件）</li>
+<li>谱面（文本文件）。</li>
+</ol>
+<p>在选歌界面时，首要的是要读取第一个和第二个信息，考虑到要实现在选歌界面对歌曲的试听，所以也要读取第三个信息。第四个信息可以在选定歌曲进入游戏时进行读取。</p>
+<p>读取前三个时，首先。利用 <code>Application.dataPath</code> 获取到游戏当前所在的目录（输出得到的是带盘符的绝对路径）。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">string</span> songsPath;</div><div class="line">songsPath = Application.dataPath + <span class="string">"/songs"</span>;</div></pre></td></tr></table></figure>
+
+<p>然后就可以利用 WWW 类来进行读取了，它的方便之处在于它可以直接将读取到的音频文件变为 <code>AudioClip</code> ，将图片文件变为 <code>Texture</code>。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//读磁盘文件，载入并生成选歌列表</span></div><div class="line">IEnumerator LoadAllSongs()</div><div class="line">{</div><div class="line">    <span class="comment">//利用 C# 的 Directory 类，获取当前目录下所有歌曲的目录</span></div><div class="line">    <span class="keyword">string</span>[] songs = Directory.GetDirectories(songsPath);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; songs.Length; ++i)</div><div class="line">    {</div><div class="line">        <span class="comment">//从磁盘载入音频文件</span></div><div class="line">        <span class="keyword">string</span> songNamePath = songs[i].Replace(<span class="string">"\\"</span>,<span class="string">"/"</span>);</div><div class="line">        <span class="keyword">string</span> musicURL = <span class="string">"file:///"</span> + songNamePath + <span class="string">"/song.ogg"</span>;</div><div class="line">        WWW www = <span class="keyword">new</span> WWW(musicURL);</div><div class="line">        AudioClip clip = www.audioClip;</div><div class="line">        <span class="keyword">while</span> (!clip.isReadyToPlay)</div><div class="line">        {</div><div class="line">            <span class="comment">//Debug.Log(www.isDone);</span></div><div class="line">            <span class="keyword">yield</span> <span class="keyword">return</span> www; </div><div class="line">        }</div><div class="line">        <span class="comment">//Debug.Log("compelete");</span></div><div class="line"></div><div class="line">        <span class="comment">//从磁盘载入对应专辑封面</span></div><div class="line">        <span class="keyword">string</span> picURL = <span class="string">"file:///"</span> + songNamePath + <span class="string">"/pic.jpg"</span>;</div><div class="line">        WWW wwwPic = <span class="keyword">new</span> WWW(picURL);</div><div class="line">        Texture picture = wwwPic.texture;</div><div class="line">        <span class="comment">//Debug.Log(wwwPic.isDone);</span></div><div class="line">        <span class="keyword">yield</span> <span class="keyword">return</span> wwwPic;</div><div class="line">        <span class="comment">//Debug.Log("compelete");</span></div><div class="line"></div><div class="line">        <span class="comment">//从磁盘载入歌曲信息</span></div><div class="line">        ArrayList songInfo = FileReader.LoadFile(songs[i], <span class="string">"manifest.txt"</span>);</div><div class="line"></div><div class="line">		<span class="comment">//......至此已读取到需要的信息，处理并利用信息生成选歌列表中的标签部分省略......</span></div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h3 id="2-_与使用_Resources_的比较">2. 与使用 Resources 的比较</h3>
+<p>我希望实现的效果是：玩家可以向指定的文件夹中任意增加或删除谱面，然后在游戏中刷新（或重启游戏），就可以在游戏中看到变化。</p>
+<p>之前使用 Resources 来实现，就存在一个资源打包的问题，打不到这样的效果。而使用 WWW 类则不需要对资源进行打包，可以及时反映指定目录下文件的变化。</p>
+<h3 id="3-_存在的问题及反思">3. 存在的问题及反思</h3>
+<p>在上面的实现中，我一次性将所有的音频文件都读取了进来，这样就会<strong>导致歌曲较多时进入选歌界面载入很慢</strong>。更好的办法是当选中一首歌时，再将它的音频文件读取进来，虽然这样会使在选歌界面预览时有一个延迟，但并不明显。</p>
+<h2 id="三、NGUI的使用">三、NGUI的使用</h2>
+<h3 id="1-_制作选歌界面">1. 制作选歌界面</h3>
+<p>效果可见上面的视频，再放一张效果图：</p>
+<p>图片</p>
+<h4 id="a-_ScrollView_的使用">a. ScrollView 的使用</h4>
+<p>首先在场景中搭好基本的框架。网上教程很多，也可以在自带的例子的基础上进行修改，在此不再赘述。搭好以后的结构如图：</p>
+<p>图片</p>
+<p>然后对 ScrollView 进行一些设置：</p>
+<p>图片</p>
+<p>接着给 Grid 添加 UIGrid 脚本，并设置为纵向。</p>
+<p>图片</p>
+<p><strong>UIGrid 会将它的子物体按设置自动进行排序。这样我们只需要考虑如何为 UIGrid 添加子物体，而不需要考虑为添加的子物体排序的具体实现。</strong>可以很方便地实现一个竖排的选歌列表。</p>
+<p>这里，我将每个谱面对应的标签作为子物体。就是下图这个：</p>
+<p>图片</p>
+<p>在添加之前，我们先制作一个这样的标签，并将它做成一个Prefab，如下图：</p>
+<p>图片</p>
+<p>这样，生成选歌列表时就可以根据读到的歌曲的数量，生成相应数量的标签，而且可以通过程序给每个标签的内容做修改。</p>
+<p>此外，在将标签做成 Prefab 之前，需要为它添加按键相关的组件，然后添加一个获取当前标签信息并跳转至游戏界面的脚本。这样就可以保证点击每个项后都可以选择对应的歌曲进入游戏。</p>
+<h4 id="b-_通过脚本进行控制">b. 通过脚本进行控制</h4>
+<p>现在准备工作已经完成，可以添加对应的脚本进行控制了。</p>
+<p>首先，我先定义了一个类<code>SongListItem</code>，来描述选歌列表中每个标签，每个标签都会被抽象为这个类的一个对象，对象的属性值对应着标签上的内容。代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> SongListItem</div><div class="line">{</div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> path;            <span class="comment">//当前项对应路径</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> songName;        <span class="comment">//当前项对应曲名</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> composer;        <span class="comment">//作者</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> BPM;             </div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> <span class="keyword">from</span>;            <span class="comment">//来源</span></div><div class="line">    <span class="keyword">private</span> AudioClip music;        <span class="comment">//对应音频文件</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[] levels;           <span class="comment">//</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> level;              <span class="comment">//当前曲难度</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> levelString;     </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;                 <span class="comment">//当前是第几首歌</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">bool</span> isSelected;        <span class="comment">//当前项是否被选中</span></div><div class="line">    <span class="keyword">private</span> Texture picture;        <span class="comment">//当前项对应专辑封面</span></div><div class="line"></div><div class="line">    <span class="comment">//构造函数，初始化各项值</span></div><div class="line">    <span class="keyword">public</span> <span class="title">SongListItem</span>(<span class="keyword">string</span> path, <span class="keyword">string</span> songName, <span class="keyword">string</span> composer, <span class="keyword">float</span> BPM, <span class="keyword">string</span> <span class="keyword">from</span>, AudioClip music, <span class="keyword">int</span> level, <span class="keyword">string</span> levelString, <span class="keyword">int</span> id, <span class="keyword">bool</span> isSelected, Texture picture)</div><div class="line">    {</div><div class="line">        <span class="keyword">this</span>.path = path;</div><div class="line">        <span class="keyword">this</span>.songName = songName;</div><div class="line">        <span class="keyword">this</span>.composer = composer;</div><div class="line">        <span class="keyword">this</span>.BPM = BPM;</div><div class="line">        <span class="keyword">this</span>.<span class="keyword">from</span> = <span class="keyword">from</span>;</div><div class="line">        <span class="keyword">this</span>.music = music;</div><div class="line">        <span class="keyword">this</span>.level = level;</div><div class="line">        <span class="keyword">this</span>.levelString = levelString;</div><div class="line">        <span class="keyword">this</span>.id = id;</div><div class="line">        <span class="keyword">this</span>.isSelected = isSelected;</div><div class="line">        <span class="keyword">this</span>.picture = picture;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span></span></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> 相应属性的get、set方法，下略</span></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span></span></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocTag">&lt;/returns&gt;</span></span></div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>然后我需要将每一个对象都按生成顺序存储下来，这样我才能从程序中获得是哪一项被选中了。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> List&lt;SongListItem&gt; songItems;</div></pre></td></tr></table></figure>
+
+<p>刚刚已经从磁盘上获取到了生成选歌列表所需的信息，接下来就补上刚刚省略的部分，利用这些信息创建选歌列表。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//从磁盘载入歌曲信息</span></div><div class="line">ArrayList songInfo = FileReader.LoadFile(songs[i], <span class="string">"manifest.txt"</span>);</div><div class="line"><span class="keyword">if</span> (songInfo.Count &gt; <span class="number">0</span>)</div><div class="line">{</div><div class="line">    <span class="comment">//对从文本文件读取到的信息进行字符串操作，提取出需要的内容</span></div><div class="line">    <span class="keyword">string</span> path = songs[i];</div><div class="line">    <span class="keyword">string</span> songName = songInfo[<span class="number">2</span>].ToString().Substring(<span class="number">5</span>, songInfo[<span class="number">2</span>].ToString().Length-<span class="number">5</span>);</div><div class="line">    <span class="keyword">string</span> composer = songInfo[<span class="number">3</span>].ToString().Substring(<span class="number">9</span>, songInfo[<span class="number">3</span>].ToString().Length-<span class="number">9</span>);</div><div class="line">    <span class="keyword">float</span> BPM = <span class="keyword">float</span>.Parse(songInfo[<span class="number">4</span>].ToString().Substring(<span class="number">4</span>, songInfo[<span class="number">4</span>].ToString().Length-<span class="number">4</span>));</div><div class="line">    <span class="keyword">string</span> <span class="keyword">from</span> = songInfo[<span class="number">5</span>].ToString().Substring(<span class="number">5</span>, songInfo[<span class="number">5</span>].ToString().Length-<span class="number">5</span>);</div><div class="line">    <span class="keyword">string</span>[] levelString = songInfo[<span class="number">6</span>].ToString().Substring(<span class="number">6</span>, songInfo[<span class="number">6</span>].ToString().Length - <span class="number">6</span>).Split(<span class="string">','</span>);</div><div class="line">    <span class="keyword">int</span>[] levels = { <span class="keyword">int</span>.Parse(levelString[<span class="number">0</span>]), <span class="keyword">int</span>.Parse(levelString[<span class="number">1</span>]), <span class="keyword">int</span>.Parse(levelString[<span class="number">2</span>]) };</div><div class="line"></div><div class="line">    AudioClip music = clip;</div><div class="line"></div><div class="line">    <span class="comment">//为同一首歌的每个难度都创建一个标签</span></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; ++j)</div><div class="line">    {</div><div class="line">        <span class="keyword">string</span> levelStr = <span class="string">"BASIC"</span>;</div><div class="line">        <span class="keyword">switch</span> (j)</div><div class="line">        {</div><div class="line">            <span class="keyword">case</span> <span class="number">0</span>: levelStr = <span class="string">"BASIC"</span>; <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">1</span>: levelStr = <span class="string">"ADVANCED"</span>; <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">2</span>: levelStr = <span class="string">"EXTREME"</span>; <span class="keyword">break</span>;</div><div class="line">        }</div><div class="line">		<span class="comment">//新建一个标签对象，修改对应的内容后加入到列表中</span></div><div class="line">        SongListItem item = <span class="keyword">new</span> SongListItem(path, songName, composer, BPM, <span class="keyword">from</span>, music, levels[j], levelStr, i, <span class="keyword">false</span>, picture);</div><div class="line">        songItems.Add(item);</div><div class="line">        <span class="comment">//根据 Prefab 实例化标签对象，修改对应的内容后放入场景中。</span></div><div class="line">        InitiateSongListItem(item);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h4 id="c-_中间大两头小的效果的实现">c. 中间大两头小的效果的实现</h4>
+<p>为了画面效果的美观，我实现了一个在滚动过程中保持两头的标签小，中间的标签大的效果。</p>
+<p>实现方法大致如下。为 Prefab 添加一个对应的脚本。这个脚本会根据当前标签的 y 坐标来对当前标签进行缩放。</p>
+<p>图片</p>
+<p>关键的代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">float</span> currentScale = <span class="number">1</span> - Mathf.Abs(<span class="keyword">this</span>.transform.position.y) / <span class="number">2.0</span>f;</div><div class="line"><span class="keyword">this</span>.transform.localScale = <span class="keyword">new</span> Vector3(currentScale, currentScale, currentScale);</div></pre></td></tr></table></figure>
+
+<h3 id="2-_在游戏主界面中的应用">2. 在游戏主界面中的应用</h3>
+<p>效果图：</p>
+<p>图片</p>
+<p>其中，歌曲封面、曲名等文字信息、Combo 数、以及暂停和返回按键都使用了 NGUI。</p>
+<p>图片</p>
+<h2 id="四、使用插件_TouchScript_支持_Win8_的多点触屏输入">四、使用插件 TouchScript 支持 Win8 的多点触屏输入</h2>
+<p>使用原型测试时的效果:</p>
+<p>视频</p>
+<h3 id="1-_TouchScript_的使用">1. TouchScript 的使用</h3>
+<p>因为 PC 的多点的触屏设备使用的 TUIO 协议，不能使用 Unity 的 Input 来处理，后来我找到了 TouchScript 插件。TouchScript 是一款开源的插件。详情见它的官网 <a href="touchScript.github.io">touchScript.github.io</a>。</p>
+<h4 id="a-_TouchScript_的一些基本概念">a. TouchScript 的一些基本概念</h4>
+<ol>
+<li>Input Sources （输入源）：用于获得不同类型触屏的输入，包括<code>MouseInput</code>、<code>MobileInput</code>、<code>TUIOInput</code>、<code>Win7TouchInput</code>和<code>Win8TouchInput</code>。</li>
+<li>Layers （层）：层是 TouchScript 中一个重要的概念。当从 Input Sources 中获取到触摸输入后，TouchScript 需要确定这个触摸事件是否点在了场景中的任意物体上。TouchScript 通过一系列排好序的层来完成这件事。比如，用 CameraLayer2D 处理有着 2D 碰撞盒的 2D 物体。</li>
+<li>Touch Manager （触摸管理）：通过 Touch Manager 我们可以指定场景中哪些层（TouchScript中的层）可以接受触摸输入。</li>
+<li>Gestures （手势）：手势包含了一系列的组件，添加了这些组件的游戏对象就可以响应相应的的手势。包括<code>Pan Gesture</code>（按住平移）、<code>Press Gesture</code>（按下）、<code>Release Gesture</code>（放开）、<code>LongPress Gesture</code>（长按）、<code>Flick Gesture</code>（快速轻击）几种。</li>
+</ol>
+<h4 id="b-_在场景中的一些准备工作">b. 在场景中的一些准备工作</h4>
+<p>为了在场景中使用 TouchScript，在导入插件后</p>
+<ul>
+<li>首先我们需要在场景中创建一个空物体，命名为<code>TouchScript</code>。然后为它添加组件<code>TouchManager</code>。</li>
+<li>接着我们在<code>TouchScript</code>下创建一个子物体，为它添加我们组件<code>Mouse Input</code>和<code>win 8Touch Input</code>（你需要哪些输入源就增加哪些，具体可见官网 wiki）</li>
+<li>为了方便调试，从插件的 Prefab 目录下找到 <code>Touch Debugger</code>，将它加入场景中</li>
+</ul>
+<p>如下图所示：</p>
+<p>图片</p>
+<p>完成这些工作以后，就可以先 Build 一次，测试是否配置正确，可以支持多点触控了。</p>
+<h4 id="c-_Gesture_的使用">c. Gesture 的使用</h4>
+<p>接下来为需要相应触屏事件的游戏对象添加相应的 Gesture （手势），如下图：</p>
+<p>图片</p>
+<p>对应的关键代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> TapResponse : MonoBehaviour {</div><div class="line"></div><div class="line">    <span class="comment">//....成员变量，略......</span></div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnEnable</span>()</div><div class="line">    {</div><div class="line">        <span class="comment">//初始化成员变量部分略，此处添加对触屏事件的响应</span></div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;PressGesture&gt;().Pressed += tappedHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;ReleaseGesture&gt;().Released += releaseHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;SimplePanGesture&gt;().StateChanged += panHandler;</div><div class="line"></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnDisable</span>()</div><div class="line">    {</div><div class="line">        <span class="comment">//销毁时移除对触屏事件的响应</span></div><div class="line">        GetComponent&lt;PressGesture&gt;().Pressed -= tappedHandler;</div><div class="line">        GetComponent&lt;ReleaseGesture&gt;().Released -= releaseHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;SimplePanGesture&gt;().StateChanged -= panHandler;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//按下时平移</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">panHandler</span>(<span class="keyword">object</span> sender, GestureStateChangeEventArgs e)</div><div class="line">    {</div><div class="line">        <span class="comment">//......内容略，见下文......</span></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">tappedHandler</span>(<span class="keyword">object</span> sender, EventArgs e)</div><div class="line">    {</div><div class="line">        onTapDown();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">releaseHandler</span>(<span class="keyword">object</span> sender, EventArgs e)</div><div class="line">    {</div><div class="line">        onTapUp();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//........下略......</span></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>TouchScript 基于手势的做法虽然方便，但是对我来说却造成了一定的麻烦。因为它的手势是与游戏对象绑定的，<strong>每个游戏对象单独响应作用在它上的手势事件</strong>。</p>
+<p>而由于在 Jubeat 中，我使用 Prefab 将 16 个按键实例化出来，它们都是相互独立的游戏对象。当我按住一个按键 A 不放，然后移动到下一个按键 B 的位置上，响应的仍然是按键 A 的手势事件，而不是我要的触发按键 B 的手势事件。</p>
+<h3 id="2-_关于射线">2. 关于射线</h3>
+<p>为了解决刚刚提到的问题，我不得不将每个触摸的点的位置获取出来后，重新利用 Unity 中的射线检测是否移动到了别的按键的位置上，并将那个按键获取出来，然后调用其中对应的方法来实现点击。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">panHandler</span>(<span class="keyword">object</span> sender, GestureStateChangeEventArgs e)</div><div class="line">{</div><div class="line">    <span class="comment">//从 TouchScript 的手势中获取当前触摸到的点的位置</span></div><div class="line">    <span class="keyword">var</span> gesture = sender <span class="keyword">as</span> SimplePanGesture;</div><div class="line">    ITouchHit Ihit;</div><div class="line">    gesture.GetTargetHitResult(<span class="keyword">out</span> Ihit);</div><div class="line">    <span class="keyword">var</span> hit2d = Ihit <span class="keyword">as</span> ITouchHit2D;</div><div class="line">    <span class="keyword">if</span> (hit2d == <span class="keyword">null</span>)</div><div class="line">    {</div><div class="line">        previousTapbox.GetComponent&lt;TapResponse&gt;().onTapUp();</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//从触摸到的点的位置发出一条射线</span></div><div class="line">    RaycastHit2D hit = Physics2D.Raycast(hit2d.Point, Vector2.zero);</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (hit != <span class="keyword">null</span> && hit.collider != <span class="keyword">null</span>)</div><div class="line">    {</div><div class="line">		<span class="comment">//获取当前触摸到的点实际在哪个按键上，并将那个按键设为按下，松开当前按键</span></div><div class="line">        currentTapbox = hit.transform.gameObject;</div><div class="line">        <span class="keyword">if</span> (currentTapbox != previousTapbox)</div><div class="line">        {</div><div class="line"></div><div class="line">            previousTapbox.GetComponent&lt;TapResponse&gt;().onTapUp();</div><div class="line">            currentTapbox.GetComponent&lt;TapResponse&gt;().onTapDown();</div><div class="line">        }</div><div class="line">        previousTapbox = currentTapbox;</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h3 id="TouchScript_与_NGUI_的冲突问题及其解决">TouchScript 与 NGUI 的冲突问题及其解决</h3>
+<p>使用过程中还遇到了 TouchScript 与 NGUI 产生冲突导致 NGUI 的按键等不能正常响应的问题。</p>
+<p>解决方法见<a href="https://github.com/TouchScript/TouchScript/issues/6" target="_blank" rel="external">https://github.com/TouchScript/TouchScript/issues/6</a></p>
+<h2 id="五、Unity_Native_2D_的使用">五、Unity Native 2D 的使用</h2>
+<p>这一次改用 Unity 原生的 2D 系统，感觉与使用 2D Toolkit 时感觉差不多，区别是不需要建立精灵集以后才能创建精灵。</p>
+<p>遇到一个问题就是Unity 原生 2D 的 Sorting Layer 和 NGUI 的 Widget 的 Depth 属性有有冲突，层的前后关系会有问题。</p>
+<h2 id="六、使用_Mecanim_动画系统控制动画">六、使用 Mecanim 动画系统控制动画</h2>
+<h3 id="Note_根据不同的判定结果显示不同的动画">Note 根据不同的判定结果显示不同的动画</h3>
+<p>如图</p>
+<p>图片</p>
+<h3 id="背景动画根据指定条件改变">背景动画根据指定条件改变</h3>
+<p>在 Jubeat 原版游戏的规则中，打完曲子最多有 900000 分，此外根据“连续不失误”的数量会得到一个 0~1的系数，然后用这个系数乘以100000，得到额外的加分，两者相加得到总分。</p>
+<p>游戏过程中背景动画像从中间逐渐散开的云，慢慢露出底下的内容。而这个背景动画展开的程度，就表示当前加分的系数。系数为1时，完全展开，系数为0时，完全闭合。</p>
+<p>图片</p>
+<p>这个系数游戏过程中一直在变化，打出 perfect 或 good，这个系数会增大，反之则会减小。相应的，背景动画展开的程度也会跟着变化。</p>
+<p>为了实现这个功能，我将背景从完全闭合到完全展开的动画分成了10段，每段循环播放，对应加分系数 0~0.1 ， 0.1~0.2 等十个区间。如图：</p>
+<p>图片</p>
+<p>此外，结束后，还要有一个评级的动画，因为也属于背景动画。也做在了一起。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+<!-- Baidu Button BEGIN -->
+<div id="bdshare" class="bdshare_t bds_tools_32 get-codes-bdshare">
+<a class="bds_qzone"></a>
+<a class="bds_tsina"></a>
+<a class="bds_tqq"></a>
+<a class="bds_renren"></a>
+<a class="bds_t163"></a>
+<span class="bds_more"></span>
+<a class="shareCount"></a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=3326447" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+ <nav id="pagination" >
+    
+    
+    <a href="/2015/01/28/Artist/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+
+
+<section id="comment">
+
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"sanderz"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->  
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+
+  <div class="widget tag">
+<h3 class="title">简介</h3>
+<ul class="entry">
+<li>SanderZ</li>
+<li>Theme: <a href="https://github.com/zippera/lightum">Lightum</a>
+<li>我的简历: <a href="">下载</a></li>
+<li>My Resume: <a href="">Download</a></li>
+<li>QQ: 375545592</li>
+<font color="red"></font>
+</ul>
+</div>
+
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><section>
+Theme of <a href="https://github.com/zippera/lightum">Lightum</a>, Improved from <a href="https://github.com/hexojs/hexo-theme-light">Light</a>, by <a href="/">zippera</a> 
+</section>
+<div class="clearfix"></div>
+</footer>
+  <script src="//libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
+
+
+

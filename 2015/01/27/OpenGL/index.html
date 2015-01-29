@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用 OpenGL 进行多光源场景绘制 | SanderZ&#39;s Blog</title>
+  <meta name="author" content="SanderZ">
+  
+  <meta name="description" content="基于 OpenGL 的多光源场景绘制
+通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。
+效果如下：
+图片
+视频">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用 OpenGL 进行多光源场景绘制"/>
+  <meta property="og:site_name" content="SanderZ&#39;s Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <link rel="alternate" href="/atom.xml" title="SanderZ&#39;s Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//libs.baidu.com/jquery/1.8.0/jquery.min.js"></script>
+</head>
+
+
+<body>
+  <header id="header" class="inner">
+<div class="alignleft">
+  <h1><a href="/">SanderZ&#39;s Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+      <li><a href="/about">关于</a></li>
+    
+	
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-01-27T09:06:27.000Z"><a href="/2015/01/27/OpenGL/">1月 27 2015</a></time>
+      
+      
+  
+    <h1 class="title">使用 OpenGL 进行多光源场景绘制</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <a id="more"></a>
+
+<h1 id="基于_OpenGL_的多光源场景绘制">基于 OpenGL 的多光源场景绘制</h1>
+<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。</p>
+<p>效果如下：</p>
+<p>图片</p>
+<p>视频</p>
+<a id="more"></a>
+
+<h2 id="1_OpenGL">1 OpenGL</h2>
+<p>OpenGL 是个跨平台的专业的图形程序接口，是一个功能强大，调用方便的底层图形库。它被广泛地应用于三维图形设计的各个领域，例如三维游戏、虚拟现实技术、三维图形与动画绘制、和计算机可视化等等。在三维图形设计中，三维场景和物体的绘制以及光照效果的表现是其中非常重要的两个问题。利用 OpenGL 可以较为简便地解决上述两个问题。</p>
+<h2 id="2_三维场景的绘制与观察">2 三维场景的绘制与观察</h2>
+<h3 id="2-1_OpenGL_中的观察变换">2.1 OpenGL 中的观察变换</h3>
+<p>在 OpenGL 中，三维图形的绘制与观察需要经过视点变换、模型变换、投影变换、视口变换几个步骤。经历以上几步后，三维物体就可以在计算机的显示器上以二维的形式表现出来。这个过程可以类比为相机拍照。</p>
+<ul>
+<li>第一步：<strong>视点变换</strong>，可以类比为确定相机位置，让相机对准三维物体；</li>
+<li>第二步：<strong>模型变换</strong>，即将三维物体放在场景中适当的位置；</li>
+<li>第三步：<strong>投影变换</strong>，可以类比为将三维物体投影在胶片上；</li>
+<li>第四步：<strong>视口变换</strong>，确定裁剪窗口的尺寸<h4 id="2-1-1_模型变换和视图变换">2.1.1 模型变换和视图变换</h4>
+在观察一个三维物体时，移动物体或者移动观察点都能使观察点与三维物体之间的相对位置发生变化，这种相对位置关系决定了观察的效果。</li>
+</ul>
+<p>在 OpenGL 中，模型和观察点的变换都能够通过矩阵运算来实现。在进行变换前，需先设置当前操作的矩阵为模型视图矩阵，像这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glMatrixMode(GL_MODELVIEW);</div></pre></td></tr></table></figure>
+
+<p>通常，在进行变换前，还需要把指定的当前操作的矩阵设置为单位矩阵，这需要一个函数： <code>glLoadIdentity()</code></p>
+<p>然后，就可以进行模型变换和视图变换了。进行模型和视图变换，主要涉及到三个几何变换函数：</p>
+<ol>
+<li><code>glTranslate*</code>，把当前矩阵和一个用于移动物体的矩阵相乘。后者的三个参数分别表示了在三个坐标上的位移值。</li>
+<li><code>glRotate*</code>，把当前矩阵和一个用于旋转物体的矩阵相乘。物体将绕着(0,0,0)到(x,y,z)的直线以逆时针旋转，参数<code>angle</code>表示旋转的角度。</li>
+<li><code>glScale*</code>，把当前矩阵和一个用于缩放物体的矩阵相乘。x,y,z 分别表示在该方向上的缩放比例。</li>
+</ol>
+<h4 id="2-1-2_投影变换和视区变换">2.1.2 投影变换和视区变换</h4>
+<p>投影变换的作用是将三维的观察坐标系中的对象投影到二维的显示平面中。在确定进行投影变换之前，需要指当前操作的矩阵为投影矩阵，并将其设置为单位矩阵，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">glMatrixMode(GL_PROJECTION);</div><div class="line">glLoadIdentity();</div></pre></td></tr></table></figure>
+
+<p>然后再确定投影方式进行投影变换。OpenGL 中提供了两种投影方式，一种是正交投影（Orthographic Projection），另一种是透视投影（Perspective Projection）。在本例中，使用的是透视投影方式。代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gluPerspective(<span class="number">45.0f</span>,(GLfloat)width/(GLfloat)height,<span class="number">0.001f</span>,<span class="number">100.0f</span>);</div></pre></td></tr></table></figure>
+
+<p>它确定一个棱台为视域体，这个区域里面的对象才能被观察到，这个区域之外的对象被裁剪掉，不会出现在图像中，如下图所示。</p>
+<h4 id="2-1-3_OpenGL_中的深度缓存函数">2.1.3 OpenGL 中的深度缓存函数</h4>
+<p>在 OpenGL 中，如果不对面的深度加以判断，那么各个面将按照程序代码中定义的先后顺序进行绘制。在同一位置上，后绘制的面总是会将先绘制的面覆盖，哪怕后绘制的面实际应该是被先绘制的面遮挡住而不可见的。<br>因此，需要启动深度缓存检测，使得显示模式包含深度缓存，保证面的正确绘制。代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glutInitDisplayMode (GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);</div></pre></td></tr></table></figure>
+
+<p>深度缓存的初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glClearDepth(<span class="number">1.0f</span>);</div></pre></td></tr></table></figure>
+
+<p>启动深度缓存检测：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glEnable(GL_DEPTH_TEST);</div></pre></td></tr></table></figure>
+
+
+<h3 id="2-2_外部模型文件的导入">2.2 外部模型文件的导入</h3>
+<p>使用 OBJ 文件库<code>glm.h</code>和<code>glm.cpp</code>实现，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> initGLObjects()										</div><div class="line">{</div><div class="line">	<span class="keyword">switch</span>(model_id)</div><div class="line">	{</div><div class="line">		<span class="keyword">case</span> <span class="number">0</span>:</div><div class="line">			glm_model= glmReadOBJ( <span class="string">"DATA/venus.obj"</span> );<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="number">1</span>:</div><div class="line">			glm_model= glmReadOBJ( <span class="string">"DATA/al.obj"</span> );<span class="keyword">break</span>;</div><div class="line"></div><div class="line">	}</div><div class="line">	glmUnitize( glm_model );</div><div class="line">	glmScale( glm_model, <span class="number">3</span> );</div><div class="line">	glmFacetNormals( glm_model );</div><div class="line">	glmVertexNormals( glm_model, <span class="number">90</span> );</div><div class="line"></div><div class="line">	list_id = glmList( glm_model, GLM_MATERIAL | GLM_SMOOTH );</div><div class="line"></div><div class="line">	glmDelete( glm_model );</div><div class="line"></div><div class="line">	<span class="keyword">return</span> TRUE;										</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h2 id="3_OpenGL_光照和表面绘制函数">3 OpenGL 光照和表面绘制函数</h2>
+<h3 id="3-1_OpenGL_光照模型">3.1 OpenGL 光照模型</h3>
+<p>在 OpenGL 采用的简单光照模型中反射光可以分成三个分量：环境反射光（Ambient Light）、漫反射光（Diffuse Light）和镜面反射光（Specular Light）。</p>
+<ul>
+<li><strong>环境光</strong>：场景中的所有顶点都被这个分量影响。当一条光线击中物体表面时，它会均匀地向各个方向散射。在许多次表面的反射后，光看上去从各个方向而来。而OpenGL中的环境光部分就对应于这种物理现象。 </li>
+<li><strong>漫反射光</strong>：当一束平行的入射光线照射到粗糙的表面时，因表面凹凸不平，造成反射光线向不同的方向无规则地反射，这种反射称之为“漫反射”或“漫射”。这个反射的光则称为漫反射光。</li>
+<li><strong>镜面反射光</strong>：镜面反射是光照射在镜面或金属表面时产生的高光分量。<h3 id="3-2_光源">3.2 光源</h3>
+<h4 id="3-2-1_OpenGL_点光源">3.2.1 OpenGL 点光源</h4>
+使用三个 RGB 分量指定的单个颜色的点光源是发光体的最简单的模型。一个场景的点光源通过给出其位置和发射光颜色来定义。本程序中代码如下：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">GLfloat Light2Pos[] = { <span class="number">5.0f</span>, -<span class="number">7.0f</span>, -<span class="number">9.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light2Amb[] = { <span class="number">0.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			 </div><div class="line">GLfloat Light2Dif[] = { <span class="number">1.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			 </div><div class="line">GLfloat Light2Spc[] = {-<span class="number">0.2f</span>, -<span class="number">0.2f</span>, -<span class="number">0.2f</span>, <span class="number">1.0f</span>};			</div><div class="line"></div><div class="line">glLightfv(GL_LIGHT2, GL_AMBIENT, Light2Amb);			</div><div class="line">glLightfv(GL_LIGHT2, GL_DIFFUSE, Light2Dif);			</div><div class="line">glLightfv(GL_LIGHT2, GL_SPECULAR, Light2Spc);		</div><div class="line">glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,<span class="number">0.05</span>);</div></pre></td></tr></table></figure>
+
+<h4 id="3-2-2_OpenGL_方向光源">3.2.2 OpenGL 方向光源</h4>
+<p>方向光源可以进一步定义成聚光灯形式，即将光的形状限制在一个圆锥内。</p>
+<p>在 OpenGL 中通过<strong>聚光截止角</strong>、<strong>聚光方向</strong>、<strong>聚光指数</strong>几个分量来描述一个聚光灯。</p>
+<ul>
+<li><strong>聚光截止角</strong>：参数<code>GL_SPOT_CUTOFF</code>描述聚光灯光锥的轴线与其中心线的夹角，即光锥顶角的一半。当该参数缺省时，其值为 180.0，即光锥的顶角为 360 度，光向所有的方向发射，相当于点光源。在本程序中代码如下：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, <span class="number">30</span>);</div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>聚光方向</strong>：聚光方向决定光锥的轴向，通过齐次坐标进行描述，其默认值为(0.0, 0.0, -1.0)，即指向Z轴负轴。在进行模型变换和视点变换时，聚光方向也要进行几何变换，其结果将保存为视点坐标系下的坐标。</li>
+<li><strong>聚光指数</strong>：参数<code>GL_SPOT_EXPONENT</code>描述光的集中程度，光锥中心的光强最大，从轴线向母线移动时光强逐渐衰减，缺省时为 0 。聚光指数越大，光源的聚焦效果越好。  除了定义聚光指数控制光锥内光强的分布，还可同时利用定位光源的衰减因子的设置光强衰减。</li>
+</ul>
+<p>本程序中关键代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">GLfloat Light1Pos[] = { <span class="number">0.0f</span>, <span class="number">10.0f</span>,-<span class="number">10.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light1Amb[] = { <span class="number">0.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light1Dif[] = { <span class="number">1.0f</span>,  <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light1Spc[] = {-<span class="number">0.2f</span>, -<span class="number">0.2f</span>, -<span class="number">0.2f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat light1_direction[]={ <span class="number">0.0f</span>, -<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>};		</div><div class="line"></div><div class="line">glLightfv(GL_LIGHT1, GL_POSITION, Light1Pos);		</div><div class="line">glLightfv(GL_LIGHT1, GL_AMBIENT, Light1Amb);		</div><div class="line">glLightfv(GL_LIGHT1, GL_DIFFUSE, Light1Dif);		</div><div class="line">glLightfv(GL_LIGHT1, GL_SPECULAR, Light1Spc);		</div><div class="line">glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, <span class="number">30</span>);</div><div class="line">glLightf(GL_LIGHT1,GL_SPOT_EXPONENT,<span class="number">30.0</span>);</div><div class="line">glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION,light1_direction);</div></pre></td></tr></table></figure>
+
+<h4 id="3-2-3_指定一个_OpenGL_光源位置和类型">3.2.3 指定一个 OpenGL 光源位置和类型</h4>
+<p>在 OpenGL 中，光源的位置坐标采用齐次坐标(x, y, z, w)的方式进行描述。当 w 为 0.0 时，表示相应的光源是定向光，(x, y, z)描述光源的方向；当 w 为 1.0 时，光源为定位光源，(x, y, z, w)表示光源在齐次坐标系下的具体位置。在上述两种情况中，位置坐标都会随着模型变换和视图变换进行变换，最后保存为视点坐标系下的坐标。</p>
+<p>在本程序中，关键代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">GLfloat Light1Pos[] = { <span class="number">0.0f</span>, <span class="number">10.0f</span>,-<span class="number">10.0f</span>, <span class="number">1.0f</span>};</div><div class="line"></div><div class="line">glLoadIdentity();							<span class="comment">// 重置矩阵</span></div><div class="line">glTranslatef(<span class="number">0.0f</span>, <span class="number">0.0f</span>, -<span class="number">20.0f</span>);					<span class="comment">// 深入屏幕20个单位</span></div><div class="line">glLightfv(GL_LIGHT1, GL_POSITION, Light1Pos);	<span class="comment">// 放置灯光</span></div><div class="line">glLightfv(GL_LIGHT2, GL_POSITION, Light2Pos);		</div><div class="line">glLightfv(GL_LIGHT3, GL_POSITION, Light3Pos);		</div><div class="line">glLightfv(GL_LIGHT4, GL_POSITION, Light4Pos);		</div><div class="line">glTranslatef(SpherePos[<span class="number">0</span>], SpherePos[<span class="number">1</span>], SpherePos[<span class="number">2</span>]);	</div><div class="line">gluSphere(q, <span class="number">1.5f</span>, <span class="number">32</span>, <span class="number">16</span>);							</div><div class="line"></div><div class="line">glLoadIdentity();						<span class="comment">// 重置矩阵</span></div><div class="line">glRotatef(-yrot, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>);			<span class="comment">// 绕Y轴旋转 -yrot 个单位</span></div><div class="line">glRotatef(-xrot, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>);			<span class="comment">// 绕X轴旋转 -xrot 个单位</span></div><div class="line">glGetFloatv(GL_MODELVIEW_MATRIX,Minv);</div><div class="line">lp1[<span class="number">0</span>] = Light1Pos[<span class="number">0</span>];			</div><div class="line">lp1[<span class="number">1</span>] = Light1Pos[<span class="number">1</span>];								</div><div class="line">lp1[<span class="number">2</span>] = Light1Pos[<span class="number">2</span>];								</div><div class="line">lp1[<span class="number">3</span>] = Light1Pos[<span class="number">3</span>];								</div><div class="line">VMatMult(Minv, lp1);				</div><div class="line">glTranslatef(-ObjPos[<span class="number">0</span>], -ObjPos[<span class="number">1</span>], -ObjPos[<span class="number">2</span>]);	</div><div class="line">glGetFloatv(GL_MODELVIEW_MATRIX,Minv);</div><div class="line">wlp1[<span class="number">0</span>] = <span class="number">0.0f</span>;									</div><div class="line">wlp1[<span class="number">1</span>] = <span class="number">0.0f</span>;										</div><div class="line">wlp1[<span class="number">2</span>] = <span class="number">0.0f</span>;										</div><div class="line">wlp1[<span class="number">3</span>] = <span class="number">1.0f</span>;</div><div class="line">VMatMult(Minv, wlp1);														</div><div class="line">lp1[<span class="number">0</span>] += wlp1[<span class="number">0</span>];	</div><div class="line">lp1[<span class="number">1</span>] += wlp1[<span class="number">1</span>];									</div><div class="line">lp1[<span class="number">2</span>] += wlp1[<span class="number">2</span>];</div></pre></td></tr></table></figure>
+
+
+<h4 id="3-2-4_指定_OpenGL_光源颜色">3.2.4 指定 OpenGL 光源颜色</h4>
+<p>根据 OpenGL 所采用的光照模型，OpenGL 光源的颜色由环境光（AMBIENT）、漫反射光（DIFFUSE）、镜面反射光（SPECULAR）三个分量共同决定。其中漫反射光分量的值对光源颜色的影响最大。</p>
+<p>在本程序中，使用以下方式设置光源颜色：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">GLfloat Light1Amb[] = { <span class="number">0.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			<span class="comment">// 环境光</span></div><div class="line">GLfloat Light1Dif[] = { <span class="number">1.0f</span>,  <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">1.0f</span>};			<span class="comment">// 漫反射</span></div><div class="line">GLfloat Light1Spc[] = {-<span class="number">0.2f</span>, -<span class="number">0.2f</span>, -<span class="number">0.2f</span>, <span class="number">1.0f</span>};			<span class="comment">// 镜面反射</span></div><div class="line"></div><div class="line">glLightfv(GL_LIGHT1, GL_AMBIENT, Light1Amb);		</div><div class="line">glLightfv(GL_LIGHT1, GL_DIFFUSE, Light1Dif);		</div><div class="line">glLightfv(GL_LIGHT1, GL_SPECULAR, Light1Spc);</div></pre></td></tr></table></figure>
+
+
+<h4 id="3-2-5_指定_OpenGL_光源的光线强度衰减系数">3.2.5 指定 OpenGL 光源的光线强度衰减系数</h4>
+<p>光强会随着距光源的距离而衰减，即离光源越远则光强越弱。在 OpenGL 中，定向光源位置为无穷远，禁用衰减，而对于定位光源，OpenGL 通过光源的发光量乘以衰减因子以实现衰减。衰减系数<code>attenuation</code>和距光源的距离关系如下图：</p>
+<p>在 OpenGL 中，环境光、漫反射光和镜面反射光的强度都会衰减。可以通过<code>glLight*</code>函数来设置衰减。<br>在本程序中，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,<span class="number">0.05</span>);</div></pre></td></tr></table></figure>
+
+<h4 id="3-2-6_启用光源">3.2.6 启用光源</h4>
+<p>在 OpenGL 中，设置完光源后，若需要设置好的光源对场景生效，需要满足两个条件。一是已经启用光照，使场景能接收光照，二是所设置的光源已经被开启，使得场景中的物体能接受该光源的光照。要启用光照或关闭光照，调用函数：<code>glEnable(GL_LIGHTING)</code> 或<code>glDisable(GL_LIGHTING)</code>。要使所定义的光源有效，则调用函数<code>glEnable(GL_LIGHT0)</code>。在本程序中代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">glEnable(GL_LIGHT1);							<span class="comment">// 启用灯光1、2、3、4</span></div><div class="line">glEnable(GL_LIGHT2);								</div><div class="line">glEnable(GL_LIGHT3);								</div><div class="line">glEnable(GL_LIGHT4);									</div><div class="line">glEnable(GL_LIGHTING);							<span class="comment">// 启用照明</span></div></pre></td></tr></table></figure>
+
+<h3 id="3-3_OpenGL_表面材质和明暗处理">3.3 OpenGL 表面材质和明暗处理</h3>
+<p>OpenGL 通过材质对红、绿、蓝三色光的反射率来描述材料的颜色。同光源一样，材料颜色也分成环境、漫反射和镜面反射分量，它们决定了材料对环境光、漫反射光和镜面反射光的反射程度，其中，材料对环境光与漫反射光的反射程度决定了材料的颜色。</p>
+<p>若OpenGL 的光源颜色为（LR、LG、LB），材质颜色为（MR、MG、MB），在忽略所有其他反射效果并且没有其它光源的情况下，最终显示物体表面的颜色为（LR<em>MR、LG</em>MG、LB*MB）。</p>
+<p>在本程序中，对材料的定义部分代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">float</span> MatAmb[] = {<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>};				<span class="comment">// 材质-环境光</span></div><div class="line"><span class="keyword">float</span> MatDif[] = {<span class="number">0.9f</span>, <span class="number">0.9f</span>, <span class="number">0.9f</span>, <span class="number">1.0f</span>};				<span class="comment">// 材质-漫反射</span></div><div class="line"><span class="keyword">float</span> MatSpc[] = {<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>};				<span class="comment">// 材质-镜面反射</span></div><div class="line"><span class="keyword">float</span> MatShn[] = {<span class="number">0.0f</span>};								<span class="comment">// 材质-光泽度</span></div><div class="line"></div><div class="line">glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmb);			<span class="comment">// 设置材质-环境光</span></div><div class="line">glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDif);			<span class="comment">// 设置材质-漫反射</span></div><div class="line">glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpc);		<span class="comment">// 设置材质-镜面反射</span></div><div class="line">glMaterialfv(GL_FRONT, GL_SHININESS, MatShn);		<span class="comment">// 设置材质-光泽度</span></div></pre></td></tr></table></figure>
+
+<p>OpenGL子程序可用<strong>常数强度表面绘制</strong>或<strong> Gouraud 表面绘制方法</strong>来显示表面。</p>
+<p>用<strong>常数强度表面绘制</strong>，即用单一颜色处理表面，称为平面明暗处理（Flat Shading），而用<strong> Gouraud 表面绘制方法</strong>则是用许多不同颜色处理，称为光滑明暗处理（Smooth Shading），也称为 Gourand 明暗处理（Gourand Shading）。</p>
+<p>在本程序中，使用光滑明暗处理，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glShadeModel(GL_SMOOTH);</div></pre></td></tr></table></figure>
+
+<h2 id="4_支持交互式输入设备">4 支持交互式输入设备</h2>
+<h3 id="4-1_GLUT_鼠标函数">4.1 GLUT 鼠标函数</h3>
+<p>在本程序中，支持通过鼠标拖动来 360 度地旋转场景中通过外部 OBJ 文件读取进来的模型。实现代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> mouseFunc(GLint button, GLint action, GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">if</span>(button == GLUT_LEFT_BUTTON)</div><div class="line">	{</div><div class="line">		<span class="keyword">switch</span>(action)</div><div class="line">		{</div><div class="line">			<span class="keyword">case</span> GLUT_DOWN:</div><div class="line">				xMouseClicked = xMouse;</div><div class="line">				yMouseClicked = yMouse;</div><div class="line">				isClicked = <span class="keyword">true</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> GLUT_UP:</div><div class="line">				isClicked = <span class="keyword">false</span>;</div><div class="line">				isDragging = <span class="keyword">false</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">		}</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">void</span> mouseMotion(GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">if</span>(!isDragging)</div><div class="line">	{</div><div class="line">		<span class="keyword">if</span>(isClicked)</div><div class="line">		{</div><div class="line">			isDragging = <span class="keyword">true</span>;</div><div class="line">		}</div><div class="line">	}</div><div class="line">	<span class="keyword">else</span>{</div><div class="line">		<span class="keyword">if</span>(isClicked)</div><div class="line">		{</div><div class="line">			<span class="comment">//......下略.....</span></div><div class="line">		}</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line">glutMouseFunc(mouseFunc);</div><div class="line">glutMotionFunc(mouseMotion);</div></pre></td></tr></table></figure>
+
+<h3 id="4-2_GLUT_键盘函数">4.2 GLUT 键盘函数</h3>
+<p>在本程序中，支持通过键盘移动场景中 4 个光源的位置。实现代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> keyboardProcess(GLubyte key, GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">switch</span>(key)</div><div class="line">	{</div><div class="line"></div><div class="line">		<span class="keyword">case</span> <span class="string">'d'</span>:								<span class="comment">// 控制灯光2</span></div><div class="line">			Light2Pos[<span class="number">0</span>] += <span class="number">0.05f</span>;<span class="keyword">break</span>;</div><div class="line">		<span class="comment">//......下略......</span></div><div class="line">		<span class="keyword">case</span> <span class="string">'1'</span>:</div><div class="line">			model_id = <span class="number">0</span>;</div><div class="line">			initGLObjects();</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">'2'</span>:</div><div class="line">			model_id = <span class="number">1</span>;</div><div class="line">			initGLObjects();</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">default</span>:</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">void</span> spkeyboardProcess(GLint key, GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">switch</span>(key)</div><div class="line">	{</div><div class="line">		<span class="keyword">case</span> GLUT_KEY_RIGHT:					<span class="comment">// 控制灯光1</span></div><div class="line">			Light1Pos[<span class="number">0</span>] += <span class="number">0.05f</span>;<span class="keyword">break</span>;</div><div class="line">			<span class="comment">//....下略....</span></div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line">glutKeyboardFunc(keyboardProcess);</div><div class="line">glutSpecialFunc(spkeyboardProcess);</div></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer>
+      
+        
+        
+<!-- Baidu Button BEGIN -->
+<div id="bdshare" class="bdshare_t bds_tools_32 get-codes-bdshare">
+<a class="bds_qzone"></a>
+<a class="bds_tsina"></a>
+<a class="bds_tqq"></a>
+<a class="bds_renren"></a>
+<a class="bds_t163"></a>
+<span class="bds_more"></span>
+<a class="shareCount"></a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=3326447" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+ <nav id="pagination" >
+    
+    <a href="/2015/01/28/Artist/" class="alignleft prev" >上一页</a>
+    
+    
+    <a href="/2015/01/26/Catch-The-Beat/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+
+
+<section id="comment">
+
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"sanderz"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->  
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+
+  <div class="widget tag">
+<h3 class="title">简介</h3>
+<ul class="entry">
+<li>SanderZ</li>
+<li>Theme: <a href="https://github.com/zippera/lightum">Lightum</a>
+<li>我的简历: <a href="">下载</a></li>
+<li>My Resume: <a href="">Download</a></li>
+<li>QQ: 375545592</li>
+<font color="red"></font>
+</ul>
+</div>
+
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><section>
+Theme of <a href="https://github.com/zippera/lightum">Lightum</a>, Improved from <a href="https://github.com/hexojs/hexo-theme-light">Light</a>, by <a href="/">zippera</a> 
+</section>
+<div class="clearfix"></div>
+</footer>
+  <script src="//libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
+
+
+

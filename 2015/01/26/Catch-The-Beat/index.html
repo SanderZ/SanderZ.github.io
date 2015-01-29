@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我做过的那些音乐类游戏——Catch The Beat 与 Unity3D 篇 | SanderZ&#39;s Blog</title>
+  <meta name="author" content="SanderZ">
+  
+  <meta name="description" content="这是本系列的第三篇文章，其他几篇的地址如下
+地址一
+地址二
+
+
+
+Catch The Beat 与 Unity3D
+大三上接触了 Unity3D 游戏引擎，发现引擎的使用确实给游戏开发带来了极大的便利，尤其是Unity有着丰富的可视化界面，使用起来比较方便。此外，随着使用引擎时接触到越来越多的概念，开发游戏时的思路也开始慢慢清晰。
+于是当时就试着用 Unity3D 引擎仿制了另一款音乐类游戏 OSU！ 中的 Catch The Beat 模式。
+Catch The Beat 作为音乐类游戏来说，比较休闲且容易上手。原本的游戏的规则是这样的：
+
+玩家控制一个托着盘子的小人左右移动，去接按照节奏落下的水果。
+水果按节奏落下，但有时相邻的两个距离很远，必须玩家按着加速键才能接到，而玩家速度过快时，又容易错过距离较近的水果。
+玩家需要尽可能地按照节奏接下全部的水果。越合拍，连续接到的水果越多，分数越高。
+
+我仿制的版本效果如下：
+视频
+
+依旧是讲一下制作时与之前不同的地方。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="我做过的那些音乐类游戏——Catch The Beat 与 Unity3D 篇"/>
+  <meta property="og:site_name" content="SanderZ&#39;s Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.ico" rel="icon" type="image/x-ico">
+  <link rel="alternate" href="/atom.xml" title="SanderZ&#39;s Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//libs.baidu.com/jquery/1.8.0/jquery.min.js"></script>
+</head>
+
+
+<body>
+  <header id="header" class="inner">
+<div class="alignleft">
+  <h1><a href="/">SanderZ&#39;s Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+      <li><a href="/about">关于</a></li>
+    
+	
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-01-26T07:35:34.000Z"><a href="/2015/01/26/Catch-The-Beat/">1月 26 2015</a></time>
+      
+      
+  
+    <h1 class="title">我做过的那些音乐类游戏——Catch The Beat 与 Unity3D 篇</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <blockquote>
+<p>这是本系列的第三篇文章，其他几篇的地址如下</p>
+<p>地址一</p>
+<p>地址二</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Catch_The_Beat_与_Unity3D">Catch The Beat 与 Unity3D</h1>
+<p>大三上接触了 Unity3D 游戏引擎，发现引擎的使用确实给游戏开发带来了极大的便利，尤其是Unity有着丰富的可视化界面，使用起来比较方便。此外，随着使用引擎时接触到越来越多的概念，开发游戏时的思路也开始慢慢清晰。</p>
+<p>于是当时就试着用 Unity3D 引擎仿制了另一款音乐类游戏 OSU！ 中的 Catch The Beat 模式。</p>
+<p>Catch The Beat 作为音乐类游戏来说，比较休闲且容易上手。原本的游戏的规则是这样的：</p>
+<ul>
+<li>玩家控制一个托着盘子的小人左右移动，去接按照节奏落下的水果。</li>
+<li>水果按节奏落下，但有时相邻的两个距离很远，必须玩家按着加速键才能接到，而玩家速度过快时，又容易错过距离较近的水果。</li>
+<li>玩家需要尽可能地按照节奏接下全部的水果。越合拍，连续接到的水果越多，分数越高。</li>
+</ul>
+<p>我仿制的版本效果如下：</p>
+<p>视频</p>
+<hr>
+<p>依旧是讲一下制作时与之前不同的地方。</p>
+<a id="more"></a>
+
+<h2 id="一、游戏功能上的完善">一、游戏功能上的完善</h2>
+<p>相较于前两次，这一次的游戏更为完整。</p>
+<p>支持键位的设定：</p>
+<p>图片</p>
+<p>可以选择不同的歌曲进行游戏：</p>
+<p>图片</p>
+<p>游戏过程中可以暂停，回到选歌界面重新选择，此外支持调节音量：</p>
+<p>图片</p>
+<p>最后一首歌曲结束后会出现评分界面：</p>
+<p>图片</p>
+<h2 id="二、2D_Toolkit_的使用">二、2D Toolkit 的使用</h2>
+<p>当时 Unity 还没有自带 2D 功能，而我要制作的是一款 2D 游戏，为此，我使用了 2D Toolkit 插件。</p>
+<p>基本上是利用插件提供的一个正交视图的摄像机。然后利用这个插件实现对精灵（Sprite）的支持。</p>
+<p>首先导入插件，然后创建 tk2d 摄像机，如下图:</p>
+<p>图片</p>
+<p>我们可以在此设置游戏的分辨率。2DToolkit 会帮助完成<strong>分辨率的适配</strong>。</p>
+<p>图片</p>
+<p>然后创建一个精灵集。精灵集是 2DToolkit 中用来存放精灵图的容器，它产生一个或多个贴图图集，替代我们的原图片从而提高性能。Project -&gt; Create -&gt; tk2d -&gt; Sprite如下图：</p>
+<p>图片</p>
+<p>然后为精灵集命名：</p>
+<p>图片</p>
+<p>打开编辑器，拖入图片资源，设置所需的碰撞盒类型：</p>
+<p>图片</p>
+<p>完成后记得点击右上角的”Commit”提交</p>
+<p>接下来就可以利用贴图集创建精灵（Sprite）了，Hierarchy -&gt; Create -&gt; tk2d -&gt; Sprite：</p>
+<p>图片</p>
+<p>最后，我们需要在代码中获取并操作精灵，大致是这样：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">tk2dSprite sprite;</div><div class="line">sprite = GetComponent&lt;tk2dSprite&gt;();</div></pre></td></tr></table></figure>
+
+<h2 id="三、NGUI_的使用">三、NGUI 的使用</h2>
+<p>虽然 2D Toolkit 也可以制作 UI，但是比较之下还是NGUI更为方便，功能也更强。因此，我在进行游戏以外的 Scene 中（包括选歌界面等）都使用的 NGUI。又因为 NGUI 和 2D Toolkit 在一个场景一起使用时，它们的Camera需要调整，比较麻烦，所以没有在进行游戏的场景中使用NGUI。</p>
+<p><strong>因为在制作这个游戏时使用的NGUI版本较老，且只是在 NGUI 官方样例的基础上进行了一些修改，主要涉及的是 <code>ScrollView</code> 的使用，此处就不展开了。具体做法我会在下一篇文章（Jubeat篇）中详细描述。</strong></p>
+<h2 id="四、编写代码时的一些不同">四、编写代码时的一些不同</h2>
+<p>程序方面，整体思路与之前差不多，但因为使用了 Unity ，编写代码要考虑它脚本的生命周期，还有他面向组件编程的特点。此外它提供了许多方便的组件，所以在具体的实现上和以往还是有许多的不同之处。总结如下。</p>
+<h3 id="1-_Unity3D中的一些重要概念">1. Unity3D中的一些重要概念</h3>
+<p>初次接触 Unity 时并没有把一些概念弄得很清楚，在脚本间相互调用时就会有些困惑。不久前 Unity 的官网更新后仔细去看了看 Doc ，在此再梳理一下 Unity 中最重要的三个基本概念。</p>
+<h4 id="a-_游戏对象（GameObject）">a. 游戏对象（GameObject）</h4>
+<p>官网Doc的描述是这样的：</p>
+<blockquote>
+<p>Every object in your game is a GameObject. However, GameObjects don’t do anything on their own. They need special properties before they can become a character, an environment, or a special effect. But every one of these objects does so many different things. If every object is a GameObject, how do we differentiate an interactive power-up object from a static room? What makes these GameObjects different from each other?</p>
+<p>The answer to this question is that GameObjects are containers. They are empty boxes which can hold the different pieces that make up a lightmapped island or a physics-driven car. So to really understand GameObjects, you have to understand these pieces; they are called Components. ……</p>
+</blockquote>
+<p>可以看到，在 Unity 中，游戏中所有物体都是游戏对象。（或者更直观具体一些，在 Hierarchy 目录下看到的所有东西都是游戏对象，<strong>Unity 是以游戏对象为单位进行操作的</strong>。）而游戏对象只是对各类物体的一个抽象，它本身是空的，什么也不做。如果希望一个游戏对象变成具体的东西，比如树、建筑、角色等等，就需要为它添加相应的行为和属性。</p>
+<p>这时就引入了组件的概念。<strong>游戏对象是组件的容器。在这个容器中加入不同的组件，就可以得到不同的游戏对象。</strong></p>
+<h4 id="b-_组件（Component）">b. 组件（Component）</h4>
+<p><strong>每个组件都有它相应的功能。它可以为一个游戏对象添加相应的属性和行为。</strong>比如 Unity 中所有的游戏对象都有的<code>Transform</code>组件，它定义了游戏对象的位置、缩放、旋转等等，添加了这个组件的游戏对象就能够被定位并进行变形。再比如，添加了碰撞盒的游戏对象就能在相互之间进行碰撞检测，产生碰撞的效果。</p>
+<h4 id="c-_脚本（Script）">c. 脚本（Script）</h4>
+<p>官网Doc的描述是这样的：</p>
+<blockquote>
+<p>When you create a script and and attach it to a GameObject, the script appears in the GameObject’s Inspector just like a Component. This is because scripts become Components when they are saved - a script is just a specific type of Component. In technical terms, a script compiles as a type of Component, and is treated like any other Component by the Unity engine. So basically, a script is a Component that you are creating yourself. You will define its members to be exposed in the Inspector, and it will execute whatever functionality you’ve written.</p>
+</blockquote>
+<p>Unity 自带组件虽然很丰富，但每个游戏都会有它独特的功能要求，只靠自带的组件是不够的。这时我们就需要通过自己编写脚本来完成这些功能。</p>
+<p>在 Unity 中，<strong>自己写的脚本其实就相当于一个自定义的组件</strong>。当我们把这个脚本附到游戏对象上时，就相当于为这个游戏对象添加了一个组件。我们完全可以在各个地方将自己写的脚本当组件来使用。</p>
+<h3 id="2-_每个游戏对象的生命周期">2. 每个游戏对象的生命周期</h3>
+<p>如下图所示：</p>
+<p>图片</p>
+<p>比较常用的有<code>Awake()</code>,<code>Start()</code>,<code>Update()</code>和<code>FixedUpdate()</code>。</p>
+<p>比如这次我就通过为<code>FixedUpdate()</code>设置一个较小的间隔来进行计时。Unity 处理的效率不错，Note 可以很好地合上拍，游戏也没有卡顿的情况出现。</p>
+<p>然后，每个脚本都有它独立的生命周期，对于自己写的脚本，各个脚本执行的先后顺序是不一定的（这一点有时会带来一些类似线程同步的麻烦）。但是也可以用如下图的方式规定它们执行的先后顺序。</p>
+<p>图片</p>
+<h3 id="3-_Prefab的使用">3. Prefab的使用</h3>
+<p>在以往的程序中，当需要大量生成相似的对象时，我会写一个类，并添加相应的属性和方法。而在Unity中，我会考虑制作一个 Prefab ,并为它添加对应的脚本。</p>
+<p>Prefab 在我的理解中相当于是一个游戏对象的模版，通过<code>Instantiate()</code>方法可以将其大量的实例化（复制作为模版的游戏对象，并放入场景中），此外在实例化的过程中，可以方便地修改每一个实例对象，使他们各不相同。</p>
+<p>比如这一次的游戏，我将 Note 制成了 Prefab，并写了一个脚本<code>NoteScript</code>让每个 Note 控制自身的行为,比如移动、销毁等等。</p>
+<h3 id="4-_各类组件的使用">4. 各类组件的使用</h3>
+<p>Unity 自带的组件很多，换句话说，很多基本的功能 Unity 已经帮我们实现了，没有特殊的需求的话，我们可以直接使用。比如，Unity 提供的碰撞盒免去了自己写碰撞检测的麻烦（碰撞检测的算法也是个可以展开深入探讨的话题），降低了开发的难度。</p>
+<h3 id="5-_Unity_的特殊文件夹——_Resources_文件夹">5. Unity 的特殊文件夹—— Resources 文件夹</h3>
+<p>为了完成可以任意选择歌曲进行游戏的功能，我需要利用程序从文件中动态地载入歌曲信息。</p>
+<p>这里就存在一个问题，从磁盘上读取音频文件后，需要转换成 Unity 的 AudioClip 类型才能使用。</p>
+<p>当时制作这个游戏的时候我是通过将歌曲文件放在 Resources 文件夹下解决的。</p>
+<blockquote>
+<p>Resources 文件夹：可以在根目录下，也可以在子目录里，只要名子叫Resources就可以。比如目录：/xxx/xxx/Resources  和 /Resources 是一样的，无论多少个叫Resources的文件夹都可以。Resources文件夹下的资源不管你用还是不用都会被打包</p>
+<p><code>Resource.Load</code> ：编辑时和运行时都可以通过Resource.Load来直接读取。</p>
+<p><code>Resources.LoadAssetAtPath()</code> ：它可以读取Assets目录下的任意文件夹下的资源，它可以在编辑时或者编辑器运行时用，它但是它不能在真机上用，它的路径是”Assets/xx/xx.xxx” 必须是这种路径，并且要带文件的后缀名。</p>
+<p><code>AssetDatabase.LoadAssetAtPath()</code>：它可以读取Assets目录下的任意文件夹下的资源，它只能在编辑时用。它的路径是”Assets/xx/xx.xxx” 必须是这种路径，并且要带文件的后缀名。</p>
+</blockquote>
+<p><strong>但这个方法存在一个严重的问题，就是文件夹下所有的文件都必须打包以后才能读到。这样一来，游戏发布以后新添加的曲子都是读不到的。后来我使用 WWW 类解决了这一问题，详细内容会在下一篇文章（Jubeat篇）中展开。</strong></p>
+<h3 id="6-_使用静态类">6. 使用静态类</h3>
+<p>将游戏中经常需要传递的值且需要保持一致的值都使用一个静态类记录，这样免去了大量获取游戏对象和组件的麻烦，且保证值是一致的。（当然，也可以用单例模式来实现，当时没有学习设计模式，使用的是静态类）</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+<!-- Baidu Button BEGIN -->
+<div id="bdshare" class="bdshare_t bds_tools_32 get-codes-bdshare">
+<a class="bds_qzone"></a>
+<a class="bds_tsina"></a>
+<a class="bds_tqq"></a>
+<a class="bds_renren"></a>
+<a class="bds_t163"></a>
+<span class="bds_more"></span>
+<a class="shareCount"></a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=3326447" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+ <nav id="pagination" >
+    
+    <a href="/2015/01/27/OpenGL/" class="alignleft prev" >上一页</a>
+    
+    
+    <a href="/2015/01/25/O2JAM/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+
+
+<section id="comment">
+
+<!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"sanderz"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->  
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+
+  <div class="widget tag">
+<h3 class="title">简介</h3>
+<ul class="entry">
+<li>SanderZ</li>
+<li>Theme: <a href="https://github.com/zippera/lightum">Lightum</a>
+<li>我的简历: <a href="">下载</a></li>
+<li>My Resume: <a href="">Download</a></li>
+<li>QQ: 375545592</li>
+<font color="red"></font>
+</ul>
+</div>
+
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><section>
+Theme of <a href="https://github.com/zippera/lightum">Lightum</a>, Improved from <a href="https://github.com/hexojs/hexo-theme-light">Light</a>, by <a href="/">zippera</a> 
+</section>
+<div class="clearfix"></div>
+</footer>
+  <script src="//libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
+
+
+

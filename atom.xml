@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-01-25T13:40:33.226Z</updated>
+  <updated>2015-01-29T06:21:55.318Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,22 +15,509 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[我做过的那些音乐类游戏——O2JAM篇]]></title>
+    <title><![CDATA[我做过的那些音乐类游戏——Jubeat与设计模式篇]]></title>
+    <link href="http://yoursite.com/2015/01/29/Jubeat/"/>
+    <id>http://yoursite.com/2015/01/29/Jubeat/</id>
+    <published>2015-01-29T04:16:00.000Z</published>
+    <updated>2015-01-29T06:20:17.854Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p>这是本系列的第四篇文章，其他几篇的地址如下</p>
+<p>地址一</p>
+<p>地址二</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Jubeat_与_Win8_触屏">Jubeat 与 Win8 触屏</h1>
+<p>Jubeat (乐动魔方) 是一款街机的音乐类游戏。街机每次玩都要投币，平板等上面的移植版本又觉得屏幕太小，一直在想要是有个支持触屏的 PC 版本多好。</p>
+<p>正好学校有大的触摸屏设备可以借我们开发使用，就试着自己用 Unity 将 Jubeat 移植到 PC 平台，用和实体的街机差不多大的触摸屏进行游戏。</p>
+<p>演示视频如下：</p>
+<p>视频</p>
+<hr>
+<p>然后总结一下开发过程中的一些要点和遇到的问题。</p>
+<h2 id="一、设计模式的使用">一、设计模式的使用</h2>
+<p>使用 Unity 的过程中，如何组织代码更加合理，一直是一个问题。初学设计模式，决定试着运用一下。</p>
+<a id="more"></a>
+
+<h3 id="1-_MVC_模式的使用">1. MVC 模式的使用</h3>
+<p>虽然不少游戏的开发可能并不适合垂直的 MVC 模式，但对于音乐类游戏来说，我认为是适用的。</p>
+<p>我使用 MVC 模式希望达到的目的是：当需要将游戏修改为另一种类型的音乐类游戏，或者改为支持多种音乐类游戏时，可以基本保持 Model 部分代码不变，只需要更换或者添加相应的 Controller 和 View 即可。</p>
+<p>下面就结合我用 VS 生成的类图来讲一下我是怎么在 Jubeat 的开发中使用 MVC 模式的。</p>
+<p>图片</p>
+<h3 id="2-_关于_Model：">2. 关于 Model：</h3>
+<p>封装内容：包括了各种音乐类游戏共有的一些<strong>数据</strong>和<strong>游戏逻辑</strong>。<strong>数据</strong>如：分数、连击数、本局游戏的音乐、音乐播放的时间、Note的列表（谱面信息），等等。<strong>逻辑</strong>如：播放音乐、添加 Note 、判断精确度，等等。</p>
+<p>上图中，<code>MugModel</code>、<code>AddNotesBehavior</code>和<code>JubeatAddBehavior</code>都属于 Model 部分。</p>
+<h4 id="a-_配合使用的策略模式">a. 配合使用的策略模式</h4>
+<p>考虑到 Model 中包含的游戏逻辑中有一部分会因为音乐游戏的玩法不同而不同，例如添加 Note 的部分和计分规则的部分。所以使用策略模式将这些会变化的部分单独封装起来，改变玩法时只需添加一个实现了对应接口的类即可。</p>
+<p>从上图中可见，这里我只将添加 Note 部分封装了起来，写了一个接口<code>AddNotesBehavior</code>，并且在<code>JubeatAddBehavior</code>中实现了这个接口。</p>
+<h4 id="b-_单例模式">b. 单例模式</h4>
+<p>此外<code>SongData</code>类记录的是选中的歌曲的谱面信息，在选歌界面和游戏时（两个 Scene）都要用到它。我需要保证它的数据在两个Scene中是一样的。</p>
+<p>为此，我试着使用单例模式，保证它只有一个实例。（在使用单例模式时遇到了一点问题，游戏对点击事件的响应变得很迟钝，此外一切正常。而在改成通过访问静态变量后就没有任何问题。暂时没有找到原因。）</p>
+<h3 id="3-_关于_View_与观察者模式">3. 关于 View 与观察者模式</h3>
+<p>封装内容：包括了各种 UI 界面元素的<strong>游戏对象</strong>和<strong>处理UI变化的逻辑</strong>。包括各种分数的 Lable 、控制 Combe 等的渐隐效果，控制背景动画随指定条件变化等等。</p>
+<p>上图中的<code>JubeatView</code>就是这次 Jubeat 游戏使用的 View ，它实现了两个接口<code>ScoreObserver</code>和<code>ComboObserver</code>，这里通过观察者模式来完成 View 和 Model 间数据的同步。</p>
+<h3 id="4-_关于_Controller">4. 关于 Controller</h3>
+<p>上图中的<code>TapResponse</code>就是这次 Jubeat 使用的 Controller。它负责的任务：获取按键的触摸事件（或鼠标点击事件），并做出相应的响应，更改 Model 中对应的内容（Note 的状态、准确度的统计信息等等）。</p>
+<h3 id="5-_Mecanim_动画系统与状态模式">5. Mecanim 动画系统与状态模式</h3>
+<p>个人的理解来看，Mecanim 的状态机帮我们实现了状态模式。使用它可以很方便地将动画播放委托给 Unity 的动画系统来处理。不同的动画对应不同的状态，我只需要在 Model 中更新相应的条件即可。然后 Unity 的动画系统会自动根据条件的变化完成状态的切换，即切换不同的动画。</p>
+<p>通过上述的方式，尽量使脚本间的关系接近右图的情况。避免了左图中情况的出现（会导致代码难以维护、修改）。</p>
+<p>图片</p>
+<h2 id="二、使用_WWW_类在运行时载入本地的资源">二、使用 WWW 类在运行时载入本地的资源</h2>
+<h3 id="1-_读取歌曲信息以及在选歌界面的歌曲预览">1. 读取歌曲信息以及在选歌界面的歌曲预览</h3>
+<p>这一次我选择使用国人制作的Jubeat的安卓移植版本 Andjuist 的谱面文件。大致格式如下：</p>
+<p>图片</p>
+<p>首先我利用 C# 自带的 IO 类写了一个用于读取文本文件的工具类<code>FileReader</code>，代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> FileReader{</div><div class="line"></div><div class="line">    <span class="comment">//打开文本文件，逐行读出，并返回一个ArrayList</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> ArrayList <span class="title">LoadFile</span>(<span class="keyword">string</span> path, <span class="keyword">string</span> name)</div><div class="line">    {</div><div class="line">        StreamReader sr = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span></div><div class="line">        {</div><div class="line">            Debug.Log(path);</div><div class="line">            sr = File.OpenText(path + <span class="string">"//"</span> + name);</div><div class="line">            Debug.Log(<span class="string">"opened"</span>);</div><div class="line">        }</div><div class="line">        <span class="keyword">catch</span> (Exception e)</div><div class="line">        {</div><div class="line">            Debug.Log(<span class="string">"failed"</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keyword">string</span> line;</div><div class="line"></div><div class="line">        ArrayList arrlist = <span class="keyword">new</span> ArrayList();</div><div class="line">        <span class="keyword">while</span> ((line = sr.ReadLine()) != <span class="keyword">null</span>)</div><div class="line">        {</div><div class="line">            arrlist.Add(line);</div><div class="line">        }</div><div class="line"></div><div class="line">        sr.Close();</div><div class="line"></div><div class="line">        sr.Dispose();</div><div class="line"></div><div class="line">        <span class="keyword">return</span> arrlist;</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>谱面的信息包括：</p>
+<ol>
+<li>歌曲封面（图片文件）</li>
+<li>歌曲信息（如曲名、作者等，文本文件）</li>
+<li>歌曲（音频文件）</li>
+<li>谱面（文本文件）。</li>
+</ol>
+<p>在选歌界面时，首要的是要读取第一个和第二个信息，考虑到要实现在选歌界面对歌曲的试听，所以也要读取第三个信息。第四个信息可以在选定歌曲进入游戏时进行读取。</p>
+<p>读取前三个时，首先。利用 <code>Application.dataPath</code> 获取到游戏当前所在的目录（输出得到的是带盘符的绝对路径）。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">string</span> songsPath;</div><div class="line">songsPath = Application.dataPath + <span class="string">"/songs"</span>;</div></pre></td></tr></table></figure>
+
+<p>然后就可以利用 WWW 类来进行读取了，它的方便之处在于它可以直接将读取到的音频文件变为 <code>AudioClip</code> ，将图片文件变为 <code>Texture</code>。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//读磁盘文件，载入并生成选歌列表</span></div><div class="line">IEnumerator LoadAllSongs()</div><div class="line">{</div><div class="line">    <span class="comment">//利用 C# 的 Directory 类，获取当前目录下所有歌曲的目录</span></div><div class="line">    <span class="keyword">string</span>[] songs = Directory.GetDirectories(songsPath);</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; songs.Length; ++i)</div><div class="line">    {</div><div class="line">        <span class="comment">//从磁盘载入音频文件</span></div><div class="line">        <span class="keyword">string</span> songNamePath = songs[i].Replace(<span class="string">"\\"</span>,<span class="string">"/"</span>);</div><div class="line">        <span class="keyword">string</span> musicURL = <span class="string">"file:///"</span> + songNamePath + <span class="string">"/song.ogg"</span>;</div><div class="line">        WWW www = <span class="keyword">new</span> WWW(musicURL);</div><div class="line">        AudioClip clip = www.audioClip;</div><div class="line">        <span class="keyword">while</span> (!clip.isReadyToPlay)</div><div class="line">        {</div><div class="line">            <span class="comment">//Debug.Log(www.isDone);</span></div><div class="line">            <span class="keyword">yield</span> <span class="keyword">return</span> www; </div><div class="line">        }</div><div class="line">        <span class="comment">//Debug.Log("compelete");</span></div><div class="line"></div><div class="line">        <span class="comment">//从磁盘载入对应专辑封面</span></div><div class="line">        <span class="keyword">string</span> picURL = <span class="string">"file:///"</span> + songNamePath + <span class="string">"/pic.jpg"</span>;</div><div class="line">        WWW wwwPic = <span class="keyword">new</span> WWW(picURL);</div><div class="line">        Texture picture = wwwPic.texture;</div><div class="line">        <span class="comment">//Debug.Log(wwwPic.isDone);</span></div><div class="line">        <span class="keyword">yield</span> <span class="keyword">return</span> wwwPic;</div><div class="line">        <span class="comment">//Debug.Log("compelete");</span></div><div class="line"></div><div class="line">        <span class="comment">//从磁盘载入歌曲信息</span></div><div class="line">        ArrayList songInfo = FileReader.LoadFile(songs[i], <span class="string">"manifest.txt"</span>);</div><div class="line"></div><div class="line">		<span class="comment">//......至此已读取到需要的信息，处理并利用信息生成选歌列表中的标签部分省略......</span></div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h3 id="2-_与使用_Resources_的比较">2. 与使用 Resources 的比较</h3>
+<p>我希望实现的效果是：玩家可以向指定的文件夹中任意增加或删除谱面，然后在游戏中刷新（或重启游戏），就可以在游戏中看到变化。</p>
+<p>之前使用 Resources 来实现，就存在一个资源打包的问题，打不到这样的效果。而使用 WWW 类则不需要对资源进行打包，可以及时反映指定目录下文件的变化。</p>
+<h3 id="3-_存在的问题及反思">3. 存在的问题及反思</h3>
+<p>在上面的实现中，我一次性将所有的音频文件都读取了进来，这样就会<strong>导致歌曲较多时进入选歌界面载入很慢</strong>。更好的办法是当选中一首歌时，再将它的音频文件读取进来，虽然这样会使在选歌界面预览时有一个延迟，但并不明显。</p>
+<h2 id="三、NGUI的使用">三、NGUI的使用</h2>
+<h3 id="1-_制作选歌界面">1. 制作选歌界面</h3>
+<p>效果可见上面的视频，再放一张效果图：</p>
+<p>图片</p>
+<h4 id="a-_ScrollView_的使用">a. ScrollView 的使用</h4>
+<p>首先在场景中搭好基本的框架。网上教程很多，也可以在自带的例子的基础上进行修改，在此不再赘述。搭好以后的结构如图：</p>
+<p>图片</p>
+<p>然后对 ScrollView 进行一些设置：</p>
+<p>图片</p>
+<p>接着给 Grid 添加 UIGrid 脚本，并设置为纵向。</p>
+<p>图片</p>
+<p><strong>UIGrid 会将它的子物体按设置自动进行排序。这样我们只需要考虑如何为 UIGrid 添加子物体，而不需要考虑为添加的子物体排序的具体实现。</strong>可以很方便地实现一个竖排的选歌列表。</p>
+<p>这里，我将每个谱面对应的标签作为子物体。就是下图这个：</p>
+<p>图片</p>
+<p>在添加之前，我们先制作一个这样的标签，并将它做成一个Prefab，如下图：</p>
+<p>图片</p>
+<p>这样，生成选歌列表时就可以根据读到的歌曲的数量，生成相应数量的标签，而且可以通过程序给每个标签的内容做修改。</p>
+<p>此外，在将标签做成 Prefab 之前，需要为它添加按键相关的组件，然后添加一个获取当前标签信息并跳转至游戏界面的脚本。这样就可以保证点击每个项后都可以选择对应的歌曲进入游戏。</p>
+<h4 id="b-_通过脚本进行控制">b. 通过脚本进行控制</h4>
+<p>现在准备工作已经完成，可以添加对应的脚本进行控制了。</p>
+<p>首先，我先定义了一个类<code>SongListItem</code>，来描述选歌列表中每个标签，每个标签都会被抽象为这个类的一个对象，对象的属性值对应着标签上的内容。代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> SongListItem</div><div class="line">{</div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> path;            <span class="comment">//当前项对应路径</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> songName;        <span class="comment">//当前项对应曲名</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> composer;        <span class="comment">//作者</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">float</span> BPM;             </div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> <span class="keyword">from</span>;            <span class="comment">//来源</span></div><div class="line">    <span class="keyword">private</span> AudioClip music;        <span class="comment">//对应音频文件</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span>[] levels;           <span class="comment">//</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> level;              <span class="comment">//当前曲难度</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">string</span> levelString;     </div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;                 <span class="comment">//当前是第几首歌</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">bool</span> isSelected;        <span class="comment">//当前项是否被选中</span></div><div class="line">    <span class="keyword">private</span> Texture picture;        <span class="comment">//当前项对应专辑封面</span></div><div class="line"></div><div class="line">    <span class="comment">//构造函数，初始化各项值</span></div><div class="line">    <span class="keyword">public</span> <span class="title">SongListItem</span>(<span class="keyword">string</span> path, <span class="keyword">string</span> songName, <span class="keyword">string</span> composer, <span class="keyword">float</span> BPM, <span class="keyword">string</span> <span class="keyword">from</span>, AudioClip music, <span class="keyword">int</span> level, <span class="keyword">string</span> levelString, <span class="keyword">int</span> id, <span class="keyword">bool</span> isSelected, Texture picture)</div><div class="line">    {</div><div class="line">        <span class="keyword">this</span>.path = path;</div><div class="line">        <span class="keyword">this</span>.songName = songName;</div><div class="line">        <span class="keyword">this</span>.composer = composer;</div><div class="line">        <span class="keyword">this</span>.BPM = BPM;</div><div class="line">        <span class="keyword">this</span>.<span class="keyword">from</span> = <span class="keyword">from</span>;</div><div class="line">        <span class="keyword">this</span>.music = music;</div><div class="line">        <span class="keyword">this</span>.level = level;</div><div class="line">        <span class="keyword">this</span>.levelString = levelString;</div><div class="line">        <span class="keyword">this</span>.id = id;</div><div class="line">        <span class="keyword">this</span>.isSelected = isSelected;</div><div class="line">        <span class="keyword">this</span>.picture = picture;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span></span></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> 相应属性的get、set方法，下略</span></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span></span></div><div class="line">    <span class="comment"><span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;returns&gt;</span><span class="xmlDocTag">&lt;/returns&gt;</span></span></div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>然后我需要将每一个对象都按生成顺序存储下来，这样我才能从程序中获得是哪一项被选中了。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> List&lt;SongListItem&gt; songItems;</div></pre></td></tr></table></figure>
+
+<p>刚刚已经从磁盘上获取到了生成选歌列表所需的信息，接下来就补上刚刚省略的部分，利用这些信息创建选歌列表。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//从磁盘载入歌曲信息</span></div><div class="line">ArrayList songInfo = FileReader.LoadFile(songs[i], <span class="string">"manifest.txt"</span>);</div><div class="line"><span class="keyword">if</span> (songInfo.Count &gt; <span class="number">0</span>)</div><div class="line">{</div><div class="line">    <span class="comment">//对从文本文件读取到的信息进行字符串操作，提取出需要的内容</span></div><div class="line">    <span class="keyword">string</span> path = songs[i];</div><div class="line">    <span class="keyword">string</span> songName = songInfo[<span class="number">2</span>].ToString().Substring(<span class="number">5</span>, songInfo[<span class="number">2</span>].ToString().Length-<span class="number">5</span>);</div><div class="line">    <span class="keyword">string</span> composer = songInfo[<span class="number">3</span>].ToString().Substring(<span class="number">9</span>, songInfo[<span class="number">3</span>].ToString().Length-<span class="number">9</span>);</div><div class="line">    <span class="keyword">float</span> BPM = <span class="keyword">float</span>.Parse(songInfo[<span class="number">4</span>].ToString().Substring(<span class="number">4</span>, songInfo[<span class="number">4</span>].ToString().Length-<span class="number">4</span>));</div><div class="line">    <span class="keyword">string</span> <span class="keyword">from</span> = songInfo[<span class="number">5</span>].ToString().Substring(<span class="number">5</span>, songInfo[<span class="number">5</span>].ToString().Length-<span class="number">5</span>);</div><div class="line">    <span class="keyword">string</span>[] levelString = songInfo[<span class="number">6</span>].ToString().Substring(<span class="number">6</span>, songInfo[<span class="number">6</span>].ToString().Length - <span class="number">6</span>).Split(<span class="string">','</span>);</div><div class="line">    <span class="keyword">int</span>[] levels = { <span class="keyword">int</span>.Parse(levelString[<span class="number">0</span>]), <span class="keyword">int</span>.Parse(levelString[<span class="number">1</span>]), <span class="keyword">int</span>.Parse(levelString[<span class="number">2</span>]) };</div><div class="line"></div><div class="line">    AudioClip music = clip;</div><div class="line"></div><div class="line">    <span class="comment">//为同一首歌的每个难度都创建一个标签</span></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; ++j)</div><div class="line">    {</div><div class="line">        <span class="keyword">string</span> levelStr = <span class="string">"BASIC"</span>;</div><div class="line">        <span class="keyword">switch</span> (j)</div><div class="line">        {</div><div class="line">            <span class="keyword">case</span> <span class="number">0</span>: levelStr = <span class="string">"BASIC"</span>; <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">1</span>: levelStr = <span class="string">"ADVANCED"</span>; <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">2</span>: levelStr = <span class="string">"EXTREME"</span>; <span class="keyword">break</span>;</div><div class="line">        }</div><div class="line">		<span class="comment">//新建一个标签对象，修改对应的内容后加入到列表中</span></div><div class="line">        SongListItem item = <span class="keyword">new</span> SongListItem(path, songName, composer, BPM, <span class="keyword">from</span>, music, levels[j], levelStr, i, <span class="keyword">false</span>, picture);</div><div class="line">        songItems.Add(item);</div><div class="line">        <span class="comment">//根据 Prefab 实例化标签对象，修改对应的内容后放入场景中。</span></div><div class="line">        InitiateSongListItem(item);</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h4 id="c-_中间大两头小的效果的实现">c. 中间大两头小的效果的实现</h4>
+<p>为了画面效果的美观，我实现了一个在滚动过程中保持两头的标签小，中间的标签大的效果。</p>
+<p>实现方法大致如下。为 Prefab 添加一个对应的脚本。这个脚本会根据当前标签的 y 坐标来对当前标签进行缩放。</p>
+<p>图片</p>
+<p>关键的代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">float</span> currentScale = <span class="number">1</span> - Mathf.Abs(<span class="keyword">this</span>.transform.position.y) / <span class="number">2.0</span>f;</div><div class="line"><span class="keyword">this</span>.transform.localScale = <span class="keyword">new</span> Vector3(currentScale, currentScale, currentScale);</div></pre></td></tr></table></figure>
+
+<h3 id="2-_在游戏主界面中的应用">2. 在游戏主界面中的应用</h3>
+<p>效果图：</p>
+<p>图片</p>
+<p>其中，歌曲封面、曲名等文字信息、Combo 数、以及暂停和返回按键都使用了 NGUI。</p>
+<p>图片</p>
+<h2 id="四、使用插件_TouchScript_支持_Win8_的多点触屏输入">四、使用插件 TouchScript 支持 Win8 的多点触屏输入</h2>
+<p>使用原型测试时的效果:</p>
+<p>视频</p>
+<h3 id="1-_TouchScript_的使用">1. TouchScript 的使用</h3>
+<p>因为 PC 的多点的触屏设备使用的 TUIO 协议，不能使用 Unity 的 Input 来处理，后来我找到了 TouchScript 插件。TouchScript 是一款开源的插件。详情见它的官网 <a href="touchScript.github.io">touchScript.github.io</a>。</p>
+<h4 id="a-_TouchScript_的一些基本概念">a. TouchScript 的一些基本概念</h4>
+<ol>
+<li>Input Sources （输入源）：用于获得不同类型触屏的输入，包括<code>MouseInput</code>、<code>MobileInput</code>、<code>TUIOInput</code>、<code>Win7TouchInput</code>和<code>Win8TouchInput</code>。</li>
+<li>Layers （层）：层是 TouchScript 中一个重要的概念。当从 Input Sources 中获取到触摸输入后，TouchScript 需要确定这个触摸事件是否点在了场景中的任意物体上。TouchScript 通过一系列排好序的层来完成这件事。比如，用 CameraLayer2D 处理有着 2D 碰撞盒的 2D 物体。</li>
+<li>Touch Manager （触摸管理）：通过 Touch Manager 我们可以指定场景中哪些层（TouchScript中的层）可以接受触摸输入。</li>
+<li>Gestures （手势）：手势包含了一系列的组件，添加了这些组件的游戏对象就可以响应相应的的手势。包括<code>Pan Gesture</code>（按住平移）、<code>Press Gesture</code>（按下）、<code>Release Gesture</code>（放开）、<code>LongPress Gesture</code>（长按）、<code>Flick Gesture</code>（快速轻击）几种。</li>
+</ol>
+<h4 id="b-_在场景中的一些准备工作">b. 在场景中的一些准备工作</h4>
+<p>为了在场景中使用 TouchScript，在导入插件后</p>
+<ul>
+<li>首先我们需要在场景中创建一个空物体，命名为<code>TouchScript</code>。然后为它添加组件<code>TouchManager</code>。</li>
+<li>接着我们在<code>TouchScript</code>下创建一个子物体，为它添加我们组件<code>Mouse Input</code>和<code>win 8Touch Input</code>（你需要哪些输入源就增加哪些，具体可见官网 wiki）</li>
+<li>为了方便调试，从插件的 Prefab 目录下找到 <code>Touch Debugger</code>，将它加入场景中</li>
+</ul>
+<p>如下图所示：</p>
+<p>图片</p>
+<p>完成这些工作以后，就可以先 Build 一次，测试是否配置正确，可以支持多点触控了。</p>
+<h4 id="c-_Gesture_的使用">c. Gesture 的使用</h4>
+<p>接下来为需要相应触屏事件的游戏对象添加相应的 Gesture （手势），如下图：</p>
+<p>图片</p>
+<p>对应的关键代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> TapResponse : MonoBehaviour {</div><div class="line"></div><div class="line">    <span class="comment">//....成员变量，略......</span></div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnEnable</span>()</div><div class="line">    {</div><div class="line">        <span class="comment">//初始化成员变量部分略，此处添加对触屏事件的响应</span></div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;PressGesture&gt;().Pressed += tappedHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;ReleaseGesture&gt;().Released += releaseHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;SimplePanGesture&gt;().StateChanged += panHandler;</div><div class="line"></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnDisable</span>()</div><div class="line">    {</div><div class="line">        <span class="comment">//销毁时移除对触屏事件的响应</span></div><div class="line">        GetComponent&lt;PressGesture&gt;().Pressed -= tappedHandler;</div><div class="line">        GetComponent&lt;ReleaseGesture&gt;().Released -= releaseHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;SimplePanGesture&gt;().StateChanged -= panHandler;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//按下时平移</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">panHandler</span>(<span class="keyword">object</span> sender, GestureStateChangeEventArgs e)</div><div class="line">    {</div><div class="line">        <span class="comment">//......内容略，见下文......</span></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">tappedHandler</span>(<span class="keyword">object</span> sender, EventArgs e)</div><div class="line">    {</div><div class="line">        onTapDown();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">releaseHandler</span>(<span class="keyword">object</span> sender, EventArgs e)</div><div class="line">    {</div><div class="line">        onTapUp();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//........下略......</span></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>TouchScript 基于手势的做法虽然方便，但是对我来说却造成了一定的麻烦。因为它的手势是与游戏对象绑定的，<strong>每个游戏对象单独响应作用在它上的手势事件</strong>。</p>
+<p>而由于在 Jubeat 中，我使用 Prefab 将 16 个按键实例化出来，它们都是相互独立的游戏对象。当我按住一个按键 A 不放，然后移动到下一个按键 B 的位置上，响应的仍然是按键 A 的手势事件，而不是我要的触发按键 B 的手势事件。</p>
+<h3 id="2-_关于射线">2. 关于射线</h3>
+<p>为了解决刚刚提到的问题，我不得不将每个触摸的点的位置获取出来后，重新利用 Unity 中的射线检测是否移动到了别的按键的位置上，并将那个按键获取出来，然后调用其中对应的方法来实现点击。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">panHandler</span>(<span class="keyword">object</span> sender, GestureStateChangeEventArgs e)</div><div class="line">{</div><div class="line">    <span class="comment">//从 TouchScript 的手势中获取当前触摸到的点的位置</span></div><div class="line">    <span class="keyword">var</span> gesture = sender <span class="keyword">as</span> SimplePanGesture;</div><div class="line">    ITouchHit Ihit;</div><div class="line">    gesture.GetTargetHitResult(<span class="keyword">out</span> Ihit);</div><div class="line">    <span class="keyword">var</span> hit2d = Ihit <span class="keyword">as</span> ITouchHit2D;</div><div class="line">    <span class="keyword">if</span> (hit2d == <span class="keyword">null</span>)</div><div class="line">    {</div><div class="line">        previousTapbox.GetComponent&lt;TapResponse&gt;().onTapUp();</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//从触摸到的点的位置发出一条射线</span></div><div class="line">    RaycastHit2D hit = Physics2D.Raycast(hit2d.Point, Vector2.zero);</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (hit != <span class="keyword">null</span> && hit.collider != <span class="keyword">null</span>)</div><div class="line">    {</div><div class="line">		<span class="comment">//获取当前触摸到的点实际在哪个按键上，并将那个按键设为按下，松开当前按键</span></div><div class="line">        currentTapbox = hit.transform.gameObject;</div><div class="line">        <span class="keyword">if</span> (currentTapbox != previousTapbox)</div><div class="line">        {</div><div class="line"></div><div class="line">            previousTapbox.GetComponent&lt;TapResponse&gt;().onTapUp();</div><div class="line">            currentTapbox.GetComponent&lt;TapResponse&gt;().onTapDown();</div><div class="line">        }</div><div class="line">        previousTapbox = currentTapbox;</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h3 id="TouchScript_与_NGUI_的冲突问题及其解决">TouchScript 与 NGUI 的冲突问题及其解决</h3>
+<p>使用过程中还遇到了 TouchScript 与 NGUI 产生冲突导致 NGUI 的按键等不能正常响应的问题。</p>
+<p>解决方法见<a href="https://github.com/TouchScript/TouchScript/issues/6" target="_blank" rel="external">https://github.com/TouchScript/TouchScript/issues/6</a></p>
+<h2 id="五、Unity_Native_2D_的使用">五、Unity Native 2D 的使用</h2>
+<p>这一次改用 Unity 原生的 2D 系统，感觉与使用 2D Toolkit 时感觉差不多，区别是不需要建立精灵集以后才能创建精灵。</p>
+<p>遇到一个问题就是Unity 原生 2D 的 Sorting Layer 和 NGUI 的 Widget 的 Depth 属性有有冲突，层的前后关系会有问题。</p>
+<h2 id="六、使用_Mecanim_动画系统控制动画">六、使用 Mecanim 动画系统控制动画</h2>
+<h3 id="Note_根据不同的判定结果显示不同的动画">Note 根据不同的判定结果显示不同的动画</h3>
+<p>如图</p>
+<p>图片</p>
+<h3 id="背景动画根据指定条件改变">背景动画根据指定条件改变</h3>
+<p>在 Jubeat 原版游戏的规则中，打完曲子最多有 900000 分，此外根据“连续不失误”的数量会得到一个 0~1的系数，然后用这个系数乘以100000，得到额外的加分，两者相加得到总分。</p>
+<p>游戏过程中背景动画像从中间逐渐散开的云，慢慢露出底下的内容。而这个背景动画展开的程度，就表示当前加分的系数。系数为1时，完全展开，系数为0时，完全闭合。</p>
+<p>图片</p>
+<p>这个系数游戏过程中一直在变化，打出 perfect 或 good，这个系数会增大，反之则会减小。相应的，背景动画展开的程度也会跟着变化。</p>
+<p>为了实现这个功能，我将背景从完全闭合到完全展开的动画分成了10段，每段循环播放，对应加分系数 0~0.1 ， 0.1~0.2 等十个区间。如图：</p>
+<p>图片</p>
+<p>此外，结束后，还要有一个评级的动画，因为也属于背景动画。也做在了一起。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<blockquote>
+<p>这是本系列的第四篇文章，其他几篇的地址如下</p>
+<p>地址一</p>
+<p>地址二</p>
+</blockquote>
+<!-- more -->
+
+<h1 id="Jubeat_与_Win8_触屏">Jubeat 与 Win8 触屏</h1>
+<p>Jubeat (乐动魔方) 是一款街机的音乐类游戏。街机每次玩都要投币，平板等上面的移植版本又觉得屏幕太小，一直在想要是有个支持触屏的 PC 版本多好。</p>
+<p>正好学校有大的触摸屏设备可以借我们开发使用，就试着自己用 Unity 将 Jubeat 移植到 PC 平台，用和实体的街机差不多大的触摸屏进行游戏。</p>
+<p>演示视频如下：</p>
+<p>视频</p>
+<hr>
+<p>然后总结一下开发过程中的一些要点和遇到的问题。</p>
+<h2 id="一、设计模式的使用">一、设计模式的使用</h2>
+<p>使用 Unity 的过程中，如何组织代码更加合理，一直是一个问题。初学设计模式，决定试着运用一下。</p>
+]]>
+    
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[偶尔也客串一回美术设计]]></title>
+    <link href="http://yoursite.com/2015/01/28/Artist/"/>
+    <id>http://yoursite.com/2015/01/28/Artist/</id>
+    <published>2015-01-28T05:49:38.000Z</published>
+    <updated>2015-01-29T05:52:39.494Z</updated>
+    <content type="html"><![CDATA[<p>稍后更新。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>稍后更新。</p>
+]]>
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[使用 OpenGL 进行多光源场景绘制]]></title>
+    <link href="http://yoursite.com/2015/01/27/OpenGL/"/>
+    <id>http://yoursite.com/2015/01/27/OpenGL/</id>
+    <published>2015-01-27T09:06:27.000Z</published>
+    <updated>2015-01-29T05:39:54.494Z</updated>
+    <content type="html"><![CDATA[<a id="more"></a>
+
+<h1 id="基于_OpenGL_的多光源场景绘制">基于 OpenGL 的多光源场景绘制</h1>
+<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。</p>
+<p>效果如下：</p>
+<p>图片</p>
+<p>视频</p>
+<a id="more"></a>
+
+<h2 id="1_OpenGL">1 OpenGL</h2>
+<p>OpenGL 是个跨平台的专业的图形程序接口，是一个功能强大，调用方便的底层图形库。它被广泛地应用于三维图形设计的各个领域，例如三维游戏、虚拟现实技术、三维图形与动画绘制、和计算机可视化等等。在三维图形设计中，三维场景和物体的绘制以及光照效果的表现是其中非常重要的两个问题。利用 OpenGL 可以较为简便地解决上述两个问题。</p>
+<h2 id="2_三维场景的绘制与观察">2 三维场景的绘制与观察</h2>
+<h3 id="2-1_OpenGL_中的观察变换">2.1 OpenGL 中的观察变换</h3>
+<p>在 OpenGL 中，三维图形的绘制与观察需要经过视点变换、模型变换、投影变换、视口变换几个步骤。经历以上几步后，三维物体就可以在计算机的显示器上以二维的形式表现出来。这个过程可以类比为相机拍照。</p>
+<ul>
+<li>第一步：<strong>视点变换</strong>，可以类比为确定相机位置，让相机对准三维物体；</li>
+<li>第二步：<strong>模型变换</strong>，即将三维物体放在场景中适当的位置；</li>
+<li>第三步：<strong>投影变换</strong>，可以类比为将三维物体投影在胶片上；</li>
+<li>第四步：<strong>视口变换</strong>，确定裁剪窗口的尺寸<h4 id="2-1-1_模型变换和视图变换">2.1.1 模型变换和视图变换</h4>
+在观察一个三维物体时，移动物体或者移动观察点都能使观察点与三维物体之间的相对位置发生变化，这种相对位置关系决定了观察的效果。</li>
+</ul>
+<p>在 OpenGL 中，模型和观察点的变换都能够通过矩阵运算来实现。在进行变换前，需先设置当前操作的矩阵为模型视图矩阵，像这样：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glMatrixMode(GL_MODELVIEW);</div></pre></td></tr></table></figure>
+
+<p>通常，在进行变换前，还需要把指定的当前操作的矩阵设置为单位矩阵，这需要一个函数： <code>glLoadIdentity()</code></p>
+<p>然后，就可以进行模型变换和视图变换了。进行模型和视图变换，主要涉及到三个几何变换函数：</p>
+<ol>
+<li><code>glTranslate*</code>，把当前矩阵和一个用于移动物体的矩阵相乘。后者的三个参数分别表示了在三个坐标上的位移值。</li>
+<li><code>glRotate*</code>，把当前矩阵和一个用于旋转物体的矩阵相乘。物体将绕着(0,0,0)到(x,y,z)的直线以逆时针旋转，参数<code>angle</code>表示旋转的角度。</li>
+<li><code>glScale*</code>，把当前矩阵和一个用于缩放物体的矩阵相乘。x,y,z 分别表示在该方向上的缩放比例。</li>
+</ol>
+<h4 id="2-1-2_投影变换和视区变换">2.1.2 投影变换和视区变换</h4>
+<p>投影变换的作用是将三维的观察坐标系中的对象投影到二维的显示平面中。在确定进行投影变换之前，需要指当前操作的矩阵为投影矩阵，并将其设置为单位矩阵，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">glMatrixMode(GL_PROJECTION);</div><div class="line">glLoadIdentity();</div></pre></td></tr></table></figure>
+
+<p>然后再确定投影方式进行投影变换。OpenGL 中提供了两种投影方式，一种是正交投影（Orthographic Projection），另一种是透视投影（Perspective Projection）。在本例中，使用的是透视投影方式。代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gluPerspective(<span class="number">45.0f</span>,(GLfloat)width/(GLfloat)height,<span class="number">0.001f</span>,<span class="number">100.0f</span>);</div></pre></td></tr></table></figure>
+
+<p>它确定一个棱台为视域体，这个区域里面的对象才能被观察到，这个区域之外的对象被裁剪掉，不会出现在图像中，如下图所示。</p>
+<h4 id="2-1-3_OpenGL_中的深度缓存函数">2.1.3 OpenGL 中的深度缓存函数</h4>
+<p>在 OpenGL 中，如果不对面的深度加以判断，那么各个面将按照程序代码中定义的先后顺序进行绘制。在同一位置上，后绘制的面总是会将先绘制的面覆盖，哪怕后绘制的面实际应该是被先绘制的面遮挡住而不可见的。<br>因此，需要启动深度缓存检测，使得显示模式包含深度缓存，保证面的正确绘制。代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glutInitDisplayMode (GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);</div></pre></td></tr></table></figure>
+
+<p>深度缓存的初始化：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glClearDepth(<span class="number">1.0f</span>);</div></pre></td></tr></table></figure>
+
+<p>启动深度缓存检测：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glEnable(GL_DEPTH_TEST);</div></pre></td></tr></table></figure>
+
+
+<h3 id="2-2_外部模型文件的导入">2.2 外部模型文件的导入</h3>
+<p>使用 OBJ 文件库<code>glm.h</code>和<code>glm.cpp</code>实现，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> initGLObjects()										</div><div class="line">{</div><div class="line">	<span class="keyword">switch</span>(model_id)</div><div class="line">	{</div><div class="line">		<span class="keyword">case</span> <span class="number">0</span>:</div><div class="line">			glm_model= glmReadOBJ( <span class="string">"DATA/venus.obj"</span> );<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="number">1</span>:</div><div class="line">			glm_model= glmReadOBJ( <span class="string">"DATA/al.obj"</span> );<span class="keyword">break</span>;</div><div class="line"></div><div class="line">	}</div><div class="line">	glmUnitize( glm_model );</div><div class="line">	glmScale( glm_model, <span class="number">3</span> );</div><div class="line">	glmFacetNormals( glm_model );</div><div class="line">	glmVertexNormals( glm_model, <span class="number">90</span> );</div><div class="line"></div><div class="line">	list_id = glmList( glm_model, GLM_MATERIAL | GLM_SMOOTH );</div><div class="line"></div><div class="line">	glmDelete( glm_model );</div><div class="line"></div><div class="line">	<span class="keyword">return</span> TRUE;										</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<h2 id="3_OpenGL_光照和表面绘制函数">3 OpenGL 光照和表面绘制函数</h2>
+<h3 id="3-1_OpenGL_光照模型">3.1 OpenGL 光照模型</h3>
+<p>在 OpenGL 采用的简单光照模型中反射光可以分成三个分量：环境反射光（Ambient Light）、漫反射光（Diffuse Light）和镜面反射光（Specular Light）。</p>
+<ul>
+<li><strong>环境光</strong>：场景中的所有顶点都被这个分量影响。当一条光线击中物体表面时，它会均匀地向各个方向散射。在许多次表面的反射后，光看上去从各个方向而来。而OpenGL中的环境光部分就对应于这种物理现象。 </li>
+<li><strong>漫反射光</strong>：当一束平行的入射光线照射到粗糙的表面时，因表面凹凸不平，造成反射光线向不同的方向无规则地反射，这种反射称之为“漫反射”或“漫射”。这个反射的光则称为漫反射光。</li>
+<li><strong>镜面反射光</strong>：镜面反射是光照射在镜面或金属表面时产生的高光分量。<h3 id="3-2_光源">3.2 光源</h3>
+<h4 id="3-2-1_OpenGL_点光源">3.2.1 OpenGL 点光源</h4>
+使用三个 RGB 分量指定的单个颜色的点光源是发光体的最简单的模型。一个场景的点光源通过给出其位置和发射光颜色来定义。本程序中代码如下：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">GLfloat Light2Pos[] = { <span class="number">5.0f</span>, -<span class="number">7.0f</span>, -<span class="number">9.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light2Amb[] = { <span class="number">0.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			 </div><div class="line">GLfloat Light2Dif[] = { <span class="number">1.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			 </div><div class="line">GLfloat Light2Spc[] = {-<span class="number">0.2f</span>, -<span class="number">0.2f</span>, -<span class="number">0.2f</span>, <span class="number">1.0f</span>};			</div><div class="line"></div><div class="line">glLightfv(GL_LIGHT2, GL_AMBIENT, Light2Amb);			</div><div class="line">glLightfv(GL_LIGHT2, GL_DIFFUSE, Light2Dif);			</div><div class="line">glLightfv(GL_LIGHT2, GL_SPECULAR, Light2Spc);		</div><div class="line">glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,<span class="number">0.05</span>);</div></pre></td></tr></table></figure>
+
+<h4 id="3-2-2_OpenGL_方向光源">3.2.2 OpenGL 方向光源</h4>
+<p>方向光源可以进一步定义成聚光灯形式，即将光的形状限制在一个圆锥内。</p>
+<p>在 OpenGL 中通过<strong>聚光截止角</strong>、<strong>聚光方向</strong>、<strong>聚光指数</strong>几个分量来描述一个聚光灯。</p>
+<ul>
+<li><strong>聚光截止角</strong>：参数<code>GL_SPOT_CUTOFF</code>描述聚光灯光锥的轴线与其中心线的夹角，即光锥顶角的一半。当该参数缺省时，其值为 180.0，即光锥的顶角为 360 度，光向所有的方向发射，相当于点光源。在本程序中代码如下：</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, <span class="number">30</span>);</div></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>聚光方向</strong>：聚光方向决定光锥的轴向，通过齐次坐标进行描述，其默认值为(0.0, 0.0, -1.0)，即指向Z轴负轴。在进行模型变换和视点变换时，聚光方向也要进行几何变换，其结果将保存为视点坐标系下的坐标。</li>
+<li><strong>聚光指数</strong>：参数<code>GL_SPOT_EXPONENT</code>描述光的集中程度，光锥中心的光强最大，从轴线向母线移动时光强逐渐衰减，缺省时为 0 。聚光指数越大，光源的聚焦效果越好。  除了定义聚光指数控制光锥内光强的分布，还可同时利用定位光源的衰减因子的设置光强衰减。</li>
+</ul>
+<p>本程序中关键代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">GLfloat Light1Pos[] = { <span class="number">0.0f</span>, <span class="number">10.0f</span>,-<span class="number">10.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light1Amb[] = { <span class="number">0.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light1Dif[] = { <span class="number">1.0f</span>,  <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat Light1Spc[] = {-<span class="number">0.2f</span>, -<span class="number">0.2f</span>, -<span class="number">0.2f</span>, <span class="number">1.0f</span>};			</div><div class="line">GLfloat light1_direction[]={ <span class="number">0.0f</span>, -<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>};		</div><div class="line"></div><div class="line">glLightfv(GL_LIGHT1, GL_POSITION, Light1Pos);		</div><div class="line">glLightfv(GL_LIGHT1, GL_AMBIENT, Light1Amb);		</div><div class="line">glLightfv(GL_LIGHT1, GL_DIFFUSE, Light1Dif);		</div><div class="line">glLightfv(GL_LIGHT1, GL_SPECULAR, Light1Spc);		</div><div class="line">glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, <span class="number">30</span>);</div><div class="line">glLightf(GL_LIGHT1,GL_SPOT_EXPONENT,<span class="number">30.0</span>);</div><div class="line">glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION,light1_direction);</div></pre></td></tr></table></figure>
+
+<h4 id="3-2-3_指定一个_OpenGL_光源位置和类型">3.2.3 指定一个 OpenGL 光源位置和类型</h4>
+<p>在 OpenGL 中，光源的位置坐标采用齐次坐标(x, y, z, w)的方式进行描述。当 w 为 0.0 时，表示相应的光源是定向光，(x, y, z)描述光源的方向；当 w 为 1.0 时，光源为定位光源，(x, y, z, w)表示光源在齐次坐标系下的具体位置。在上述两种情况中，位置坐标都会随着模型变换和视图变换进行变换，最后保存为视点坐标系下的坐标。</p>
+<p>在本程序中，关键代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">GLfloat Light1Pos[] = { <span class="number">0.0f</span>, <span class="number">10.0f</span>,-<span class="number">10.0f</span>, <span class="number">1.0f</span>};</div><div class="line"></div><div class="line">glLoadIdentity();							<span class="comment">// 重置矩阵</span></div><div class="line">glTranslatef(<span class="number">0.0f</span>, <span class="number">0.0f</span>, -<span class="number">20.0f</span>);					<span class="comment">// 深入屏幕20个单位</span></div><div class="line">glLightfv(GL_LIGHT1, GL_POSITION, Light1Pos);	<span class="comment">// 放置灯光</span></div><div class="line">glLightfv(GL_LIGHT2, GL_POSITION, Light2Pos);		</div><div class="line">glLightfv(GL_LIGHT3, GL_POSITION, Light3Pos);		</div><div class="line">glLightfv(GL_LIGHT4, GL_POSITION, Light4Pos);		</div><div class="line">glTranslatef(SpherePos[<span class="number">0</span>], SpherePos[<span class="number">1</span>], SpherePos[<span class="number">2</span>]);	</div><div class="line">gluSphere(q, <span class="number">1.5f</span>, <span class="number">32</span>, <span class="number">16</span>);							</div><div class="line"></div><div class="line">glLoadIdentity();						<span class="comment">// 重置矩阵</span></div><div class="line">glRotatef(-yrot, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>);			<span class="comment">// 绕Y轴旋转 -yrot 个单位</span></div><div class="line">glRotatef(-xrot, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>);			<span class="comment">// 绕X轴旋转 -xrot 个单位</span></div><div class="line">glGetFloatv(GL_MODELVIEW_MATRIX,Minv);</div><div class="line">lp1[<span class="number">0</span>] = Light1Pos[<span class="number">0</span>];			</div><div class="line">lp1[<span class="number">1</span>] = Light1Pos[<span class="number">1</span>];								</div><div class="line">lp1[<span class="number">2</span>] = Light1Pos[<span class="number">2</span>];								</div><div class="line">lp1[<span class="number">3</span>] = Light1Pos[<span class="number">3</span>];								</div><div class="line">VMatMult(Minv, lp1);				</div><div class="line">glTranslatef(-ObjPos[<span class="number">0</span>], -ObjPos[<span class="number">1</span>], -ObjPos[<span class="number">2</span>]);	</div><div class="line">glGetFloatv(GL_MODELVIEW_MATRIX,Minv);</div><div class="line">wlp1[<span class="number">0</span>] = <span class="number">0.0f</span>;									</div><div class="line">wlp1[<span class="number">1</span>] = <span class="number">0.0f</span>;										</div><div class="line">wlp1[<span class="number">2</span>] = <span class="number">0.0f</span>;										</div><div class="line">wlp1[<span class="number">3</span>] = <span class="number">1.0f</span>;</div><div class="line">VMatMult(Minv, wlp1);														</div><div class="line">lp1[<span class="number">0</span>] += wlp1[<span class="number">0</span>];	</div><div class="line">lp1[<span class="number">1</span>] += wlp1[<span class="number">1</span>];									</div><div class="line">lp1[<span class="number">2</span>] += wlp1[<span class="number">2</span>];</div></pre></td></tr></table></figure>
+
+
+<h4 id="3-2-4_指定_OpenGL_光源颜色">3.2.4 指定 OpenGL 光源颜色</h4>
+<p>根据 OpenGL 所采用的光照模型，OpenGL 光源的颜色由环境光（AMBIENT）、漫反射光（DIFFUSE）、镜面反射光（SPECULAR）三个分量共同决定。其中漫反射光分量的值对光源颜色的影响最大。</p>
+<p>在本程序中，使用以下方式设置光源颜色：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">GLfloat Light1Amb[] = { <span class="number">0.0f</span>,  <span class="number">0.0f</span>,  <span class="number">0.0f</span>, <span class="number">1.0f</span>};			<span class="comment">// 环境光</span></div><div class="line">GLfloat Light1Dif[] = { <span class="number">1.0f</span>,  <span class="number">1.0f</span>,  <span class="number">1.0f</span>, <span class="number">1.0f</span>};			<span class="comment">// 漫反射</span></div><div class="line">GLfloat Light1Spc[] = {-<span class="number">0.2f</span>, -<span class="number">0.2f</span>, -<span class="number">0.2f</span>, <span class="number">1.0f</span>};			<span class="comment">// 镜面反射</span></div><div class="line"></div><div class="line">glLightfv(GL_LIGHT1, GL_AMBIENT, Light1Amb);		</div><div class="line">glLightfv(GL_LIGHT1, GL_DIFFUSE, Light1Dif);		</div><div class="line">glLightfv(GL_LIGHT1, GL_SPECULAR, Light1Spc);</div></pre></td></tr></table></figure>
+
+
+<h4 id="3-2-5_指定_OpenGL_光源的光线强度衰减系数">3.2.5 指定 OpenGL 光源的光线强度衰减系数</h4>
+<p>光强会随着距光源的距离而衰减，即离光源越远则光强越弱。在 OpenGL 中，定向光源位置为无穷远，禁用衰减，而对于定位光源，OpenGL 通过光源的发光量乘以衰减因子以实现衰减。衰减系数<code>attenuation</code>和距光源的距离关系如下图：</p>
+<p>在 OpenGL 中，环境光、漫反射光和镜面反射光的强度都会衰减。可以通过<code>glLight*</code>函数来设置衰减。<br>在本程序中，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,<span class="number">0.05</span>);</div></pre></td></tr></table></figure>
+
+<h4 id="3-2-6_启用光源">3.2.6 启用光源</h4>
+<p>在 OpenGL 中，设置完光源后，若需要设置好的光源对场景生效，需要满足两个条件。一是已经启用光照，使场景能接收光照，二是所设置的光源已经被开启，使得场景中的物体能接受该光源的光照。要启用光照或关闭光照，调用函数：<code>glEnable(GL_LIGHTING)</code> 或<code>glDisable(GL_LIGHTING)</code>。要使所定义的光源有效，则调用函数<code>glEnable(GL_LIGHT0)</code>。在本程序中代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">glEnable(GL_LIGHT1);							<span class="comment">// 启用灯光1、2、3、4</span></div><div class="line">glEnable(GL_LIGHT2);								</div><div class="line">glEnable(GL_LIGHT3);								</div><div class="line">glEnable(GL_LIGHT4);									</div><div class="line">glEnable(GL_LIGHTING);							<span class="comment">// 启用照明</span></div></pre></td></tr></table></figure>
+
+<h3 id="3-3_OpenGL_表面材质和明暗处理">3.3 OpenGL 表面材质和明暗处理</h3>
+<p>OpenGL 通过材质对红、绿、蓝三色光的反射率来描述材料的颜色。同光源一样，材料颜色也分成环境、漫反射和镜面反射分量，它们决定了材料对环境光、漫反射光和镜面反射光的反射程度，其中，材料对环境光与漫反射光的反射程度决定了材料的颜色。</p>
+<p>若OpenGL 的光源颜色为（LR、LG、LB），材质颜色为（MR、MG、MB），在忽略所有其他反射效果并且没有其它光源的情况下，最终显示物体表面的颜色为（LR<em>MR、LG</em>MG、LB*MB）。</p>
+<p>在本程序中，对材料的定义部分代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">float</span> MatAmb[] = {<span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">0.4f</span>, <span class="number">1.0f</span>};				<span class="comment">// 材质-环境光</span></div><div class="line"><span class="keyword">float</span> MatDif[] = {<span class="number">0.9f</span>, <span class="number">0.9f</span>, <span class="number">0.9f</span>, <span class="number">1.0f</span>};				<span class="comment">// 材质-漫反射</span></div><div class="line"><span class="keyword">float</span> MatSpc[] = {<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>};				<span class="comment">// 材质-镜面反射</span></div><div class="line"><span class="keyword">float</span> MatShn[] = {<span class="number">0.0f</span>};								<span class="comment">// 材质-光泽度</span></div><div class="line"></div><div class="line">glMaterialfv(GL_FRONT, GL_AMBIENT, MatAmb);			<span class="comment">// 设置材质-环境光</span></div><div class="line">glMaterialfv(GL_FRONT, GL_DIFFUSE, MatDif);			<span class="comment">// 设置材质-漫反射</span></div><div class="line">glMaterialfv(GL_FRONT, GL_SPECULAR, MatSpc);		<span class="comment">// 设置材质-镜面反射</span></div><div class="line">glMaterialfv(GL_FRONT, GL_SHININESS, MatShn);		<span class="comment">// 设置材质-光泽度</span></div></pre></td></tr></table></figure>
+
+<p>OpenGL子程序可用<strong>常数强度表面绘制</strong>或<strong> Gouraud 表面绘制方法</strong>来显示表面。</p>
+<p>用<strong>常数强度表面绘制</strong>，即用单一颜色处理表面，称为平面明暗处理（Flat Shading），而用<strong> Gouraud 表面绘制方法</strong>则是用许多不同颜色处理，称为光滑明暗处理（Smooth Shading），也称为 Gourand 明暗处理（Gourand Shading）。</p>
+<p>在本程序中，使用光滑明暗处理，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glShadeModel(GL_SMOOTH);</div></pre></td></tr></table></figure>
+
+<h2 id="4_支持交互式输入设备">4 支持交互式输入设备</h2>
+<h3 id="4-1_GLUT_鼠标函数">4.1 GLUT 鼠标函数</h3>
+<p>在本程序中，支持通过鼠标拖动来 360 度地旋转场景中通过外部 OBJ 文件读取进来的模型。实现代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> mouseFunc(GLint button, GLint action, GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">if</span>(button == GLUT_LEFT_BUTTON)</div><div class="line">	{</div><div class="line">		<span class="keyword">switch</span>(action)</div><div class="line">		{</div><div class="line">			<span class="keyword">case</span> GLUT_DOWN:</div><div class="line">				xMouseClicked = xMouse;</div><div class="line">				yMouseClicked = yMouse;</div><div class="line">				isClicked = <span class="keyword">true</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> GLUT_UP:</div><div class="line">				isClicked = <span class="keyword">false</span>;</div><div class="line">				isDragging = <span class="keyword">false</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">		}</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">void</span> mouseMotion(GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">if</span>(!isDragging)</div><div class="line">	{</div><div class="line">		<span class="keyword">if</span>(isClicked)</div><div class="line">		{</div><div class="line">			isDragging = <span class="keyword">true</span>;</div><div class="line">		}</div><div class="line">	}</div><div class="line">	<span class="keyword">else</span>{</div><div class="line">		<span class="keyword">if</span>(isClicked)</div><div class="line">		{</div><div class="line">			<span class="comment">//......下略.....</span></div><div class="line">		}</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line">glutMouseFunc(mouseFunc);</div><div class="line">glutMotionFunc(mouseMotion);</div></pre></td></tr></table></figure>
+
+<h3 id="4-2_GLUT_键盘函数">4.2 GLUT 键盘函数</h3>
+<p>在本程序中，支持通过键盘移动场景中 4 个光源的位置。实现代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> keyboardProcess(GLubyte key, GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">switch</span>(key)</div><div class="line">	{</div><div class="line"></div><div class="line">		<span class="keyword">case</span> <span class="string">'d'</span>:								<span class="comment">// 控制灯光2</span></div><div class="line">			Light2Pos[<span class="number">0</span>] += <span class="number">0.05f</span>;<span class="keyword">break</span>;</div><div class="line">		<span class="comment">//......下略......</span></div><div class="line">		<span class="keyword">case</span> <span class="string">'1'</span>:</div><div class="line">			model_id = <span class="number">0</span>;</div><div class="line">			initGLObjects();</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">case</span> <span class="string">'2'</span>:</div><div class="line">			model_id = <span class="number">1</span>;</div><div class="line">			initGLObjects();</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		<span class="keyword">default</span>:</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">void</span> spkeyboardProcess(GLint key, GLint xMouse, GLint yMouse)</div><div class="line">{</div><div class="line">	<span class="keyword">switch</span>(key)</div><div class="line">	{</div><div class="line">		<span class="keyword">case</span> GLUT_KEY_RIGHT:					<span class="comment">// 控制灯光1</span></div><div class="line">			Light1Pos[<span class="number">0</span>] += <span class="number">0.05f</span>;<span class="keyword">break</span>;</div><div class="line">			<span class="comment">//....下略....</span></div><div class="line">	}</div><div class="line">}</div><div class="line"></div><div class="line">glutKeyboardFunc(keyboardProcess);</div><div class="line">glutSpecialFunc(spkeyboardProcess);</div></pre></td></tr></table></figure>
+
+]]></content>
+    <summary type="html">
+    <![CDATA[<!-- more -->
+
+<h1 id="基于_OpenGL_的多光源场景绘制">基于 OpenGL 的多光源场景绘制</h1>
+<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。</p>
+<p>效果如下：</p>
+<p>图片</p>
+<p>视频</p>
+]]>
+    
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[我做过的那些音乐类游戏——Catch The Beat 与 Unity3D 篇]]></title>
+    <link href="http://yoursite.com/2015/01/26/Catch-The-Beat/"/>
+    <id>http://yoursite.com/2015/01/26/Catch-The-Beat/</id>
+    <published>2015-01-26T07:35:34.000Z</published>
+    <updated>2015-01-29T04:38:15.966Z</updated>
+    <content type="html"><![CDATA[<blockquote>
+<p>这是本系列的第三篇文章，其他几篇的地址如下</p>
+<p>地址一</p>
+<p>地址二</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Catch_The_Beat_与_Unity3D">Catch The Beat 与 Unity3D</h1>
+<p>大三上接触了 Unity3D 游戏引擎，发现引擎的使用确实给游戏开发带来了极大的便利，尤其是Unity有着丰富的可视化界面，使用起来比较方便。此外，随着使用引擎时接触到越来越多的概念，开发游戏时的思路也开始慢慢清晰。</p>
+<p>于是当时就试着用 Unity3D 引擎仿制了另一款音乐类游戏 OSU！ 中的 Catch The Beat 模式。</p>
+<p>Catch The Beat 作为音乐类游戏来说，比较休闲且容易上手。原本的游戏的规则是这样的：</p>
+<ul>
+<li>玩家控制一个托着盘子的小人左右移动，去接按照节奏落下的水果。</li>
+<li>水果按节奏落下，但有时相邻的两个距离很远，必须玩家按着加速键才能接到，而玩家速度过快时，又容易错过距离较近的水果。</li>
+<li>玩家需要尽可能地按照节奏接下全部的水果。越合拍，连续接到的水果越多，分数越高。</li>
+</ul>
+<p>我仿制的版本效果如下：</p>
+<p>视频</p>
+<hr>
+<p>依旧是讲一下制作时与之前不同的地方。</p>
+<a id="more"></a>
+
+<h2 id="一、游戏功能上的完善">一、游戏功能上的完善</h2>
+<p>相较于前两次，这一次的游戏更为完整。</p>
+<p>支持键位的设定：</p>
+<p>图片</p>
+<p>可以选择不同的歌曲进行游戏：</p>
+<p>图片</p>
+<p>游戏过程中可以暂停，回到选歌界面重新选择，此外支持调节音量：</p>
+<p>图片</p>
+<p>最后一首歌曲结束后会出现评分界面：</p>
+<p>图片</p>
+<h2 id="二、2D_Toolkit_的使用">二、2D Toolkit 的使用</h2>
+<p>当时 Unity 还没有自带 2D 功能，而我要制作的是一款 2D 游戏，为此，我使用了 2D Toolkit 插件。</p>
+<p>基本上是利用插件提供的一个正交视图的摄像机。然后利用这个插件实现对精灵（Sprite）的支持。</p>
+<p>首先导入插件，然后创建 tk2d 摄像机，如下图:</p>
+<p>图片</p>
+<p>我们可以在此设置游戏的分辨率。2DToolkit 会帮助完成<strong>分辨率的适配</strong>。</p>
+<p>图片</p>
+<p>然后创建一个精灵集。精灵集是 2DToolkit 中用来存放精灵图的容器，它产生一个或多个贴图图集，替代我们的原图片从而提高性能。Project -&gt; Create -&gt; tk2d -&gt; Sprite如下图：</p>
+<p>图片</p>
+<p>然后为精灵集命名：</p>
+<p>图片</p>
+<p>打开编辑器，拖入图片资源，设置所需的碰撞盒类型：</p>
+<p>图片</p>
+<p>完成后记得点击右上角的”Commit”提交</p>
+<p>接下来就可以利用贴图集创建精灵（Sprite）了，Hierarchy -&gt; Create -&gt; tk2d -&gt; Sprite：</p>
+<p>图片</p>
+<p>最后，我们需要在代码中获取并操作精灵，大致是这样：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">tk2dSprite sprite;</div><div class="line">sprite = GetComponent&lt;tk2dSprite&gt;();</div></pre></td></tr></table></figure>
+
+<h2 id="三、NGUI_的使用">三、NGUI 的使用</h2>
+<p>虽然 2D Toolkit 也可以制作 UI，但是比较之下还是NGUI更为方便，功能也更强。因此，我在进行游戏以外的 Scene 中（包括选歌界面等）都使用的 NGUI。又因为 NGUI 和 2D Toolkit 在一个场景一起使用时，它们的Camera需要调整，比较麻烦，所以没有在进行游戏的场景中使用NGUI。</p>
+<p><strong>因为在制作这个游戏时使用的NGUI版本较老，且只是在 NGUI 官方样例的基础上进行了一些修改，主要涉及的是 <code>ScrollView</code> 的使用，此处就不展开了。具体做法我会在下一篇文章（Jubeat篇）中详细描述。</strong></p>
+<h2 id="四、编写代码时的一些不同">四、编写代码时的一些不同</h2>
+<p>程序方面，整体思路与之前差不多，但因为使用了 Unity ，编写代码要考虑它脚本的生命周期，还有他面向组件编程的特点。此外它提供了许多方便的组件，所以在具体的实现上和以往还是有许多的不同之处。总结如下。</p>
+<h3 id="1-_Unity3D中的一些重要概念">1. Unity3D中的一些重要概念</h3>
+<p>初次接触 Unity 时并没有把一些概念弄得很清楚，在脚本间相互调用时就会有些困惑。不久前 Unity 的官网更新后仔细去看了看 Doc ，在此再梳理一下 Unity 中最重要的三个基本概念。</p>
+<h4 id="a-_游戏对象（GameObject）">a. 游戏对象（GameObject）</h4>
+<p>官网Doc的描述是这样的：</p>
+<blockquote>
+<p>Every object in your game is a GameObject. However, GameObjects don’t do anything on their own. They need special properties before they can become a character, an environment, or a special effect. But every one of these objects does so many different things. If every object is a GameObject, how do we differentiate an interactive power-up object from a static room? What makes these GameObjects different from each other?</p>
+<p>The answer to this question is that GameObjects are containers. They are empty boxes which can hold the different pieces that make up a lightmapped island or a physics-driven car. So to really understand GameObjects, you have to understand these pieces; they are called Components. ……</p>
+</blockquote>
+<p>可以看到，在 Unity 中，游戏中所有物体都是游戏对象。（或者更直观具体一些，在 Hierarchy 目录下看到的所有东西都是游戏对象，<strong>Unity 是以游戏对象为单位进行操作的</strong>。）而游戏对象只是对各类物体的一个抽象，它本身是空的，什么也不做。如果希望一个游戏对象变成具体的东西，比如树、建筑、角色等等，就需要为它添加相应的行为和属性。</p>
+<p>这时就引入了组件的概念。<strong>游戏对象是组件的容器。在这个容器中加入不同的组件，就可以得到不同的游戏对象。</strong></p>
+<h4 id="b-_组件（Component）">b. 组件（Component）</h4>
+<p><strong>每个组件都有它相应的功能。它可以为一个游戏对象添加相应的属性和行为。</strong>比如 Unity 中所有的游戏对象都有的<code>Transform</code>组件，它定义了游戏对象的位置、缩放、旋转等等，添加了这个组件的游戏对象就能够被定位并进行变形。再比如，添加了碰撞盒的游戏对象就能在相互之间进行碰撞检测，产生碰撞的效果。</p>
+<h4 id="c-_脚本（Script）">c. 脚本（Script）</h4>
+<p>官网Doc的描述是这样的：</p>
+<blockquote>
+<p>When you create a script and and attach it to a GameObject, the script appears in the GameObject’s Inspector just like a Component. This is because scripts become Components when they are saved - a script is just a specific type of Component. In technical terms, a script compiles as a type of Component, and is treated like any other Component by the Unity engine. So basically, a script is a Component that you are creating yourself. You will define its members to be exposed in the Inspector, and it will execute whatever functionality you’ve written.</p>
+</blockquote>
+<p>Unity 自带组件虽然很丰富，但每个游戏都会有它独特的功能要求，只靠自带的组件是不够的。这时我们就需要通过自己编写脚本来完成这些功能。</p>
+<p>在 Unity 中，<strong>自己写的脚本其实就相当于一个自定义的组件</strong>。当我们把这个脚本附到游戏对象上时，就相当于为这个游戏对象添加了一个组件。我们完全可以在各个地方将自己写的脚本当组件来使用。</p>
+<h3 id="2-_每个游戏对象的生命周期">2. 每个游戏对象的生命周期</h3>
+<p>如下图所示：</p>
+<p>图片</p>
+<p>比较常用的有<code>Awake()</code>,<code>Start()</code>,<code>Update()</code>和<code>FixedUpdate()</code>。</p>
+<p>比如这次我就通过为<code>FixedUpdate()</code>设置一个较小的间隔来进行计时。Unity 处理的效率不错，Note 可以很好地合上拍，游戏也没有卡顿的情况出现。</p>
+<p>然后，每个脚本都有它独立的生命周期，对于自己写的脚本，各个脚本执行的先后顺序是不一定的（这一点有时会带来一些类似线程同步的麻烦）。但是也可以用如下图的方式规定它们执行的先后顺序。</p>
+<p>图片</p>
+<h3 id="3-_Prefab的使用">3. Prefab的使用</h3>
+<p>在以往的程序中，当需要大量生成相似的对象时，我会写一个类，并添加相应的属性和方法。而在Unity中，我会考虑制作一个 Prefab ,并为它添加对应的脚本。</p>
+<p>Prefab 在我的理解中相当于是一个游戏对象的模版，通过<code>Instantiate()</code>方法可以将其大量的实例化（复制作为模版的游戏对象，并放入场景中），此外在实例化的过程中，可以方便地修改每一个实例对象，使他们各不相同。</p>
+<p>比如这一次的游戏，我将 Note 制成了 Prefab，并写了一个脚本<code>NoteScript</code>让每个 Note 控制自身的行为,比如移动、销毁等等。</p>
+<h3 id="4-_各类组件的使用">4. 各类组件的使用</h3>
+<p>Unity 自带的组件很多，换句话说，很多基本的功能 Unity 已经帮我们实现了，没有特殊的需求的话，我们可以直接使用。比如，Unity 提供的碰撞盒免去了自己写碰撞检测的麻烦（碰撞检测的算法也是个可以展开深入探讨的话题），降低了开发的难度。</p>
+<h3 id="5-_Unity_的特殊文件夹——_Resources_文件夹">5. Unity 的特殊文件夹—— Resources 文件夹</h3>
+<p>为了完成可以任意选择歌曲进行游戏的功能，我需要利用程序从文件中动态地载入歌曲信息。</p>
+<p>这里就存在一个问题，从磁盘上读取音频文件后，需要转换成 Unity 的 AudioClip 类型才能使用。</p>
+<p>当时制作这个游戏的时候我是通过将歌曲文件放在 Resources 文件夹下解决的。</p>
+<blockquote>
+<p>Resources 文件夹：可以在根目录下，也可以在子目录里，只要名子叫Resources就可以。比如目录：/xxx/xxx/Resources  和 /Resources 是一样的，无论多少个叫Resources的文件夹都可以。Resources文件夹下的资源不管你用还是不用都会被打包</p>
+<p><code>Resource.Load</code> ：编辑时和运行时都可以通过Resource.Load来直接读取。</p>
+<p><code>Resources.LoadAssetAtPath()</code> ：它可以读取Assets目录下的任意文件夹下的资源，它可以在编辑时或者编辑器运行时用，它但是它不能在真机上用，它的路径是”Assets/xx/xx.xxx” 必须是这种路径，并且要带文件的后缀名。</p>
+<p><code>AssetDatabase.LoadAssetAtPath()</code>：它可以读取Assets目录下的任意文件夹下的资源，它只能在编辑时用。它的路径是”Assets/xx/xx.xxx” 必须是这种路径，并且要带文件的后缀名。</p>
+</blockquote>
+<p><strong>但这个方法存在一个严重的问题，就是文件夹下所有的文件都必须打包以后才能读到。这样一来，游戏发布以后新添加的曲子都是读不到的。后来我使用 WWW 类解决了这一问题，详细内容会在下一篇文章（Jubeat篇）中展开。</strong></p>
+<h3 id="6-_使用静态类">6. 使用静态类</h3>
+<p>将游戏中经常需要传递的值且需要保持一致的值都使用一个静态类记录，这样免去了大量获取游戏对象和组件的麻烦，且保证值是一致的。（当然，也可以用单例模式来实现，当时没有学习设计模式，使用的是静态类）</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<blockquote>
+<p>这是本系列的第三篇文章，其他几篇的地址如下</p>
+<p>地址一</p>
+<p>地址二</p>
+</blockquote>
+<!-- more -->
+
+<h1 id="Catch_The_Beat_与_Unity3D">Catch The Beat 与 Unity3D</h1>
+<p>大三上接触了 Unity3D 游戏引擎，发现引擎的使用确实给游戏开发带来了极大的便利，尤其是Unity有着丰富的可视化界面，使用起来比较方便。此外，随着使用引擎时接触到越来越多的概念，开发游戏时的思路也开始慢慢清晰。</p>
+<p>于是当时就试着用 Unity3D 引擎仿制了另一款音乐类游戏 OSU！ 中的 Catch The Beat 模式。</p>
+<p>Catch The Beat 作为音乐类游戏来说，比较休闲且容易上手。原本的游戏的规则是这样的：</p>
+<ul>
+<li>玩家控制一个托着盘子的小人左右移动，去接按照节奏落下的水果。</li>
+<li>水果按节奏落下，但有时相邻的两个距离很远，必须玩家按着加速键才能接到，而玩家速度过快时，又容易错过距离较近的水果。</li>
+<li>玩家需要尽可能地按照节奏接下全部的水果。越合拍，连续接到的水果越多，分数越高。</li>
+</ul>
+<p>我仿制的版本效果如下：</p>
+<p>视频</p>
+<hr>
+<p>依旧是讲一下制作时与之前不同的地方。</p>
+]]>
+    
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[我做过的那些音乐类游戏——O2JAM 与 Android 篇]]></title>
     <link href="http://yoursite.com/2015/01/25/O2JAM/"/>
     <id>http://yoursite.com/2015/01/25/O2JAM/</id>
     <published>2015-01-25T12:53:47.000Z</published>
-    <updated>2015-01-25T13:40:17.769Z</updated>
+    <updated>2015-01-29T04:41:26.950Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p>这是本系列的第二篇文章，其他几篇的地址如下</p>
 <p>地址一</p>
 <p>地址二</p>
 </blockquote>
+<a id="more"></a>
+
 <h1 id="劲乐团（O2JAM）与Android">劲乐团（O2JAM）与Android</h1>
 <p>有了上一次制作太鼓达人的经验，在大二上安卓的课程设计时，我决定尝试一下制作O2JAM。</p>
 <p>下面是一段效果演示的视频：</p>
 <p>链接</p>
 <hr>
 <p>O2JAM是一款典型的下落式MUG。整体来说，它的游戏逻辑与太鼓达人十分相似。此外，安卓开发也是使用的<code>Java</code>，所以整个程序的思路与之前制作的太鼓达人（详见上一篇）很接近，在此就只讲与之前不同的地方。</p>
+<a id="more"></a>
+
 <h2 id="一、Note类的修改">一、Note类的修改</h2>
 <p>原来太鼓的程序中，我只是用<code>Notes</code>类记录了<code>Note</code>对象的位置以及类型，没有很好地利用面向对象的特性。</p>
 <p>所以在这一次O2JAM的程序中，我再次分析了Note的行为，并在<code>Note</code>类中添加了相应的属性与方法。</p>
@@ -98,18 +585,56 @@
 <p>地址一</p>
 <p>地址二</p>
 </blockquote>
+<!-- more -->
+
 <h1 id="劲乐团（O2JAM）与Android">劲乐团（O2JAM）与Android</h1>
-<p>有了上一次制作]]>
+<p>有了上一次制作太鼓达人的经验，在大二上安卓的课程设计时，我决定尝试一下制作O2JAM。</p>
+<p>下面是一段效果演示的视频：</p>
+<p>链接</p>
+<hr>
+<p>O2JAM是一款典型的下落式MUG。整体来说，它的游戏逻辑与太鼓达人十分相似。此外，安卓开发也是使用的<code>Java</code>，所以整个程序的思路与之前制作的太鼓达人（详见上一篇）很接近，在此就只讲与之前不同的地方。</p>
+]]>
+    
     </summary>
     
   </entry>
   
   <entry>
-    <title><![CDATA[我做过的那些音乐类游戏——太鼓达人篇]]></title>
+    <title><![CDATA[用 Adruino 单片机与安卓进行交互]]></title>
+    <link href="http://yoursite.com/2015/01/24/Adruino/"/>
+    <id>http://yoursite.com/2015/01/24/Adruino/</id>
+    <published>2015-01-24T05:50:27.000Z</published>
+    <updated>2015-01-29T06:12:31.210Z</updated>
+    <content type="html"><![CDATA[<p>稍后更新。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>稍后更新。</p>
+]]>
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[用 ActionScript 3.0 和 Flash 制作高保真的程序原型]]></title>
+    <link href="http://yoursite.com/2015/01/22/AS3-0/"/>
+    <id>http://yoursite.com/2015/01/22/AS3-0/</id>
+    <published>2015-01-22T05:50:01.000Z</published>
+    <updated>2015-01-29T06:13:28.290Z</updated>
+    <content type="html"><![CDATA[<p>稍后更新。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>稍后更新。</p>
+]]>
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[我做过的那些音乐类游戏——太鼓达人与 JAVA 篇]]></title>
     <link href="http://yoursite.com/2015/01/22/Taiko/"/>
     <id>http://yoursite.com/2015/01/22/Taiko/</id>
     <published>2015-01-21T16:46:19.000Z</published>
-    <updated>2015-01-24T13:57:15.589Z</updated>
+    <updated>2015-01-29T04:42:23.294Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p>前言</p>
 <p>出于对音乐类游戏的爱好，从大学正式学习编程开始，我就陆陆续续地尝试用当时学到的知识把自己接触过的一些音乐类游戏给实现出来。</p>
@@ -230,8 +755,9 @@
     <link href="http://yoursite.com/2015/01/21/Build_your_blog_with_%20hexo/"/>
     <id>http://yoursite.com/2015/01/21/Build_your_blog_with_ hexo/</id>
     <published>2015-01-21T04:41:44.000Z</published>
-    <updated>2015-01-24T11:26:04.981Z</updated>
-    <content type="html"><![CDATA[<p><a id="more"></a></p>
+    <updated>2015-01-25T13:52:02.389Z</updated>
+    <content type="html"><![CDATA[<a id="more"></a>
+
 <h2 id="什么是Hexo">什么是Hexo</h2>
 <p>Hexo是一款开源的博客程序，它可以生成静态的博客页面。详见它的官网<a href="hexo.io">hexo.io</a></p>
 <h2 id="为什么选择Hexo">为什么选择Hexo</h2>
@@ -243,10 +769,12 @@
 </li>
 <li><p>支持同时将博客发布至Github和Gitcafe（只需要简单地修改Hexo的配置文件即可）。再利用自己购买的域名和DNSPOD进行分流，可以使国内外都有比较理想的访问速度。</p>
 </li>
-<li><p>主题丰富，可以自由定制。想节省时间的话，Hexo上已有不少主题，许多是国人制作的，直接使用便有不错的页面效果和访问速度。如果比较熟悉前端技术，有时间也喜欢折腾，还可以自己定制主题。<br><a id="more"></a></p>
-<h2 id="使用Hexo需要哪些基础">使用Hexo需要哪些基础</h2>
+<li><p>主题丰富，可以自由定制。想节省时间的话，Hexo上已有不少主题，许多是国人制作的，直接使用便有不错的页面效果和访问速度。如果比较熟悉前端技术，有时间也喜欢折腾，还可以自己定制主题。</p>
 </li>
 </ol>
+<a id="more"></a>
+
+<h2 id="使用Hexo需要哪些基础">使用Hexo需要哪些基础</h2>
 <p>使用Hexo至少需要掌握以下的几点：</p>
 <ol>
 <li><p>Git的基本操作</p>
@@ -320,7 +848,8 @@
 <p>网上查了很久，基本是说没有在 git bash 中操作或者是 Git 环境变量没有配置好。可惜我不属于这两种情况。暂时没有找到解决方案。</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p><!-- more --></p>
+    <![CDATA[<!-- more -->
+
 <h2 id="什么是Hexo">什么是Hexo</h2>
 <p>Hexo是一款开源的博客程序，它可以生成静态的博客页面。详见它的官网<a href="hexo.io">hexo.io</a></p>
 <h2 id="为什么选择Hexo">为什么选择Hexo</h2>
@@ -332,7 +861,10 @@
 </li>
 <li><p>支持同时将博客发布至Github和Gitcafe（只需要简单地修改Hexo的配置文件即可）。再利用自己购买的域名和DNSPOD进行分流，可以使国内外都有比较理想的访问速度。</p>
 </li>
-<li><p>主题丰富，可以自由定制。想节省时间的话，Hexo上已有不少主题，许多是国人制作的，直接使用便有不错的页面效果和访问速度。如果比较熟悉前端技术，有时间也喜欢折腾，还可以自己定制主题。<br>]]>
+<li><p>主题丰富，可以自由定制。想节省时间的话，Hexo上已有不少主题，许多是国人制作的，直接使用便有不错的页面效果和访问速度。如果比较熟悉前端技术，有时间也喜欢折腾，还可以自己定制主题。</p>
+</li>
+</ol>
+]]>
     
     </summary>
     
