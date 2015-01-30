@@ -9,10 +9,8 @@
   <meta name="author" content="SanderZ">
   
   <meta name="description" content="基于 OpenGL 的多光源场景绘制
-通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。
-效果如下：
-图片
-视频">
+通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部OBJ文件中读入模型的三维场景绘制程序。
+效果如下：">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -85,12 +83,14 @@
         <a id="more"></a>
 
 <h1 id="基于_OpenGL_的多光源场景绘制">基于 OpenGL 的多光源场景绘制</h1>
-<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。</p>
+<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部<code>OBJ</code>文件中读入模型的三维场景绘制程序。</p>
 <p>效果如下：</p>
-<p>图片</p>
-<p>视频</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image4.jpeg" alt="效果图1"></p>
 <a id="more"></a>
 
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image5.jpeg" alt="效果图2"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image6.jpeg" alt="效果图3"></p>
+<p>视频</p>
 <h2 id="1_OpenGL">1 OpenGL</h2>
 <p>OpenGL 是个跨平台的专业的图形程序接口，是一个功能强大，调用方便的底层图形库。它被广泛地应用于三维图形设计的各个领域，例如三维游戏、虚拟现实技术、三维图形与动画绘制、和计算机可视化等等。在三维图形设计中，三维场景和物体的绘制以及光照效果的表现是其中非常重要的两个问题。利用 OpenGL 可以较为简便地解决上述两个问题。</p>
 <h2 id="2_三维场景的绘制与观察">2 三维场景的绘制与观察</h2>
@@ -121,6 +121,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gluPerspective(<span class="number">45.0f</span>,(GLfloat)width/(GLfloat)height,<span class="number">0.001f</span>,<span class="number">100.0f</span>);</div></pre></td></tr></table></figure>
 
 <p>它确定一个棱台为视域体，这个区域里面的对象才能被观察到，这个区域之外的对象被裁剪掉，不会出现在图像中，如下图所示。</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image1.png" alt=""></p>
 <h4 id="2-1-3_OpenGL_中的深度缓存函数">2.1.3 OpenGL 中的深度缓存函数</h4>
 <p>在 OpenGL 中，如果不对面的深度加以判断，那么各个面将按照程序代码中定义的先后顺序进行绘制。在同一位置上，后绘制的面总是会将先绘制的面覆盖，哪怕后绘制的面实际应该是被先绘制的面遮挡住而不可见的。<br>因此，需要启动深度缓存检测，使得显示模式包含深度缓存，保证面的正确绘制。代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glutInitDisplayMode (GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);</div></pre></td></tr></table></figure>
@@ -177,6 +178,7 @@
 
 <h4 id="3-2-5_指定_OpenGL_光源的光线强度衰减系数">3.2.5 指定 OpenGL 光源的光线强度衰减系数</h4>
 <p>光强会随着距光源的距离而衰减，即离光源越远则光强越弱。在 OpenGL 中，定向光源位置为无穷远，禁用衰减，而对于定位光源，OpenGL 通过光源的发光量乘以衰减因子以实现衰减。衰减系数<code>attenuation</code>和距光源的距离关系如下图：</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image2.png" alt=""><br><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image3.png" alt=""></p>
 <p>在 OpenGL 中，环境光、漫反射光和镜面反射光的强度都会衰减。可以通过<code>glLight*</code>函数来设置衰减。<br>在本程序中，代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,<span class="number">0.05</span>);</div></pre></td></tr></table></figure>
 

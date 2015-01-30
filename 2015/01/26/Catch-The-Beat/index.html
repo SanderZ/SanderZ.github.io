@@ -121,29 +121,29 @@ Catch The Beat 作为音乐类游戏来说，比较休闲且容易上手。原�
 <h2 id="一、游戏功能上的完善">一、游戏功能上的完善</h2>
 <p>相较于前两次，这一次的游戏更为完整。</p>
 <p>支持键位的设定：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_1.jpg" alt="效果图"></p>
 <p>可以选择不同的歌曲进行游戏：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_2.jpg" alt="效果图"></p>
 <p>游戏过程中可以暂停，回到选歌界面重新选择，此外支持调节音量：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_3.jpg" alt="效果图"></p>
 <p>最后一首歌曲结束后会出现评分界面：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_4.jpg" alt="效果图"></p>
 <h2 id="二、2D_Toolkit_的使用">二、2D Toolkit 的使用</h2>
 <p>当时 Unity 还没有自带 2D 功能，而我要制作的是一款 2D 游戏，为此，我使用了 2D Toolkit 插件。</p>
 <p>基本上是利用插件提供的一个正交视图的摄像机。然后利用这个插件实现对精灵（Sprite）的支持。</p>
 <p>首先导入插件，然后创建 tk2d 摄像机，如下图:</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_1.jpg" alt="效果图"></p>
 <p>我们可以在此设置游戏的分辨率。2DToolkit 会帮助完成<strong>分辨率的适配</strong>。</p>
-<p>图片</p>
-<p>然后创建一个精灵集。精灵集是 2DToolkit 中用来存放精灵图的容器，它产生一个或多个贴图图集，替代我们的原图片从而提高性能。Project -&gt; Create -&gt; tk2d -&gt; Sprite如下图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_2.jpg" alt="效果图"></p>
+<p>然后创建一个精灵集。精灵集是 2DToolkit 中用来存放精灵图的容器，它产生一个或多个贴图图集，替代我们的原图片从而提高性能。Project -&gt; Create -&gt; tk2d -&gt; Sprite Collection如下图：</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_3.jpg" alt="效果图"></p>
 <p>然后为精灵集命名：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_4.jpg" alt="效果图"></p>
 <p>打开编辑器，拖入图片资源，设置所需的碰撞盒类型：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_5.jpg" alt="效果图"></p>
 <p>完成后记得点击右上角的”Commit”提交</p>
 <p>接下来就可以利用贴图集创建精灵（Sprite）了，Hierarchy -&gt; Create -&gt; tk2d -&gt; Sprite：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_6.jpg" alt="效果图"></p>
 <p>最后，我们需要在代码中获取并操作精灵，大致是这样：</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">tk2dSprite sprite;</div><div class="line">sprite = GetComponent&lt;tk2dSprite&gt;();</div></pre></td></tr></table></figure>
 
@@ -173,11 +173,12 @@ Catch The Beat 作为音乐类游戏来说，比较休闲且容易上手。原�
 <p>在 Unity 中，<strong>自己写的脚本其实就相当于一个自定义的组件</strong>。当我们把这个脚本附到游戏对象上时，就相当于为这个游戏对象添加了一个组件。我们完全可以在各个地方将自己写的脚本当组件来使用。</p>
 <h3 id="2-_每个游戏对象的生命周期">2. 每个游戏对象的生命周期</h3>
 <p>如下图所示：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/lifetime.jpg" alt="生命周期"></p>
 <p>比较常用的有<code>Awake()</code>,<code>Start()</code>,<code>Update()</code>和<code>FixedUpdate()</code>。</p>
 <p>比如这次我就通过为<code>FixedUpdate()</code>设置一个较小的间隔来进行计时。Unity 处理的效率不错，Note 可以很好地合上拍，游戏也没有卡顿的情况出现。</p>
 <p>然后，每个脚本都有它独立的生命周期，对于自己写的脚本，各个脚本执行的先后顺序是不一定的（这一点有时会带来一些类似线程同步的麻烦）。但是也可以用如下图的方式规定它们执行的先后顺序。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_7.jpg" alt="效果图"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_8.jpg" alt="效果图"></p>
 <h3 id="3-_Prefab的使用">3. Prefab的使用</h3>
 <p>在以往的程序中，当需要大量生成相似的对象时，我会写一个类，并添加相应的属性和方法。而在Unity中，我会考虑制作一个 Prefab ,并为它添加对应的脚本。</p>
 <p>Prefab 在我的理解中相当于是一个游戏对象的模版，通过<code>Instantiate()</code>方法可以将其大量的实例化（复制作为模版的游戏对象，并放入场景中），此外在实例化的过程中，可以方便地修改每一个实例对象，使他们各不相同。</p>

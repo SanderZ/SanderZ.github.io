@@ -135,7 +135,7 @@ Hexo是一款开源的博客程序，它可以生成静态的博客页面。详�
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git clone https://github.com/creationix/nvm.git</div></pre></td></tr></table></figure>
 
 <p><strong>接下来就是官网没有提及的部分</strong>。到这一步以后，官网让重启terminal，然后执行<code>$ nvm install 0.10</code>。这时，我遇到了问题，如下图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/hexo1.jpg" alt="错误"></p>
 <p><strong>解决的方法如下</strong>，执行<code>$ source ~/.nvm/nvm.sh</code>后<code>nvm</code>命令就可用了。但这样是不够的，重启terminal后，还会出现同样的问题。我们需要在<code>~/.bashrc</code>, <code>~/.bash_profile</code>, <code>~/.profile</code>, 或者 <code>~/.zshrc</code>之一的文件中添加刚才的命令，这样在终端启动时就会自动执行刚才的命令。</p>
 <p>接下来利用<code>nvm</code>安装NodeJS，执行如下命令，安装0.10版的NodeJS（最新稳定版本）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ nvm install <span class="number">0.10</span></div></pre></td></tr></table></figure>
@@ -177,7 +177,7 @@ Hexo是一款开源的博客程序，它可以生成静态的博客页面。详�
 <p>完成后在浏览器中查看你的Github pages，Gitcafe pages，如果之前的步骤一切顺利，你可以发现博客已经成功发布了。</p>
 <h3 id="关于Windows系统下安装：">关于Windows系统下安装：</h3>
 <p>我在 Windows8 系统上尝试安装过，开始一切正常。但最后执行 <code>$ hexo deploy</code>的时候总是像下面一样报错。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/hexo2.jpg" alt="效果图1"></p>
 <p>网上查了很久，基本是说没有在 git bash 中操作或者是 Git 环境变量没有配置好。可惜我不属于这两种情况。暂时没有找到解决方案。</p>
 
       

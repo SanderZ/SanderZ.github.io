@@ -4,7 +4,7 @@
   
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-01-29T06:21:55.318Z</updated>
+  <updated>2015-01-30T08:34:22.381Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://yoursite.com/2015/01/29/Jubeat/"/>
     <id>http://yoursite.com/2015/01/29/Jubeat/</id>
     <published>2015-01-29T04:16:00.000Z</published>
-    <updated>2015-01-29T06:20:17.854Z</updated>
+    <updated>2015-01-29T15:46:54.669Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p>这是本系列的第四篇文章，其他几篇的地址如下</p>
 <p>地址一</p>
@@ -42,7 +42,7 @@
 <p>虽然不少游戏的开发可能并不适合垂直的 MVC 模式，但对于音乐类游戏来说，我认为是适用的。</p>
 <p>我使用 MVC 模式希望达到的目的是：当需要将游戏修改为另一种类型的音乐类游戏，或者改为支持多种音乐类游戏时，可以基本保持 Model 部分代码不变，只需要更换或者添加相应的 Controller 和 View 即可。</p>
 <p>下面就结合我用 VS 生成的类图来讲一下我是怎么在 Jubeat 的开发中使用 MVC 模式的。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/JubeatClassDiagram.png" alt="类图"></p>
 <h3 id="2-_关于_Model：">2. 关于 Model：</h3>
 <p>封装内容：包括了各种音乐类游戏共有的一些<strong>数据</strong>和<strong>游戏逻辑</strong>。<strong>数据</strong>如：分数、连击数、本局游戏的音乐、音乐播放的时间、Note的列表（谱面信息），等等。<strong>逻辑</strong>如：播放音乐、添加 Note 、判断精确度，等等。</p>
 <p>上图中，<code>MugModel</code>、<code>AddNotesBehavior</code>和<code>JubeatAddBehavior</code>都属于 Model 部分。</p>
@@ -60,11 +60,11 @@
 <h3 id="5-_Mecanim_动画系统与状态模式">5. Mecanim 动画系统与状态模式</h3>
 <p>个人的理解来看，Mecanim 的状态机帮我们实现了状态模式。使用它可以很方便地将动画播放委托给 Unity 的动画系统来处理。不同的动画对应不同的状态，我只需要在 Model 中更新相应的条件即可。然后 Unity 的动画系统会自动根据条件的变化完成状态的切换，即切换不同的动画。</p>
 <p>通过上述的方式，尽量使脚本间的关系接近右图的情况。避免了左图中情况的出现（会导致代码难以维护、修改）。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ClassArrange.jpg" alt="架构"></p>
 <h2 id="二、使用_WWW_类在运行时载入本地的资源">二、使用 WWW 类在运行时载入本地的资源</h2>
 <h3 id="1-_读取歌曲信息以及在选歌界面的歌曲预览">1. 读取歌曲信息以及在选歌界面的歌曲预览</h3>
 <p>这一次我选择使用国人制作的Jubeat的安卓移植版本 Andjuist 的谱面文件。大致格式如下：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/BeatmapStructure.jpg" alt="谱面结构"></p>
 <p>首先我利用 C# 自带的 IO 类写了一个用于读取文本文件的工具类<code>FileReader</code>，代码如下：</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> FileReader{</div><div class="line"></div><div class="line">    <span class="comment">//打开文本文件，逐行读出，并返回一个ArrayList</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> ArrayList <span class="title">LoadFile</span>(<span class="keyword">string</span> path, <span class="keyword">string</span> name)</div><div class="line">    {</div><div class="line">        StreamReader sr = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span></div><div class="line">        {</div><div class="line">            Debug.Log(path);</div><div class="line">            sr = File.OpenText(path + <span class="string">"//"</span> + name);</div><div class="line">            Debug.Log(<span class="string">"opened"</span>);</div><div class="line">        }</div><div class="line">        <span class="keyword">catch</span> (Exception e)</div><div class="line">        {</div><div class="line">            Debug.Log(<span class="string">"failed"</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keyword">string</span> line;</div><div class="line"></div><div class="line">        ArrayList arrlist = <span class="keyword">new</span> ArrayList();</div><div class="line">        <span class="keyword">while</span> ((line = sr.ReadLine()) != <span class="keyword">null</span>)</div><div class="line">        {</div><div class="line">            arrlist.Add(line);</div><div class="line">        }</div><div class="line"></div><div class="line">        sr.Close();</div><div class="line"></div><div class="line">        sr.Dispose();</div><div class="line"></div><div class="line">        <span class="keyword">return</span> arrlist;</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
 
@@ -90,19 +90,19 @@
 <h2 id="三、NGUI的使用">三、NGUI的使用</h2>
 <h3 id="1-_制作选歌界面">1. 制作选歌界面</h3>
 <p>效果可见上面的视频，再放一张效果图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/JubeatSongList.jpg" alt="选歌界面"></p>
 <h4 id="a-_ScrollView_的使用">a. ScrollView 的使用</h4>
 <p>首先在场景中搭好基本的框架。网上教程很多，也可以在自带的例子的基础上进行修改，在此不再赘述。搭好以后的结构如图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/scrollview1.jpg" alt="选歌界面"></p>
 <p>然后对 ScrollView 进行一些设置：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/scrollview2.jpg" alt="选歌界面"></p>
 <p>接着给 Grid 添加 UIGrid 脚本，并设置为纵向。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/scrollview3.jpg" alt="选歌界面"></p>
 <p><strong>UIGrid 会将它的子物体按设置自动进行排序。这样我们只需要考虑如何为 UIGrid 添加子物体，而不需要考虑为添加的子物体排序的具体实现。</strong>可以很方便地实现一个竖排的选歌列表。</p>
 <p>这里，我将每个谱面对应的标签作为子物体。就是下图这个：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/JubeatSongListItem.jpg" alt="选歌界面"></p>
 <p>在添加之前，我们先制作一个这样的标签，并将它做成一个Prefab，如下图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/scrollview5.jpg" alt="选歌界面"></p>
 <p>这样，生成选歌列表时就可以根据读到的歌曲的数量，生成相应数量的标签，而且可以通过程序给每个标签的内容做修改。</p>
 <p>此外，在将标签做成 Prefab 之前，需要为它添加按键相关的组件，然后添加一个获取当前标签信息并跳转至游戏界面的脚本。这样就可以保证点击每个项后都可以选择对应的歌曲进入游戏。</p>
 <h4 id="b-_通过脚本进行控制">b. 通过脚本进行控制</h4>
@@ -119,15 +119,15 @@
 <h4 id="c-_中间大两头小的效果的实现">c. 中间大两头小的效果的实现</h4>
 <p>为了画面效果的美观，我实现了一个在滚动过程中保持两头的标签小，中间的标签大的效果。</p>
 <p>实现方法大致如下。为 Prefab 添加一个对应的脚本。这个脚本会根据当前标签的 y 坐标来对当前标签进行缩放。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/scrollview6.jpg" alt="选歌界面"></p>
 <p>关键的代码如下：</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">float</span> currentScale = <span class="number">1</span> - Mathf.Abs(<span class="keyword">this</span>.transform.position.y) / <span class="number">2.0</span>f;</div><div class="line"><span class="keyword">this</span>.transform.localScale = <span class="keyword">new</span> Vector3(currentScale, currentScale, currentScale);</div></pre></td></tr></table></figure>
 
 <h3 id="2-_在游戏主界面中的应用">2. 在游戏主界面中的应用</h3>
 <p>效果图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/JubeatGamePlay.jpg" alt="游戏界面"></p>
 <p>其中，歌曲封面、曲名等文字信息、Combo 数、以及暂停和返回按键都使用了 NGUI。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/JubeatGamePlay1.jpg" alt="游戏界面"></p>
 <h2 id="四、使用插件_TouchScript_支持_Win8_的多点触屏输入">四、使用插件 TouchScript 支持 Win8 的多点触屏输入</h2>
 <p>使用原型测试时的效果:</p>
 <p>视频</p>
@@ -148,11 +148,11 @@
 <li>为了方便调试，从插件的 Prefab 目录下找到 <code>Touch Debugger</code>，将它加入场景中</li>
 </ul>
 <p>如下图所示：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/touch1.jpg" alt="触控"></p>
 <p>完成这些工作以后，就可以先 Build 一次，测试是否配置正确，可以支持多点触控了。</p>
 <h4 id="c-_Gesture_的使用">c. Gesture 的使用</h4>
 <p>接下来为需要相应触屏事件的游戏对象添加相应的 Gesture （手势），如下图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/touch2.jpg" alt="触控"></p>
 <p>对应的关键代码如下：</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> TapResponse : MonoBehaviour {</div><div class="line"></div><div class="line">    <span class="comment">//....成员变量，略......</span></div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnEnable</span>()</div><div class="line">    {</div><div class="line">        <span class="comment">//初始化成员变量部分略，此处添加对触屏事件的响应</span></div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;PressGesture&gt;().Pressed += tappedHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;ReleaseGesture&gt;().Released += releaseHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;SimplePanGesture&gt;().StateChanged += panHandler;</div><div class="line"></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnDisable</span>()</div><div class="line">    {</div><div class="line">        <span class="comment">//销毁时移除对触屏事件的响应</span></div><div class="line">        GetComponent&lt;PressGesture&gt;().Pressed -= tappedHandler;</div><div class="line">        GetComponent&lt;ReleaseGesture&gt;().Released -= releaseHandler;</div><div class="line">        <span class="keyword">this</span>.gameObject.GetComponent&lt;SimplePanGesture&gt;().StateChanged -= panHandler;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//按下时平移</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">panHandler</span>(<span class="keyword">object</span> sender, GestureStateChangeEventArgs e)</div><div class="line">    {</div><div class="line">        <span class="comment">//......内容略，见下文......</span></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">tappedHandler</span>(<span class="keyword">object</span> sender, EventArgs e)</div><div class="line">    {</div><div class="line">        onTapDown();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">releaseHandler</span>(<span class="keyword">object</span> sender, EventArgs e)</div><div class="line">    {</div><div class="line">        onTapUp();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">//........下略......</span></div><div class="line">}</div></pre></td></tr></table></figure>
 
@@ -171,14 +171,13 @@
 <h2 id="六、使用_Mecanim_动画系统控制动画">六、使用 Mecanim 动画系统控制动画</h2>
 <h3 id="Note_根据不同的判定结果显示不同的动画">Note 根据不同的判定结果显示不同的动画</h3>
 <p>如图</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/Anim1.jpg" alt="动画"></p>
 <h3 id="背景动画根据指定条件改变">背景动画根据指定条件改变</h3>
 <p>在 Jubeat 原版游戏的规则中，打完曲子最多有 900000 分，此外根据“连续不失误”的数量会得到一个 0~1的系数，然后用这个系数乘以100000，得到额外的加分，两者相加得到总分。</p>
 <p>游戏过程中背景动画像从中间逐渐散开的云，慢慢露出底下的内容。而这个背景动画展开的程度，就表示当前加分的系数。系数为1时，完全展开，系数为0时，完全闭合。</p>
-<p>图片</p>
 <p>这个系数游戏过程中一直在变化，打出 perfect 或 good，这个系数会增大，反之则会减小。相应的，背景动画展开的程度也会跟着变化。</p>
 <p>为了实现这个功能，我将背景从完全闭合到完全展开的动画分成了10段，每段循环播放，对应加分系数 0~0.1 ， 0.1~0.2 等十个区间。如图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/Anim2.jpg" alt="动画"></p>
 <p>此外，结束后，还要有一个评级的动画，因为也属于背景动画。也做在了一起。</p>
 ]]></content>
     <summary type="html">
@@ -209,12 +208,41 @@
     <link href="http://yoursite.com/2015/01/28/Artist/"/>
     <id>http://yoursite.com/2015/01/28/Artist/</id>
     <published>2015-01-28T05:49:38.000Z</published>
-    <updated>2015-01-29T05:52:39.494Z</updated>
-    <content type="html"><![CDATA[<p>稍后更新。</p>
+    <updated>2015-01-30T07:10:37.230Z</updated>
+    <content type="html"><![CDATA[<a id="more"></a>
+
+<p> 小组作业，要求制作一款严肃教育类游戏。因为小组里只有我受过一些美术训练，所以就在分工时将美术的任务交给了我。（程序部分由另外的组员负责，我并未参与）</p>
+<h1 id="化学达人">化学达人</h1>
+<h2 id="游戏的效果">游戏的效果</h2>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/px1.jpg" alt="效果图1"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/px2.jpg" alt="效果图2"></p>
+<p>以下是一段演示视频：</p>
+<p>视频</p>
+<a id="more"></a>
+
+<h2 id="游戏的构思">游戏的构思</h2>
+<p>我们的希望是制作一个化学版的“24点”。给出相应的条件后，然后两名玩家比谁选择的化合物更符合给出的条件。为了增强竞技性，游戏采用了抢夺先手，然后回合制的规则。两名玩家轮流取所需化合物，当两人都拿到指定数量的化合物后，本轮游戏结束。</p>
+<p>虽然这个作品有一定教育作用。但不得不承认，这个作品作为游戏而言娱乐性较差。</p>
+<h1 id="起先的设计——荒野求生">起先的设计——荒野求生</h1>
+<p>其实最开始，我们是希望制作一款以“荒野求生”为主题的严肃教育类游戏。让玩家通过自己的智慧和一定的引导帮助主角在荒漠中存活，在这个过程中学会荒漠求生的技巧。但最后因为各方面的原因，这个方案被放弃了。</p>
+<p>视频</p>
+<p>一些场景的设定：</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/s1_setting.jpg" alt="效果图1"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/s4_setting1.jpg" alt="效果图2"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/s5_setting.jpg" alt="效果图3"></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>稍后更新。</p>
+    <![CDATA[<!-- more -->
+
+<p> 小组作业，要求制作一款严肃教育类游戏。因为小组里只有我受过一些美术训练，所以就在分工时将美术的任务交给了我。（程序部分由另外的组员负责，我并未参与）</p>
+<h1 id="化学达人">化学达人</h1>
+<h2 id="游戏的效果">游戏的效果</h2>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/px1.jpg" alt="效果图1"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/px2.jpg" alt="效果图2"></p>
+<p>以下是一段演示视频：</p>
+<p>视频</p>
 ]]>
+    
     </summary>
     
   </entry>
@@ -224,16 +252,18 @@
     <link href="http://yoursite.com/2015/01/27/OpenGL/"/>
     <id>http://yoursite.com/2015/01/27/OpenGL/</id>
     <published>2015-01-27T09:06:27.000Z</published>
-    <updated>2015-01-29T05:39:54.494Z</updated>
+    <updated>2015-01-30T08:34:09.026Z</updated>
     <content type="html"><![CDATA[<a id="more"></a>
 
 <h1 id="基于_OpenGL_的多光源场景绘制">基于 OpenGL 的多光源场景绘制</h1>
-<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。</p>
+<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部<code>OBJ</code>文件中读入模型的三维场景绘制程序。</p>
 <p>效果如下：</p>
-<p>图片</p>
-<p>视频</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image4.jpeg" alt="效果图1"></p>
 <a id="more"></a>
 
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image5.jpeg" alt="效果图2"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image6.jpeg" alt="效果图3"></p>
+<p>视频</p>
 <h2 id="1_OpenGL">1 OpenGL</h2>
 <p>OpenGL 是个跨平台的专业的图形程序接口，是一个功能强大，调用方便的底层图形库。它被广泛地应用于三维图形设计的各个领域，例如三维游戏、虚拟现实技术、三维图形与动画绘制、和计算机可视化等等。在三维图形设计中，三维场景和物体的绘制以及光照效果的表现是其中非常重要的两个问题。利用 OpenGL 可以较为简便地解决上述两个问题。</p>
 <h2 id="2_三维场景的绘制与观察">2 三维场景的绘制与观察</h2>
@@ -264,6 +294,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gluPerspective(<span class="number">45.0f</span>,(GLfloat)width/(GLfloat)height,<span class="number">0.001f</span>,<span class="number">100.0f</span>);</div></pre></td></tr></table></figure>
 
 <p>它确定一个棱台为视域体，这个区域里面的对象才能被观察到，这个区域之外的对象被裁剪掉，不会出现在图像中，如下图所示。</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image1.png" alt=""></p>
 <h4 id="2-1-3_OpenGL_中的深度缓存函数">2.1.3 OpenGL 中的深度缓存函数</h4>
 <p>在 OpenGL 中，如果不对面的深度加以判断，那么各个面将按照程序代码中定义的先后顺序进行绘制。在同一位置上，后绘制的面总是会将先绘制的面覆盖，哪怕后绘制的面实际应该是被先绘制的面遮挡住而不可见的。<br>因此，需要启动深度缓存检测，使得显示模式包含深度缓存，保证面的正确绘制。代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glutInitDisplayMode (GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);</div></pre></td></tr></table></figure>
@@ -320,6 +351,7 @@
 
 <h4 id="3-2-5_指定_OpenGL_光源的光线强度衰减系数">3.2.5 指定 OpenGL 光源的光线强度衰减系数</h4>
 <p>光强会随着距光源的距离而衰减，即离光源越远则光强越弱。在 OpenGL 中，定向光源位置为无穷远，禁用衰减，而对于定位光源，OpenGL 通过光源的发光量乘以衰减因子以实现衰减。衰减系数<code>attenuation</code>和距光源的距离关系如下图：</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image2.png" alt=""><br><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image3.png" alt=""></p>
 <p>在 OpenGL 中，环境光、漫反射光和镜面反射光的强度都会衰减。可以通过<code>glLight*</code>函数来设置衰减。<br>在本程序中，代码如下：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glLightf(GL_LIGHT2,GL_QUADRATIC_ATTENUATION,<span class="number">0.05</span>);</div></pre></td></tr></table></figure>
 
@@ -352,10 +384,9 @@
     <![CDATA[<!-- more -->
 
 <h1 id="基于_OpenGL_的多光源场景绘制">基于 OpenGL 的多光源场景绘制</h1>
-<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部 OBJ 文件中读入模型的三维场景绘制程序。</p>
+<p>通过使用 OpenGL 图形库，实现一个简单的，具有多个光源，且可以支持鼠标控制模型 360 度旋转，键盘控制多个光源位置，并且能够从外部<code>OBJ</code>文件中读入模型的三维场景绘制程序。</p>
 <p>效果如下：</p>
-<p>图片</p>
-<p>视频</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/opengl_image4.jpeg" alt="效果图1"></p>
 ]]>
     
     </summary>
@@ -367,7 +398,7 @@
     <link href="http://yoursite.com/2015/01/26/Catch-The-Beat/"/>
     <id>http://yoursite.com/2015/01/26/Catch-The-Beat/</id>
     <published>2015-01-26T07:35:34.000Z</published>
-    <updated>2015-01-29T04:38:15.966Z</updated>
+    <updated>2015-01-29T15:48:58.765Z</updated>
     <content type="html"><![CDATA[<blockquote>
 <p>这是本系列的第三篇文章，其他几篇的地址如下</p>
 <p>地址一</p>
@@ -393,29 +424,29 @@
 <h2 id="一、游戏功能上的完善">一、游戏功能上的完善</h2>
 <p>相较于前两次，这一次的游戏更为完整。</p>
 <p>支持键位的设定：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_1.jpg" alt="效果图"></p>
 <p>可以选择不同的歌曲进行游戏：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_2.jpg" alt="效果图"></p>
 <p>游戏过程中可以暂停，回到选歌界面重新选择，此外支持调节音量：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_3.jpg" alt="效果图"></p>
 <p>最后一首歌曲结束后会出现评分界面：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/ctb_4.jpg" alt="效果图"></p>
 <h2 id="二、2D_Toolkit_的使用">二、2D Toolkit 的使用</h2>
 <p>当时 Unity 还没有自带 2D 功能，而我要制作的是一款 2D 游戏，为此，我使用了 2D Toolkit 插件。</p>
 <p>基本上是利用插件提供的一个正交视图的摄像机。然后利用这个插件实现对精灵（Sprite）的支持。</p>
 <p>首先导入插件，然后创建 tk2d 摄像机，如下图:</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_1.jpg" alt="效果图"></p>
 <p>我们可以在此设置游戏的分辨率。2DToolkit 会帮助完成<strong>分辨率的适配</strong>。</p>
-<p>图片</p>
-<p>然后创建一个精灵集。精灵集是 2DToolkit 中用来存放精灵图的容器，它产生一个或多个贴图图集，替代我们的原图片从而提高性能。Project -&gt; Create -&gt; tk2d -&gt; Sprite如下图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_2.jpg" alt="效果图"></p>
+<p>然后创建一个精灵集。精灵集是 2DToolkit 中用来存放精灵图的容器，它产生一个或多个贴图图集，替代我们的原图片从而提高性能。Project -&gt; Create -&gt; tk2d -&gt; Sprite Collection如下图：</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_3.jpg" alt="效果图"></p>
 <p>然后为精灵集命名：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_4.jpg" alt="效果图"></p>
 <p>打开编辑器，拖入图片资源，设置所需的碰撞盒类型：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_5.jpg" alt="效果图"></p>
 <p>完成后记得点击右上角的”Commit”提交</p>
 <p>接下来就可以利用贴图集创建精灵（Sprite）了，Hierarchy -&gt; Create -&gt; tk2d -&gt; Sprite：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_6.jpg" alt="效果图"></p>
 <p>最后，我们需要在代码中获取并操作精灵，大致是这样：</p>
 <figure class="highlight cs"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">tk2dSprite sprite;</div><div class="line">sprite = GetComponent&lt;tk2dSprite&gt;();</div></pre></td></tr></table></figure>
 
@@ -445,11 +476,12 @@
 <p>在 Unity 中，<strong>自己写的脚本其实就相当于一个自定义的组件</strong>。当我们把这个脚本附到游戏对象上时，就相当于为这个游戏对象添加了一个组件。我们完全可以在各个地方将自己写的脚本当组件来使用。</p>
 <h3 id="2-_每个游戏对象的生命周期">2. 每个游戏对象的生命周期</h3>
 <p>如下图所示：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/lifetime.jpg" alt="生命周期"></p>
 <p>比较常用的有<code>Awake()</code>,<code>Start()</code>,<code>Update()</code>和<code>FixedUpdate()</code>。</p>
 <p>比如这次我就通过为<code>FixedUpdate()</code>设置一个较小的间隔来进行计时。Unity 处理的效率不错，Note 可以很好地合上拍，游戏也没有卡顿的情况出现。</p>
 <p>然后，每个脚本都有它独立的生命周期，对于自己写的脚本，各个脚本执行的先后顺序是不一定的（这一点有时会带来一些类似线程同步的麻烦）。但是也可以用如下图的方式规定它们执行的先后顺序。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_7.jpg" alt="效果图"></p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/tk2d_8.jpg" alt="效果图"></p>
 <h3 id="3-_Prefab的使用">3. Prefab的使用</h3>
 <p>在以往的程序中，当需要大量生成相似的对象时，我会写一个类，并添加相应的属性和方法。而在Unity中，我会考虑制作一个 Prefab ,并为它添加对应的脚本。</p>
 <p>Prefab 在我的理解中相当于是一个游戏对象的模版，通过<code>Instantiate()</code>方法可以将其大量的实例化（复制作为模版的游戏对象，并放入场景中），此外在实例化的过程中，可以方便地修改每一个实例对象，使他们各不相同。</p>
@@ -600,31 +632,30 @@
   </entry>
   
   <entry>
-    <title><![CDATA[用 Adruino 单片机与安卓进行交互]]></title>
-    <link href="http://yoursite.com/2015/01/24/Adruino/"/>
-    <id>http://yoursite.com/2015/01/24/Adruino/</id>
-    <published>2015-01-24T05:50:27.000Z</published>
-    <updated>2015-01-29T06:12:31.210Z</updated>
-    <content type="html"><![CDATA[<p>稍后更新。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>稍后更新。</p>
-]]>
-    </summary>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[用 ActionScript 3.0 和 Flash 制作高保真的程序原型]]></title>
+    <title><![CDATA[使用 ActionScript3.0 和 PaperVision 3D 实现简单的三维空间]]></title>
     <link href="http://yoursite.com/2015/01/22/AS3-0/"/>
     <id>http://yoursite.com/2015/01/22/AS3-0/</id>
     <published>2015-01-22T05:50:01.000Z</published>
-    <updated>2015-01-29T06:13:28.290Z</updated>
-    <content type="html"><![CDATA[<p>稍后更新。</p>
+    <updated>2015-01-30T08:30:00.270Z</updated>
+    <content type="html"><![CDATA[<a id="more"></a>
+
+<h1 id="使用_AS3-0_和_PaperVision_3D_实现简单的三维空间">使用 AS3.0 和 PaperVision 3D 实现简单的三维空间</h1>
+<p>刚上大二时做的，演示视频如下：</p>
+<p>视频</p>
+<a id="more"></a>
+
+<p>代码如下：</p>
+<figure class="highlight as3"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div></pre></td><td class="code"><pre><div class="line"><span class="package"><span class="keyword">package</span></span></div><div class="line">{</div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> flash.events.Event;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> flash.events.KeyboardEvent;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> flash.geom.Point;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> flash.ui.Keyboard;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> flash.events.MouseEvent;</span></div><div class="line">	</div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.cameras.CameraType;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.cameras.SpringCamera3D;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.core.math.Number3D;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.materials.BitmapFileMaterial;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.materials.ColorMaterial;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.objects.DisplayObject3D;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.objects.primitives.PaperPlane;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.objects.primitives.Sphere;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.view.BasicView;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.objects.primitives.Cube;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.materials.utils.MaterialsList;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.materials.special.CompositeMaterial;</span>		</div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.materials.*;</span>	</div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.core.math.Matrix3D;</span></div><div class="line">	<span class="preprocessor"><span class="keyword">import</span> org.papervision3d.events.InteractiveScene3DEvent;</span></div><div class="line">	</div><div class="line">	<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Space_3d</span> <span class="keyword">extends</span> <span class="title">BasicView</span></span>{</div><div class="line"></div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> previousMousePoint:Point = <span class="keyword">new</span> Point();<span class="comment">//声明记录刚按下时鼠标位置的变量</span></div><div class="line"></div><div class="line">		<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">const</span> FORWARD:Number3D=<span class="keyword">new</span> Number3D(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>);</div><div class="line">		</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> cubeContainer:DisplayObject3D;<span class="comment">//声明立方体容器</span></div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> starContainer:Sphere;<span class="comment">//声明星星容器</span></div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> stars:DisplayObject3D;<span class="comment">//声明星星物件</span></div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> earth:Sphere;<span class="comment">//声明地球物件</span></div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> cube:Cube;<span class="comment">//声明立方体</span></div><div class="line">		</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> myCamera:SpringCamera3D;<span class="comment">//声明摄像机（弹性摄像机）</span></div><div class="line">		</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> isMouseDown:Boolean = <span class="literal">false</span>;<span class="comment">//记录鼠标是否按下的布尔型变量</span></div><div class="line">		</div><div class="line">		<span class="comment">//记录键盘对应各键是否按下的布尔型变量</span></div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> keyForward:Boolean = <span class="literal">false</span>;</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> keyBackward:Boolean = <span class="literal">false</span>;</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> keyLeft:Boolean = <span class="literal">false</span>;</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> keyRight:Boolean = <span class="literal">false</span>;</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> keyUper:Boolean = <span class="literal">false</span>;</div><div class="line">		<span class="keyword">private</span> <span class="keyword">var</span> keyLower:Boolean = <span class="literal">false</span>;</div><div class="line">		</div><div class="line">		<span class="comment">//构造函数</span></div><div class="line">		<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">Space_3d</span><span class="params">()</span></span>{</div><div class="line">			<span class="comment">//调用父类BasicView的构造方法，实例化视窗，宽高与舞台一直，自动对齐场景，启用鼠标感应，摄像机为弹性摄像机</span></div><div class="line">			<span class="keyword">super</span>(stage.stageWidth , stage.stageHeight,<span class="literal">true</span>,<span class="literal">true</span>,CameraType.SPRING);</div><div class="line">			<span class="keyword">this</span>.viewport.buttonMode = <span class="literal">true</span>;<span class="comment">//启用按键模式</span></div><div class="line">			</div><div class="line">			Init3DObject();<span class="comment">//调用初始化3D物件的函数</span></div><div class="line">			startRendering();<span class="comment">//渲染</span></div><div class="line">		}</div><div class="line">		</div><div class="line">		<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">Init3DObject</span><span class="params">()</span><span class="type">:void</span></span>{</div><div class="line">			<span class="comment">//关于摄像机的一些设置</span></div><div class="line">			myCamera = SpringCamera3D(camera);<span class="comment">//弹性摄像机</span></div><div class="line">			myCamera.mass = <span class="number">20</span>;<span class="comment">//摄像机质量20</span></div><div class="line">			myCamera.damping = <span class="number">20</span>;<span class="comment">//弹力的阻尼20</span></div><div class="line">			myCamera.stiffness = <span class="number">10</span>;<span class="comment">//弹簧硬度10</span></div><div class="line">			myCamera.positionOffset = <span class="keyword">new</span> Number3D(<span class="number">0</span> , <span class="number">30</span> , -<span class="number">100</span>);<span class="comment">//摄像机位置偏移量</span></div><div class="line">			myCamera.lookOffset = <span class="keyword">new</span> Number3D(<span class="number">0</span>,<span class="number">0</span>,<span class="number">100</span>);<span class="comment">//摄像机观察目标位置偏移量</span></div><div class="line">			myCamera.far = <span class="number">10000</span>;</div><div class="line">			</div><div class="line">			<span class="comment">//实例化星星和它的容器</span></div><div class="line">			starContainer = <span class="keyword">new</span> Sphere(<span class="literal">null</span> , <span class="number">3000</span> , <span class="number">30</span> ,<span class="number">30</span>);</div><div class="line">			stars = <span class="keyword">new</span> DisplayObject3D();</div><div class="line">			</div><div class="line">			<span class="keyword">var</span> starContainerVertsNum:uint = starContainer.geometry.vertices.length;<span class="comment">//记录星星容器顶点数的变量</span></div><div class="line">			<span class="keyword">for</span>(<span class="keyword">var</span> i:uint = <span class="number">0</span> ; i &lt; starContainerVertsNum ; i++){</div><div class="line">				<span class="comment">//星星颜色随机</span></div><div class="line">				<span class="keyword">var</span> sphereMat:ColorMaterial = <span class="keyword">new</span> ColorMaterial(<span class="number">0xff0000</span> * Math.random());</div><div class="line">				<span class="keyword">var</span> mysphere:Sphere = <span class="keyword">new</span> Sphere(sphereMat , <span class="number">10</span> , <span class="number">2</span> ,<span class="number">2</span>);				</div><div class="line">				<span class="comment">//星星位置，在球形容器内随机</span></div><div class="line">				mysphere.x = Math.random()*starContainer.geometry.vertices[i].x;</div><div class="line">				mysphere.y = Math.random()*starContainer.geometry.vertices[i].y;</div><div class="line">				mysphere.z = Math.random()*starContainer.geometry.vertices[i].z;</div><div class="line">				mysphere.scale = Math.random();</div><div class="line">				</div><div class="line">				stars.addChild(mysphere);</div><div class="line">			}</div><div class="line">			</div><div class="line">			<span class="comment">//地球的贴图</span></div><div class="line">			<span class="keyword">var</span> earthMat:BitmapFileMaterial = <span class="keyword">new</span> BitmapFileMaterial(<span class="string">"assets/earth1.jpg"</span>,<span class="literal">true</span>);</div><div class="line">			earthMat.doubleSided = <span class="literal">true</span>;</div><div class="line">			<span class="comment">//实例化地球</span></div><div class="line">			earth = <span class="keyword">new</span> Sphere(earthMat ,<span class="number">500</span> , <span class="number">20</span> , <span class="number">20</span>);</div><div class="line">			earth.z = <span class="number">1500</span>;	</div><div class="line">			<span class="comment">//实例化立方体容器</span></div><div class="line">			cubeContainer = <span class="keyword">new</span> DisplayObject3D();</div><div class="line">			</div><div class="line">			<span class="comment">//立方体每个面的贴图</span></div><div class="line">			<span class="keyword">var</span> mat1:BitmapFileMaterial = <span class="keyword">new</span> BitmapFileMaterial(<span class="string">"assets/mat1.jpg"</span>,<span class="literal">true</span>);</div><div class="line">			<span class="keyword">var</span> mat2:BitmapFileMaterial = <span class="keyword">new</span> BitmapFileMaterial(<span class="string">"assets/mat2.jpg"</span>,<span class="literal">true</span>);</div><div class="line">			<span class="keyword">var</span> mat3:BitmapFileMaterial = <span class="keyword">new</span> BitmapFileMaterial(<span class="string">"assets/mat3.jpg"</span>,<span class="literal">true</span>);</div><div class="line">			<span class="keyword">var</span> mat4:BitmapFileMaterial = <span class="keyword">new</span> BitmapFileMaterial(<span class="string">"assets/mat4.jpg"</span>,<span class="literal">true</span>);</div><div class="line">			<span class="keyword">var</span> mat5:BitmapFileMaterial = <span class="keyword">new</span> BitmapFileMaterial(<span class="string">"assets/mat5.jpg"</span>,<span class="literal">true</span>);</div><div class="line">			<span class="keyword">var</span> mat6:BitmapFileMaterial = <span class="keyword">new</span> BitmapFileMaterial(<span class="string">"assets/mat6.jpg"</span>,<span class="literal">true</span>);			</div><div class="line"></div><div class="line">			mat1.doubleSided = <span class="literal">false</span>;<span class="comment">//关闭材质的双面模式</span></div><div class="line">			mat1.interactive = <span class="literal">true</span>;<span class="comment">//允许与鼠标进行交互</span></div><div class="line">			mat2.doubleSided = <span class="literal">false</span>;</div><div class="line">			mat2.interactive = <span class="literal">true</span>;</div><div class="line">			mat3.doubleSided = <span class="literal">false</span>;</div><div class="line">			mat3.interactive = <span class="literal">true</span>;</div><div class="line">			mat4.doubleSided = <span class="literal">false</span>;</div><div class="line">			mat4.interactive = <span class="literal">true</span>;			</div><div class="line">			mat5.doubleSided = <span class="literal">false</span>;</div><div class="line">			mat5.interactive = <span class="literal">true</span>;</div><div class="line">			mat6.doubleSided = <span class="literal">false</span>;</div><div class="line">			mat6.interactive = <span class="literal">true</span>;</div><div class="line">			</div><div class="line">			<span class="comment">//为各个面设置贴图</span></div><div class="line">			<span class="keyword">var</span> ml:MaterialsList = <span class="keyword">new</span> MaterialsList({</div><div class="line">				top:mat1,</div><div class="line">				bottom:mat2,</div><div class="line">				left:mat3,</div><div class="line">				right:mat4,</div><div class="line">				front:mat5,</div><div class="line">				back:mat6</div><div class="line">			});</div><div class="line">			<span class="comment">//实例化立方体</span></div><div class="line">			cube = <span class="keyword">new</span> Cube(ml, <span class="number">40</span>, <span class="number">40</span>, <span class="number">40</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>);		</div><div class="line">			<span class="comment">//将立方体加入容器</span></div><div class="line">			cubeContainer.addChild(cube);</div><div class="line">			<span class="comment">//将立方体容器，星星，地球加入场景</span></div><div class="line">			scene.addChild(cubeContainer);</div><div class="line">			scene.addChild(stars);</div><div class="line">			scene.addChild(earth);</div><div class="line">			<span class="comment">//设置键盘监听和鼠标监听</span></div><div class="line">			stage.addEventListener(KeyboardEvent.KEY_DOWN , eKeyDown);</div><div class="line">			stage.addEventListener(KeyboardEvent.KEY_UP , eKeyUp);</div><div class="line">			cube.addEventListener(InteractiveScene3DEvent.OBJECT_OUT, eMouseUp);<span class="comment">//为立方体设鼠标监听</span></div><div class="line">			cube.addEventListener(InteractiveScene3DEvent.OBJECT_PRESS, eMouseDown);</div><div class="line">			cube.addEventListener(InteractiveScene3DEvent.OBJECT_RELEASE, eMouseUp);</div><div class="line">			<span class="comment">//摄像机的目标为立方体容器，不设为立方体，这样可以在鼠标转动立方体时，摄像机不跟随发生移动</span></div><div class="line">			myCamera.target = cubeContainer;</div><div class="line">		}</div><div class="line">		</div><div class="line">		<span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">onRenderTick</span><span class="params">(e:Event = null)</span><span class="type">:void</span></span>{</div><div class="line">			<span class="keyword">if</span>(isMouseDown){</div><div class="line">				<span class="comment">//获得当前鼠标位置</span></div><div class="line">				<span class="keyword">var</span> currentMousePoint:Point = <span class="keyword">new</span> Point(viewport.containerSprite.mouseX, viewport.containerSprite.mouseY);</div><div class="line">				<span class="comment">//将当前鼠标位置和先前的位置做差，得到相应的向量</span></div><div class="line">				<span class="keyword">var</span> difference:Point = currentMousePoint.subtract(previousMousePoint);</div><div class="line">				<span class="keyword">var</span> vector:Number3D = <span class="keyword">new</span> Number3D(difference.x, difference.y, <span class="number">0</span>);</div><div class="line">				</div><div class="line">				<span class="keyword">var</span> rotationAxis:Number3D = Number3D.cross(vector, FORWARD);</div><div class="line">				rotationAxis.normalize();</div><div class="line">				<span class="comment">//得到旋转矩阵</span></div><div class="line">				<span class="keyword">var</span> distance:Number = Point.distance(currentMousePoint, previousMousePoint);</div><div class="line">				<span class="keyword">var</span> rotationMatrix:Matrix3D = Matrix3D.rotationMatrix(rotationAxis.x, -rotationAxis.y, rotationAxis.z, distance / <span class="number">250</span>);</div><div class="line">			 	<span class="comment">//矩阵相乘，实现转动</span></div><div class="line">				cube.transform.calculateMultiply3x3(rotationMatrix, cube.transform);</div><div class="line">				previousMousePoint = currentMousePoint;<span class="comment">//将当前鼠标位置设为先前鼠标位置</span></div><div class="line">			}</div><div class="line">			</div><div class="line">			myCamera.lookAt(cubeContainer);<span class="comment">//摄像机看向立方体容器</span></div><div class="line">			</div><div class="line">			earth.yaw(<span class="number">0.4</span>);<span class="comment">//地球自转</span></div><div class="line">			move();<span class="comment">//移动</span></div><div class="line">			</div><div class="line">			<span class="keyword">super</span>.onRenderTick();</div><div class="line">		}</div><div class="line">		</div><div class="line">		<span class="comment">//键盘按键抬起时的动作</span></div><div class="line">		<span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">eKeyUp</span><span class="params">(event:KeyboardEvent)</span><span class="type">:void</span></span>{</div><div class="line">			<span class="keyword">switch</span>(event.keyCode){</div><div class="line">				<span class="keyword">case</span> Keyboard.UP:</div><div class="line">					keyForward = <span class="literal">false</span>;</div><div class="line">					<span class="keyword">break</span>;			</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> Keyboard.DOWN:</div><div class="line">					keyBackward = <span class="literal">false</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> Keyboard.LEFT:</div><div class="line">					keyLeft = <span class="literal">false</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> Keyboard.RIGHT:</div><div class="line">					keyRight = <span class="literal">false</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> <span class="string">"W"</span>.charCodeAt():</div><div class="line">					keyUper = <span class="literal">false</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> <span class="string">"S"</span>.charCodeAt():</div><div class="line">					keyLower = <span class="literal">false</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> <span class="string">"A"</span>.charCodeAt():</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> <span class="string">"D"</span>.charCodeAt():</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">			}</div><div class="line">		}</div><div class="line">		</div><div class="line">		<span class="comment">//键盘按键按下时的动作</span></div><div class="line">		<span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">eKeyDown</span><span class="params">(event:KeyboardEvent)</span><span class="type">:void</span></span>{</div><div class="line">			<span class="keyword">switch</span>(event.keyCode){</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> Keyboard.UP:</div><div class="line">					keyForward = <span class="literal">true</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> Keyboard.DOWN:</div><div class="line">					keyBackward = <span class="literal">true</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> Keyboard.LEFT:</div><div class="line">					keyLeft = <span class="literal">true</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> Keyboard.RIGHT:</div><div class="line">					keyRight = <span class="literal">true</span>;</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">					</div><div class="line">				<span class="keyword">case</span> <span class="string">"W"</span>.charCodeAt():{</div><div class="line">					keyUper = <span class="literal">true</span>;</div><div class="line">				}<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> <span class="string">"S"</span>.charCodeAt():{</div><div class="line">					keyLower = <span class="literal">true</span>;</div><div class="line">				}<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> <span class="string">"A"</span>.charCodeAt():{</div><div class="line">					<span class="keyword">if</span>(cubeContainer.scale &lt;= <span class="number">0.15</span>){</div><div class="line">						cubeContainer.scale = <span class="number">0.15</span>;<span class="comment">//限制允许的缩小的极限</span></div><div class="line">					}</div><div class="line">					<span class="keyword">else</span>{</div><div class="line">						cubeContainer.scale -= <span class="number">0.05</span>;</div><div class="line">					}</div><div class="line">				}<span class="keyword">break</span>;</div><div class="line">				</div><div class="line">				<span class="keyword">case</span> <span class="string">"D"</span>.charCodeAt():{</div><div class="line">					cubeContainer.scale += <span class="number">0.1</span>;</div><div class="line">				}<span class="keyword">break</span>;</div><div class="line">			}</div><div class="line">		}</div><div class="line">		<span class="comment">//移动立方体所用函数</span></div><div class="line">		<span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">move</span><span class="params">()</span><span class="type">:void</span></span>{</div><div class="line">			<span class="comment">//前后移动</span></div><div class="line">			<span class="keyword">if</span>(keyForward){</div><div class="line">				cubeContainer.moveForward(<span class="number">15</span>);</div><div class="line">			}</div><div class="line">			<span class="keyword">else</span> <span class="keyword">if</span>(keyBackward){</div><div class="line">				cubeContainer.moveBackward(<span class="number">15</span>);</div><div class="line">			}</div><div class="line">			<span class="comment">//左右转动</span></div><div class="line">			<span class="keyword">if</span>(keyLeft){</div><div class="line">				<span class="keyword">if</span>(cubeContainer.scale &lt;= <span class="number">0.4</span>){</div><div class="line">					cubeContainer.localRotationY += <span class="number">10</span>;</div><div class="line">				}</div><div class="line">				<span class="keyword">else</span> <span class="keyword">if</span>(cubeContainer.scale &lt;= <span class="number">1</span>){</div><div class="line">					cubeContainer.localRotationY += <span class="number">4</span>;</div><div class="line">				}</div><div class="line">				<span class="keyword">else</span>{</div><div class="line">					cubeContainer.localRotationY += <span class="number">1</span>;</div><div class="line">				}</div><div class="line">			}</div><div class="line">			<span class="keyword">else</span> <span class="keyword">if</span>(keyRight){</div><div class="line">				<span class="keyword">if</span>(cubeContainer.scale &lt;= <span class="number">0.4</span>){</div><div class="line">					cubeContainer.localRotationY -= <span class="number">10</span>;</div><div class="line">				}</div><div class="line">				<span class="keyword">else</span> <span class="keyword">if</span>(cubeContainer.scale &lt;= <span class="number">1</span>){</div><div class="line">					cubeContainer.localRotationY -= <span class="number">4</span>;</div><div class="line">				}</div><div class="line">				<span class="keyword">else</span>{</div><div class="line">					cubeContainer.localRotationY -= <span class="number">1</span>;</div><div class="line">				}</div><div class="line">			}</div><div class="line">			<span class="comment">//上下移动</span></div><div class="line">			<span class="keyword">if</span>(keyUper){</div><div class="line">				cubeContainer.moveUp(<span class="number">15</span>);</div><div class="line">			}</div><div class="line">			<span class="keyword">else</span> <span class="keyword">if</span>(keyLower){</div><div class="line">				cubeContainer.moveDown(<span class="number">15</span>);</div><div class="line">			}</div><div class="line">		}		</div><div class="line">		</div><div class="line">		<span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">eMouseDown</span><span class="params">(e:InteractiveScene3DEvent)</span><span class="type">:void</span></span>{</div><div class="line">			isMouseDown=<span class="literal">true</span>;</div><div class="line">			<span class="comment">//获得刚按下时鼠标的坐标</span></div><div class="line">			previousMousePoint.x = viewport.containerSprite.mouseX;</div><div class="line">			previousMousePoint.y = viewport.containerSprite.mouseY;</div><div class="line">		}</div><div class="line"></div><div class="line">		<span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">eMouseUp</span><span class="params">(e:InteractiveScene3DEvent)</span><span class="type">:void</span></span>{</div><div class="line">			isMouseDown = <span class="literal">false</span>;</div><div class="line">		}</div><div class="line"></div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>稍后更新。</p>
+    <![CDATA[<!-- more -->
+
+<h1 id="使用_AS3-0_和_PaperVision_3D_实现简单的三维空间">使用 AS3.0 和 PaperVision 3D 实现简单的三维空间</h1>
+<p>刚上大二时做的，演示视频如下：</p>
+<p>视频</p>
 ]]>
+    
     </summary>
     
   </entry>
@@ -755,7 +786,7 @@
     <link href="http://yoursite.com/2015/01/21/Build_your_blog_with_%20hexo/"/>
     <id>http://yoursite.com/2015/01/21/Build_your_blog_with_ hexo/</id>
     <published>2015-01-21T04:41:44.000Z</published>
-    <updated>2015-01-25T13:52:02.389Z</updated>
+    <updated>2015-01-29T15:47:47.073Z</updated>
     <content type="html"><![CDATA[<a id="more"></a>
 
 <h2 id="什么是Hexo">什么是Hexo</h2>
@@ -802,7 +833,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git clone https://github.com/creationix/nvm.git</div></pre></td></tr></table></figure>
 
 <p><strong>接下来就是官网没有提及的部分</strong>。到这一步以后，官网让重启terminal，然后执行<code>$ nvm install 0.10</code>。这时，我遇到了问题，如下图：</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/hexo1.jpg" alt="错误"></p>
 <p><strong>解决的方法如下</strong>，执行<code>$ source ~/.nvm/nvm.sh</code>后<code>nvm</code>命令就可用了。但这样是不够的，重启terminal后，还会出现同样的问题。我们需要在<code>~/.bashrc</code>, <code>~/.bash_profile</code>, <code>~/.profile</code>, 或者 <code>~/.zshrc</code>之一的文件中添加刚才的命令，这样在终端启动时就会自动执行刚才的命令。</p>
 <p>接下来利用<code>nvm</code>安装NodeJS，执行如下命令，安装0.10版的NodeJS（最新稳定版本）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ nvm install <span class="number">0.10</span></div></pre></td></tr></table></figure>
@@ -844,7 +875,7 @@
 <p>完成后在浏览器中查看你的Github pages，Gitcafe pages，如果之前的步骤一切顺利，你可以发现博客已经成功发布了。</p>
 <h3 id="关于Windows系统下安装：">关于Windows系统下安装：</h3>
 <p>我在 Windows8 系统上尝试安装过，开始一切正常。但最后执行 <code>$ hexo deploy</code>的时候总是像下面一样报错。</p>
-<p>图片</p>
+<p><img src="http://7u2ro1.com1.z0.glb.clouddn.com/hexo2.jpg" alt="效果图1"></p>
 <p>网上查了很久，基本是说没有在 git bash 中操作或者是 Git 环境变量没有配置好。可惜我不属于这两种情况。暂时没有找到解决方案。</p>
 ]]></content>
     <summary type="html">
