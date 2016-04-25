@@ -1,0 +1,432 @@
+/*
+=================
+清除浏览器默认样式
+=================
+*/
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+a {
+	text-decoration: none; 
+}
+
+/*
+==========
+网格的容器
+==========
+*/
+.grid-container{
+	/*width: 100%;*/
+	max-width: 1200px;
+	/*padding: 10px;*/
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/*
+=======================
+清除浮动，避免行之间影响
+=======================
+*/
+.grid-row:before,
+.grid-row:after{
+	content: "";
+	display: table;
+	clear: both;
+}
+.grid-row:after{
+	zoom:1;
+}
+
+.clear-fix:before,
+.clear-fix:after{
+	content: "";
+	display: table;
+	clear: both;
+}
+.clear-fix:after{
+	zoom:1;
+}
+
+/*
+=========================
+使各列保持在各自所属的行中
+=========================
+*/
+[class*=" col-"]{
+	float: left;
+	padding: 0 15px;
+	/*margin: 30px 0;*/
+	min-height: 1px;
+}
+
+/*
+===========================
+窗口宽度小于768px时各列的宽度
+===========================
+*/
+.col-s-1{ width: 8.333333%; }
+.col-s-2{ width: 16.666667%; }
+.col-s-3{ width: 25%; }
+.col-s-4{ width: 33.333333%; }
+.col-s-5{ width: 41.666667%; }
+.col-s-6{ width: 50%; }
+.col-s-7{ width: 58.333333%; }
+.col-s-8{ width: 66.666667%; }
+.col-s-9{ width: 75%; }
+.col-s-10{ width: 83.333333%; }
+.col-s-11{ width: 91.666667%; }
+.col-s-12{ width: 100%; }
+
+/*
+===========================
+窗口宽度大于768px时各列的宽度
+===========================
+*/
+/*@media all and (min-width: 768px) {
+	.col-m-1{ width: 8.333333%; }
+	.col-m-2{ width: 16.666667%; }
+	.col-m-3{ width: 25%; }
+	.col-m-4{ width: 33.333333%; }
+	.col-m-5{ width: 41.666667%; }
+	.col-m-6{ width: 50%; }
+	.col-m-7{ width: 58.333333%; }
+	.col-m-8{ width: 66.666667%; }
+	.col-m-9{ width: 75%; }
+	.col-m-10{ width: 83.333333%; }
+	.col-m-11{ width: 91.666667%; }
+	.col-m-12{ width: 100%; }
+}*/
+
+@media all and (min-width: 940px) {
+	.col-m-1{ width: 8.333333%; }
+	.col-m-2{ width: 16.666667%; }
+	.col-m-3{ width: 25%; }
+	.col-m-4{ width: 33.333333%; }
+	.col-m-5{ width: 41.666667%; }
+	.col-m-6{ width: 50%; }
+	.col-m-7{ width: 58.333333%; }
+	.col-m-8{ width: 66.666667%; }
+	.col-m-9{ width: 75%; }
+	.col-m-10{ width: 83.333333%; }
+	.col-m-11{ width: 91.666667%; }
+	.col-m-12{ width: 100%; }
+}
+
+/*
+===================
+为内容容器设置样式
+===================
+*/
+.content-wrapper{
+	border: 1px solid #e5e5e5;
+	border-top: 3px solid #3498db;
+	min-height: 30px;
+}
+
+/*@media all and (max-width: 768px) {
+	.content-wrapper{
+		margin-top: 30px;
+	}
+}*/
+
+@media all and (max-width: 940px) {
+	.content-wrapper{
+		margin-top: 30px;
+	}
+}
+
+/*
+=======================
+为所有元素应用border-box
+=======================
+*/
+*{
+	box-sizing: border-box;
+}
+
+/*
+========
+字体设置
+========
+*/
+body{
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	color: #222;
+}
+
+/*
+========
+网页头部
+========
+*/
+header{
+	width: 100%;
+	/*height: 110px;*/
+	margin-bottom: 30px;
+}
+
+.banner{
+	/*height: 50px;*/
+	color: #999;
+	line-height: 50px;
+	overflow: auto;
+}
+#banner-wrapper{
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1200px;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+#banner-logo{
+	float: left;
+	margin-left: 15px;
+	margin-top: 5px; 
+	margin-bottom: 5px;
+}
+#banner-date{
+	float: right;
+	font-size: 12px;
+}
+
+/*
+======
+导航栏
+======
+*/
+header nav{
+	background-color: #3498db;
+	border: 1px solid #2980b9;
+	font-family: "微软雅黑";
+	font-size: 16px;
+/*	height: 60px;*/
+}
+
+header a{
+	display: block;
+	color: #fff;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+@media all and (max-width: 940px) {
+	header a{
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+}
+
+.nav{
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1200px;
+	padding-left: 15px;
+	padding-right: 15px;
+	/*overflow: auto;*/
+}
+
+.nav-list li{
+	float: left;
+	line-height: 60px;
+}
+
+/* hide sub menu links */
+ul.sub-menu {
+    display:none;
+    position:absolute;
+    left: 0;
+    /*top:40px;  make this equal to the line-height of the links (specified below) */
+    width: 200px;
+    background-color: #3498db;
+}
+
+.sub-menu .sub-menu{
+	position: absolute;
+    top: 0;
+    left: 201px; /* make this equal to the width of the sub nav above */
+    margin: 0;
+    z-index: 1;
+}
+
+li.dropdown{
+	position: relative;
+}
+
+li.dropdown li{
+	float: none;
+	border-top: 1px solid #fff;
+}
+
+/* show arrows for dropdowns */
+nav li.dropdown > a {
+    background-position:right 20px;
+    background-repeat:no-repeat;
+}
+
+nav li li.dropdown > a {
+    background-position:right 16px;
+    background-repeat:no-repeat;
+}
+
+
+/*@media all and (max-width: 768px) {
+	.nav-list li{
+		float: none;
+		display: block;
+		line-height: 24px;
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+}*/
+
+@media all and (max-width: 940px) {
+	.nav-list li{
+		float: none;
+		display: block;
+		line-height: 24px;
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+}
+
+.user-btn{
+	float: right;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	height: 30px;
+	line-height: 30px;
+	background-color: #ecf0f1;
+	border: 1px solid #2980b9;
+}
+
+.user-btn a{
+	padding-left: 10px;
+	padding-right: 10px;
+	color: #222;
+}
+
+.nav-selected{
+	background-color: #ecf0f1;
+	color: #222;
+}
+
+/*
+============
+主体内容部分
+============
+*/
+.main{
+	
+}
+
+.main a{
+	color: #222;
+}
+
+.main .content-header{
+	padding: 15px;
+	font-size: 20px;
+	font-family: "微软雅黑";
+}
+
+.content-header h2{
+	float: left;
+}
+
+.content-header .more-btn{
+	float: right;
+	font-size: 14px;
+	color: #3498db;
+	line-height: 20px;
+}
+
+.main .btn{
+	display: block;
+	background-color: #3498db;
+	border: 1px solid #2980b9;
+	color: #fff;
+	font-size: 16px;
+	line-height: 40px;
+	width: 140px;
+	text-align: center;
+	font-family: "微软雅黑";
+	cursor: pointer;
+}
+
+/*
+========
+页脚部分
+========
+*/
+footer{
+	height: 40px;
+	margin-top: 30px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1200px;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-top: 1px solid #ccc;	
+	font-size: 12px;
+	line-height: 40px;
+	color: #999;
+}
+
+#copyright{
+	float: left;
+}
+
+#support{
+	float: right;
+}
+
+.icon{
+	color: #3498db;
+	padding-right: 10px;
+}
