@@ -4,16 +4,21 @@
 	<meta charset="UTF-8">
 	<title>东海监测中心OA</title>
 	<link rel="stylesheet" href="assets/styles/main.css">
-	<link rel="stylesheet" href="assets/styles/index.css">
+	<link rel="stylesheet" href="assets/styles/new_apply.css">
 	<link rel="stylesheet" href="assets/styles/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="assets/styles/select2.css">
+	<link rel="stylesheet" href="assets/styles/jquery-labelauty.css">
 	<script src="assets/js/respond.min.js"></script>
 	<script src="assets/js/html5shiv.min.js"></script>
 	<script src="assets/js/jquery-1.12.3.min.js"></script>
 	<script src="assets/js/select2.min.js"></script>
+	<script src="assets/js/jquery.quicksearch.js"></script>
+	<!--[if gt IE 8]>
 	<script src="assets/js/Labelauty/jquery-labelauty.js"></script>
+	<script src="assets/js/labelauty.js"></script>
+	<![endif]-->  
 	<script src="assets/js/main.js"></script>
-	<script src="assets/js/index.js"></script>	
+	<script src="assets/js/new_apply.js"></script>
 </head>
 <body>
 	<!-- 页头 -->
@@ -369,203 +374,116 @@
 	<!-- 主体部分 -->
 	<div class="grid-container">	
 		<div class="grid-row main">
-			<!-- 通知通告 -->
-			<div class="col-s-12 col-m-4">
-				<div class="content-wrapper">
-					<div class="content-header clear-fix">
-						<h2><span class="fa fa-feed icon"></span>通知通告</h2>
-						<a href="" class="more-btn">>>显示全部</a>
-					</div>
-					<div id="notice_wrapper">
-						<a href="" class="notice-item">
-							<span class="notice-title"><span class="fa fa-warning icon-urgent"></span>东海监测中心2016年2月份新闻宣传工作情况通告</span>
-							<span class="notice-date">2016-03-15</span><span class="notice-new">&nbsp;&nbsp;NEW</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title"><span class="fa fa-warning icon-important"></span>1631组 关于李善通等聘任的通知</span>
-							<span class="notice-date">2016-03-15</span><span class="notice-new">&nbsp;&nbsp;NEW</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title"><span class="fa fa-warning icon-new"></span>1632组 关于李志恩等续聘的通知</span>
-							<span class="notice-date">2016-03-15</span><span class="notice-new">&nbsp;&nbsp;NEW</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">1633组 关于刘鹏霞等聘任的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">关于梳理项目作业指导书基本情况的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">关于转发《中共国家海洋局党组关于吴强同志任职的通知》等文件的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">关于转发《国家海洋局关于吴强任职的通知》等文件的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-					</div>
-				</div>
-				<!-- 发起新的申请 -->
-				<div class="content-wrapper" id="new_task_box">
-					<div class="content-header clear-fix">
-						<h2><span class="fa fa-calendar-plus-o icon"></span>发起新的申请</h2>
-					</div>
-					<div class="center-wrapper">
-						<div class="center">
-							<button class="btn" id="new_task_btn"><span class="fa fa-plus icon" id="plus_icon"></span>发起新的申请</button>
-						</div>					
-					</div>
-				</div>
-				<!-- 审批进程查询 -->
-				<div class="content-wrapper" id="process_query_box">
-					<div class="content-header clear-fix">
-						<h2><span class="fa fa-search icon"></span>审批进程查询</h2>
-					</div>
-					<div>
-						<div id="process_query_selector_box">
-							<select class="selector" id="process_query_selector">
-								<option value="" selected="true" disabled="true">请选择流程类型</option>
-								<optgroup label="人事">
-									<option value="">员工培训申请流程</option>
-									<option value="">专业技术职务聘请申请流程</option>
-									<option value="">外来项目合作人员登记申请流程</option>
-									<option value="">工资发放流程</option>
-								</optgroup>
-								<optgroup label="资产">
-									<option value="">仪器设备申购流程</option>
-									<option value="">仪器设备报废流程</option>
-								</optgroup>								
-								<optgroup label="组三">
-									<option value="">流程三</option>
-									<option value="">流程四</option>
-									<option value="">流程三</option>
-									<option value="">流程四</option>
-								</optgroup>
-								<optgroup label="组四">
-									<option value="">流程三</option>
-									<option value="">流程四</option>
-									<option value="">流程三</option>
-								</optgroup>							
-							</select>
-						</div>
-						<div class="center-wrapper">
-							<div class="center">
-								<button class="btn" id="process_query_btn">查询</button>
-							</div>					
+			<!-- 待办事项 -->
+			<div class="col-s-12 col-m-12">
+				<div class="content-wrapper" id="to_do_box">
+					<!-- 标题 -->
+					<div class="content-header clear-fix" id="to_do_header">
+						<h2><span class="fa fa-map-marker icon"></span>当前位置：首页 > 事项申请 > 发起任务</h2>
+						<div id="search_bar_wrapper">
+							<form>
+								<label id="search_icon"><span class="fa fa-search"></span></label>
+								<input id="search_bar" type="text" name="search_bar" placeholder="输入任务名以快速定位" />
+							</form>							
 						</div>						
 					</div>
-				</div>
-			</div>
-			<!-- 待办事项 -->
-			<div class="col-s-12 col-m-4">
-				<div class="content-wrapper" id="to_do_box">
-					<div class="content-header clear-fix" id="to_do_header">
-						<h2><span class="fa fa-calendar-minus-o icon"></span>待办事项</h2>
-						<span id="to_do_count">5</span>
-						<!-- <a href="" id="new-request-btn" class="btn"><span class="fa fa-plus icon" id="plus-icon"></span>发起新的申请</a> -->
-					</div>
+					<!-- 发起项列表 -->
 					<ul id="to_do_list">
+						<!-- 人事 -->
 						<li>
 							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>仪器设备验收流程<span class="tree-child-count">1</span>
+								<span class="fa fa-chevron-down icon"></span>人事
 							</div>
-							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>薛凤全——使用部门审核</a></li>
+							<ul class="items">
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>培训申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>岗位变更</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>职称聘任</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>工资申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>职称申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>收文</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>发文</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>员工录用</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>干部录用</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>外来培训</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>工资发放</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>津贴发放</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>工资补发</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>津贴补发</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>工资确认</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>高温费</a></li>
 							</ul>
 						</li>
+						<!-- 资产 -->
 						<li>
 							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>数据库使用权限申请流程<span class="tree-child-count">2</span>
+								<span class="fa fa-chevron-down icon"></span>资产
 							</div>
 							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>秦玉涛——信息部门收回权限</a></li>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>秦玉涛——信息部门收回权限</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>设备申购</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>设备验收</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>设备维修</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>设备报废</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>批量报废</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>物品申领</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>物品购领</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>劳保用品</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>物品申购</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>汽车报修</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>用车登记</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>行车补贴</a></li>
 							</ul>
 						</li>
+						<!-- 质管 -->						
 						<li>
 							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>LIMS软件需求申请流程<span class="tree-child-count">1</span>
+								<span class="fa fa-chevron-down icon"></span>质管
 							</div>
 							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>秦晓光——信息人员办理</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>检定校准</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>检定计划</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>新项目申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>新项目论证</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>新项目验收</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>方法评审</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>方法确认</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>审核反馈</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>报告审核</a></li>
 							</ul>
 						</li>
+						<!-- 考勤 -->						
 						<li>
 							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>公文收文流程<span class="tree-child-count">1</span>
+								<span class="fa fa-chevron-down icon"></span>考勤
 							</div>
 							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>李亿红——申请人填写</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>调休申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>出差申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>产假申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>丧假申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>事假申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>婚假申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>病假申请</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>探亲申请</a></li>
 							</ul>
 						</li>
-					</ul>
-				</div>
-			</div>
-			<!-- 已办事项 -->
-			<div class="col-s-12 col-m-4">
-				<div class="content-wrapper" id="done_box">
-					<div class="content-header clear-fix">
-						<h2><span class="fa fa-calendar-check-o icon"></span>已办事项</h2>
-						<a href="" class="more-btn">>>显示全部</a>
-					</div>
-					<ul id="done_list">
+						<!-- 需求 -->						
 						<li>
 							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>公文收文流程<span class="tree-child-count">2</span>
+								<span class="fa fa-chevron-down icon"></span>需求
 							</div>
 							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>吴祥贵——承办人办理</a></li>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>吴祥贵——组织人事科归档</a></li>								
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>人员需求</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>培训计划</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>设备需求</a></li>
 							</ul>
 						</li>
+						<!-- 档案 -->						
 						<li>
 							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>软件需求申请流程<span class="tree-child-count">1</span>
+								<span class="fa fa-chevron-down icon"></span>档案
 							</div>
 							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>薛凤全——使用部门审核</a></li>
-							</ul>
-						</li>
-						<li>
-							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>软件故障反映流程<span class="tree-child-count">1</span>
-							</div>
-							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>薛凤全——使用部门审核</a></li>
-							</ul>
-						</li>
-						<li>
-							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>LIMS软件故障反映流程<span class="tree-child-count">1</span>
-							</div>
-							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>薛凤全——使用部门审核</a></li>
-							</ul>
-						</li>
-						<li>
-							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>LIMS软件需求申请流程<span class="tree-child-count">1</span>
-							</div>
-							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>薛凤全——使用部门审核</a></li>
-							</ul>
-						</li>
-						<li>
-							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>工作进度流程I(监测含报告)<span class="tree-child-count">1</span>
-							</div>
-							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>薛凤全——使用部门审核</a></li>
-							</ul>
-						</li>
-						<li>
-							<div class="tree-parent-btn">
-								<span class="fa fa-chevron-down icon"></span>仪器设备验收流程<span class="tree-child-count">1</span>
-							</div>
-							<ul>
-								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>薛凤全——使用部门审核</a></li>
+								<li><a href="" class="tree-child-btn"><span class="fa fa-dot-circle-o icon"></span>查阅/借阅</a></li>
 							</ul>
 						</li>
 					</ul>
