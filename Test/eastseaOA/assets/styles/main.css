@@ -1088,3 +1088,8 @@ icon 设置
 	line-height: 24px;
 }
 
+
+.nano { }
+.nano .nano-content { padding: 10px; }
+.nano .nano-pane   { background: #fafafa; }
+.nano .nano-slider { background: #3498db; }

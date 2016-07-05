@@ -9,10 +9,12 @@
 	<link rel="stylesheet" href="assets/styles/index.css">
 	<link rel="stylesheet" href="assets/styles/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="assets/styles/select2.css">
+	<link rel="stylesheet" href="assets/styles/nanoscroller.css">
 	<script src="assets/js/respond.min.js"></script>
 	<script src="assets/js/html5shiv.min.js"></script>
 	<script src="assets/js/jquery-1.12.3.min.js"></script>
 	<script src="assets/js/select2.min.js"></script>
+	<script src="assets/js/jquery.nanoscroller.js"></script>
 	<script src="assets/js/Labelauty/jquery-labelauty.js"></script>
 	<script src="assets/js/main.js"></script>
 	<script src="assets/js/index.js"></script>	
@@ -378,47 +380,131 @@
 						<h2><span class="fa fa-feed icon"></span>通知通告</h2>
 						<a href="" class="more-btn">>>显示全部</a>
 					</div>
-					<div id="notice_wrapper">
-						<a href="" class="notice-item">
-							<span class="notice-title"><span class="fa fa-warning icon-urgent"></span>东海监测中心2016年2月份新闻宣传工作情况通告</span>
-							<span class="notice-new">&nbsp;&nbsp;NEW</span><span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title"><span class="fa fa-warning icon-important"></span>1631组 关于李善通等聘任的通知</span>
-							<span class="notice-new">&nbsp;&nbsp;NEW</span><span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title"><span class="fa fa-warning icon-new"></span>1632组 关于李志恩等续聘的通知</span>
-							<span class="notice-new">&nbsp;&nbsp;NEW</span><span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">1633组 关于刘鹏霞等聘任的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">关于梳理项目作业指导书基本情况的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">关于转发《中共国家海洋局党组关于吴强同志任职的通知》等文件的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">关于转发《国家海洋局关于吴强任职的通知》等文件的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">东海监测中心2016年2月份新闻宣传工作情况通告</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">1631组 关于李善通等聘任的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
-						<a href="" class="notice-item">
-							<span class="notice-title">1632组 关于李志恩等续聘的通知</span>
-							<span class="notice-date">2016-03-15</span>
-						</a>
+					<div id="notice_wrapper" class="nano">
+						<div class="nano-content">
+							<a href="" class="notice-item">
+								<span class="notice-title"><span class="fa fa-warning icon-urgent"></span>东海监测中心2016年2月份新闻宣传工作情况通告</span>
+								<span class="notice-new">&nbsp;&nbsp;NEW</span><span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title"><span class="fa fa-warning icon-important"></span>1631组 关于李善通等聘任的通知</span>
+								<span class="notice-new">&nbsp;&nbsp;NEW</span><span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title"><span class="fa fa-warning icon-new"></span>1632组 关于李志恩等续聘的通知</span>
+								<span class="notice-new">&nbsp;&nbsp;NEW</span><span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1633组 关于刘鹏霞等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于梳理项目作业指导书基本情况的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《中共国家海洋局党组关于吴强同志任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《国家海洋局关于吴强任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">东海监测中心2016年2月份新闻宣传工作情况通告</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1631组 关于李善通等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1632组 关于李志恩等续聘的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							<a href="" class="notice-item">
+								<span class="notice-title">1633组 关于刘鹏霞等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于梳理项目作业指导书基本情况的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《中共国家海洋局党组关于吴强同志任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《国家海洋局关于吴强任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">东海监测中心2016年2月份新闻宣传工作情况通告</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1631组 关于李善通等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1632组 关于李志恩等续聘的通知</span>
+								<span class="notice-date">2016-03-15</span>								
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1633组 关于刘鹏霞等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于梳理项目作业指导书基本情况的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《中共国家海洋局党组关于吴强同志任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《国家海洋局关于吴强任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">东海监测中心2016年2月份新闻宣传工作情况通告</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1631组 关于李善通等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1632组 关于李志恩等续聘的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							<a href="" class="notice-item">
+								<span class="notice-title">1633组 关于刘鹏霞等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于梳理项目作业指导书基本情况的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《中共国家海洋局党组关于吴强同志任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">关于转发《国家海洋局关于吴强任职的通知》等文件的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">东海监测中心2016年2月份新闻宣传工作情况通告</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1631组 关于李善通等聘任的通知</span>
+								<span class="notice-date">2016-03-15</span>
+							</a>
+							<a href="" class="notice-item">
+								<span class="notice-title">1632组 关于李志恩等续聘的通知</span>
+								<span class="notice-date">2016-03-15</span>								
+							</a>							
+						</div>
 					</div>
 				</div>
 				<!-- 发起新的申请 -->
