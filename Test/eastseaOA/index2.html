@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>东海监测中心OA</title>
 	<link rel="stylesheet" href="assets/styles/main.css">
-	<link rel="stylesheet" href="assets/styles/index.css">
+	<link rel="stylesheet" href="assets/styles/index2.css">
 	<link rel="stylesheet" href="assets/styles/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="assets/styles/select2.css">
 	<script src="assets/js/respond.min.js"></script>
@@ -421,64 +421,14 @@
 						</a>
 					</div>
 				</div>
-				<!-- 发起新的申请 -->
-				<div class="content-wrapper" id="new_task_box">
-					<div class="content-header clear-fix">
-						<h2><span class="fa fa-calendar-plus-o icon"></span>发起新的申请</h2>
-					</div>
-					<div class="center-wrapper">
-						<div class="center">
-							<button class="btn" id="new_task_btn"><span class="fa fa-plus icon" id="plus_icon"></span>发起新的申请</button>
-						</div>					
-					</div>
-				</div>
-				<!-- 审批进程查询 -->
-				<div class="content-wrapper" id="process_query_box">
-					<div class="content-header clear-fix">
-						<h2><span class="fa fa-search icon"></span>审批进程查询</h2>
-					</div>
-					<div>
-						<div id="process_query_selector_box">
-							<select class="selector" id="process_query_selector">
-								<option value="" selected="true" disabled="true">请选择流程类型</option>
-								<optgroup label="人事">
-									<option value="">员工培训申请流程</option>
-									<option value="">专业技术职务聘请申请流程</option>
-									<option value="">外来项目合作人员登记申请流程</option>
-									<option value="">工资发放流程</option>
-								</optgroup>
-								<optgroup label="资产">
-									<option value="">仪器设备申购流程</option>
-									<option value="">仪器设备报废流程</option>
-								</optgroup>								
-								<optgroup label="组三">
-									<option value="">流程三</option>
-									<option value="">流程四</option>
-									<option value="">流程三</option>
-									<option value="">流程四</option>
-								</optgroup>
-								<optgroup label="组四">
-									<option value="">流程三</option>
-									<option value="">流程四</option>
-									<option value="">流程三</option>
-								</optgroup>							
-							</select>
-						</div>
-						<div class="center-wrapper">
-							<div class="center">
-								<button class="btn" id="process_query_btn">查询</button>
-							</div>					
-						</div>						
-					</div>
-				</div>
 			</div>
 			<!-- 待办事项 -->
-			<div class="col-s-12 col-m-4">
+			<div class="col-s-12 col-m-4">		
 				<div class="content-wrapper" id="to_do_box">
 					<div class="content-header clear-fix" id="to_do_header">
 						<h2><span class="fa fa-calendar-minus-o icon"></span>待办事项</h2>
 						<span id="to_do_count">5</span>
-						<!-- <a href="" id="new-request-btn" class="btn"><span class="fa fa-plus icon" id="plus-icon"></span>发起新的申请</a> -->
+						<a href="" id="new_task_btn" class="btn"><span class="fa fa-plus icon" id="plus_icon"></span>发起新的申请</a>
 					</div>
 					<ul id="to_do_list">
 						<li>
@@ -518,13 +468,43 @@
 				</div>
 			</div>
 			<!-- 已办事项 -->
-			<div class="col-s-12 col-m-4">
+			<div class="col-s-12 col-m-4">		
 				<div class="content-wrapper" id="done_box">
 					<div class="content-header clear-fix">
 						<h2><span class="fa fa-calendar-check-o icon"></span>已办事项</h2>
 						<a href="" class="more-btn">>>显示全部</a>
 					</div>
 					<ul id="done_list">
+						<li>
+							<div class="center-wrapper">
+								<div id="process_query_selector_box" class="center">
+									<select class="selector" id="process_query_selector">
+										<option value="" selected="true" disabled="true">请选择要查询的流程类型</option>
+										<optgroup label="人事">
+											<option value="">员工培训申请流程</option>
+											<option value="">专业技术职务聘请申请流程</option>
+											<option value="">外来项目合作人员登记申请流程</option>
+											<option value="">工资发放流程</option>
+										</optgroup>
+										<optgroup label="资产">
+											<option value="">仪器设备申购流程</option>
+											<option value="">仪器设备报废流程</option>
+										</optgroup>								
+										<optgroup label="组三">
+											<option value="">流程三</option>
+											<option value="">流程四</option>
+											<option value="">流程三</option>
+											<option value="">流程四</option>
+										</optgroup>
+										<optgroup label="组四">
+											<option value="">流程三</option>
+											<option value="">流程四</option>
+											<option value="">流程三</option>
+										</optgroup>							
+									</select>
+								</div>						
+							</div>							
+						</li>
 						<li>
 							<div class="tree-parent-btn">
 								<span class="fa fa-chevron-down icon"></span>公文收文流程<span class="tree-child-count">2</span>
