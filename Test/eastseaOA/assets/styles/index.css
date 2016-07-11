@@ -141,6 +141,14 @@
 }
 
 
+#to_do_box .tree-parent-btn,
+#to_do_box .tree-child-btn,
+#done_box .tree-parent-btn,
+#done_box .tree-child-btn{
+	margin-bottom: 3px;
+	line-height: 34px;
+}
+
 /*
 =============
 事项查询
