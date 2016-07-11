@@ -222,7 +222,7 @@ header{
 .banner{
 	/*height: 50px;*/
 	color: #999;
-	line-height: 40px;
+	line-height: 50px;
 	overflow: auto;
 }
 #banner_wrapper{
@@ -237,8 +237,8 @@ header{
 	margin-left: 15px;
 	margin-top: 5px; 
 	margin-bottom: 5px;
-	width: 214.5px;
-	height: 30px;
+/*	width: 214.5px;
+	height: 30px;*/
 }
 #banner_date{
 	float: right;
@@ -1050,7 +1050,7 @@ icon 设置
 
 .tree-child-count{
 	float: right;
-	color: #fff;
+	color: #222;
 }
 
 .parent-active-tree .tree-parent-wrapper{
