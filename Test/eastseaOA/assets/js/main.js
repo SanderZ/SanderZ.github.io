@@ -238,7 +238,7 @@ $(document).ready(function() {
  //    	radioClass: 'iradio_flat-blue'
 	// });
 
-	$(".nano").nanoScroller();
+	// $(".nano").nanoScroller();
 
 });
 
