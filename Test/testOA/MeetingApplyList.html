@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<title>东海监测中心OA</title>
+	<link rel="stylesheet" href="assets/styles/main.css">
+	<link rel="stylesheet" href="assets/styles/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="assets/styles/select2.css">
+	<link rel="stylesheet" href="assets/styles/jquery-labelauty.css">
+	<script src="assets/js/respond.min.js"></script>
+	<script src="assets/js/html5shiv.min.js"></script>
+	<script src="assets/js/jquery-1.12.3.min.js"></script>
+	<script src="assets/js/select2.min.js"></script>
+	<script src="assets/js/jquery.quicksearch.js"></script>
+	<script src="assets/js/Labelauty/jquery-labelauty.js"></script>
+	<script src="assets/js/labelauty.js"></script>
+	<script src="assets/js/main.js"></script>
+</head>
+<body>
+	<!-- 页头 -->
+	<header>
+		<div class="banner">
+			<div id="banner_wrapper">
+				<img src="assets/images/logo.png" alt="" id="banner_logo">
+				<div id="banner_date">2016年4月20日&nbsp;星期二</div>
+			</div>	
+		</div>	
+		<!-- 导航栏 -->								
+		<nav>
+			<div class="nav clear-fix">
+				<ul class="nav-list">
+					<!-- 首页 -->
+					<li><a href="" class="nav-selected">首页</a></li>
+					<!-- 业务管理 -->					
+					<li class="dropdown">
+						<a href="">业务管理</a>
+						<ul class="sub-menu">
+							<li class="dropdown">
+								<a href="">策划实施<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">质量策划</a></li>
+									<li><a href="">任务书管理</a></li>
+									<li><a href="">业务工作进度</a></li>
+									<li><a href="">科技工作进度</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">绩效管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">外业绩效核算</a></li>
+									<li><a href="">内业绩效核算</a></li>
+									<li><a href="">分配明细</a></li>
+									<li><a href="">绩效</a></li>
+									<li><a href="">分析项目</a></li>
+									<li><a href="">绩效系数</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">合同管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">合作方管理</a></li>
+									<li><a href="">合同评审</a></li>
+									<li><a href="">合同登记</a></li>									
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">成果管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">成果登记</a></li>
+									<li><a href="">保密审查管理</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">档案管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">记录借阅</a></li>
+									<li><a href="">标准规范目录</a></li>
+									<li><a href="">档案目录</a></li>
+									<li><a href="">一级期刊目录</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="">业务管理监督</a>
+							</li>
+						</ul>
+					</li>
+					<!-- 人事管理 -->
+					<li class="dropdown">
+						<a href="">人事管理</a>
+						<ul class="sub-menu">
+							<li class="dropdown">
+								<a href="">人员信息<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">人员信息</a></li>
+									<li><a href="">全员信息</a></li>
+									<li><a href="">外来人员登记</a></li>
+									<li><a href="">通信录</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">培训信息<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">培训历史</a></li>
+									<li><a href="">培训计划</a></li>
+									<li><a href="">培训申请</a></li>
+									<li><a href="">培训通知</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">工资管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">发放管理</a></li>
+									<li><a href="">本人工资</a></li>								
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">收发文<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">收文办理</a></li>
+									<li><a href="">发文办理</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="">规章制度</a>
+							</li>
+							<li>
+								<a href="">人事管理监督</a>
+							</li>
+						</ul>
+					</li>
+					<!-- 行政后勤 -->
+					<li class="dropdown">
+						<a href="">行政后勤</a>
+						<ul class="sub-menu">
+							<li class="dropdown">
+								<a href="">固定资产管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">资产信息</a></li>
+									<li><a href="">申购管理</a></li>
+									<li><a href="">维修管理</a></li>
+									<li><a href="">物业维修</a></li>
+									<li><a href="">报废管理</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">车辆管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">车辆信息</a></li>
+									<li><a href="">用车登记</a></li>
+									<li><a href="">车辆维修</a></li>
+									<li><a href="">行车补贴</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="">耗材管理</a>
+							</li>
+							<li class="dropdown">
+								<a href="">标准物质<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">标准物质信息</a></li>
+									<li><a href="">标准物质领用</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">供应商<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">仪器供应商</a></li>
+									<li><a href="">耗材供应商</a></li>								
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">出差管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">出差申请</a></li>
+									<li><a href="">调休申请</a></li>
+									<li><a href="">探亲申请</a></li>
+									<li><a href="">婚假申请</a></li>
+									<li><a href="">产假申请</a></li>
+									<li><a href="">病假申请</a></li>														
+									<li><a href="">丧假申请</a></li>
+									<li><a href="">事假申请</a></li>				
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">考勤<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">单位考勤</a></li>
+									<li><a href="">科室考勤</a></li>
+									<li><a href="">考勤抽查</a></li>
+									<li><a href="">个人考勤</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="">行政管理监督</a>
+							</li>
+						</ul>						
+					</li>
+					<!-- 质量管理 -->
+					<li class="dropdown">
+						<a href="">质量管理</a>
+						<ul class="sub-menu">
+							<li class="dropdown">
+								<a href="">计量器具<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">送检申请管理</a></li>
+									<li><a href="">送检计划管理</a></li>
+									<li><a href="">计量周期管理</a></li>
+									<li><a href="">溯源结果管理</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="">规范标准</a>
+							</li>
+							<li>
+								<a href="">考核成绩</a>
+							</li>
+							<li>
+								<a href="">作业指导书</a>
+							</li>
+							<li class="dropdown">
+								<a href="">新项目控制程序<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">新项目申请</a></li>
+									<li><a href="">新项目论证</a></li>
+									<li><a href="">新项目验收</a></li>			
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="">监测方法管理<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">监测方法评审</a></li>
+									<li><a href="">监测方法确认</a></li>				
+								</ul>
+							</li>
+							<li>
+								<a href="">技术审核</a>
+							</li>
+							<li>
+								<a href="">质量管理监督</a>
+							</li>
+						</ul>							
+					</li>
+					<!-- 信息管理 -->
+					<li class="dropdown">
+						<a href="">信息管理</a>
+						<ul class="sub-menu">
+							<li>
+								<a href="">安全检查</a>
+							</li>
+							<li>
+								<a href="">用户权限申请</a>
+							</li>
+							<li>
+								<a href="">数据库权限申请</a>
+							</li>
+							<li>
+								<a href="">数据导出申请</a>
+							</li>
+							<li>
+								<a href="">软件故障反映</a>
+							</li>
+							<li>
+								<a href="">软件需求申请</a>
+							</li>
+							<li>
+								<a href="">电子地图申请</a>
+							</li>
+							<li>
+								<a href="">网络用户申请</a>
+							</li>
+							<li>
+								<a href="">数据更改申请</a>
+							</li>
+							<li>
+								<a href="">计算机登记表</a>
+							</li>
+							<li>
+								<a href="">升级维护管理</a>
+							</li>
+						</ul>						
+					</li>
+					<!-- 党团工作 -->
+					<li class="dropdown">
+						<a href="">党团工作</a>
+						<ul class="sub-menu">
+							<li class="dropdown">
+								<a href="">党团员信息<span class="fa fa-chevron-right icon"></span></a>
+								<ul class="sub-menu">
+									<li><a href="">党员信息</a></li>
+									<li><a href="">团员信息</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="">党团活动</a>
+							</li>
+						</ul>							
+					</li>
+					<!-- 监测监视业务系统 -->
+					<li class="dropdown">
+						<a href="">监测监视业务系统</a>
+						<ul class="sub-menu">
+							<li>
+								<a href="">海洋工程信息系统</a>
+							</li>
+							<li>
+								<a href="">海洋倾倒区信息系统</a>
+							</li>
+							<li>
+								<a href="">HYJCLIMS</a>
+							</li>
+							<li>
+								<a href="">综合管理系统</a>
+							</li>
+							<li>
+								<a href="">实时监测系统</a>
+							</li>
+							<li>
+								<a href="">监视监管系统</a>
+							</li>
+							<li>
+								<a href="">在线编报系统</a>
+							</li>
+							<li>
+								<a href="">危化品系统</a>
+							</li>
+						</ul>							
+					</li>
+				</ul>
+				<div class="user-btn">
+					<span class="new-message-notice" id="new_message_notify"></span>
+					<span class="user-icon"></span>
+					<span class="user-name">
+						<div href="">
+							<span class="fa fa-user icon"></span><span id="userName">登陆</span>
+						</div>
+					</span>
+					<div class="dropdown" id="userDrop">
+						<ul class="sub-menu">
+							<li><a href="">附件下载</a></li>
+							<li><a href="">文件交换</a></li>
+							<li><a href="">记事本</a></li>
+							<li><a href="">新短消息<span class="new-message-notice" id="new_message_count">4</span></a></li>
+							<li><a href="">修改密码</a></li>
+							<li><a href="">管理入口</a></li>
+							<li><a href="">退出</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</nav>							
+	</header>
+	<div id="mask" class="mask"></div>
+	<div class="main content-wrapper" id="loginBox">
+		<span class="fa fa-times icon" id="close_btn"></span>
+		<form>
+			<div class="input-wrapper clear-fix" id="user-name-wrapper">
+				<label for="UserName">用户名：</label>
+				<input class="text-input" type="text" placeholder="请输入用户名" id="UserName" />
+			</div>
+			<div class="input-wrapper clear-fix" id="password-wrapper">
+				<label for="PassWord">密码：</label>
+				<input class="text-input" type="password" placeholder="请输入密码" id="PassWord" />
+			</div>
+			<div id="btn_wrapper">
+				<input class="btn" type="submit" id="login_btn" value="登录" />
+				<input class="btn" type="reset" id="reset_btn" value="重置" />
+			</div>					
+		</form>
+	</div>
+	<!-- 主体部分 -->
+	<div class="grid-container">	
+		<div class="grid-row main">
+			<!-- 待办事项 -->
+			<div class="col-s-12 col-m-12">
+				<div class="content-wrapper">
+					<!-- 标题 -->
+					<div class="content-header clear-fix">
+						<h2><span class="fa fa-map-marker icon"></span>当前位置：首页 > 管理入口 > 任务新建</h2>				
+					</div>
+					<div class="content-body">
+						<div class="article-wrapper">
+							<div class="center">
+								<p>
+									<label for="UserName">申请人：</label>
+									<input class="text-input" type="text" placeholder="输入申请人或点击右侧图标" id="UserName" />
+									<a href=""><span class="fa fa-user-plus icon"></span></a>
+								</p>
+								<div class="center-wrapper">
+									<div class="center">
+										<input class="btn" type="submit" id="login_btn" value="完成" />
+									</div>									
+								</div>																								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 页脚 -->
+	<footer>
+		<span id="copyright">Copyright&copy;2012-2016&nbsp;国家海洋局东海监测中心</span><span id="support">技术支持：上海市计算技术研究所</span>
+	</footer>
+</body>
+</html>
